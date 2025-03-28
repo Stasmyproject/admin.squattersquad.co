@@ -1,5 +1,6 @@
 <?php
-$project_id = $GLOBALS['metronic_draft_project_id'] ?? 0;
+// Попробуем получить проект из глобальной переменной или из cookie
+$project_id = $GLOBALS['metronic_draft_project_id'] ?? (isset($_COOKIE['draft_project_id']) ? intval($_COOKIE['draft_project_id']) : 0);
 ?>
 
 <div class="card card-flush py-4 form-wizard" data-project-id="<?php echo esc_attr($project_id); ?>">
