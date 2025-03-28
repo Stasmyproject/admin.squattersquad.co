@@ -77,11 +77,10 @@ function metronic_enqueue_custom_scripts() {
     );
 
     // Прокидываем переменную ajaxurl
-    wp_localize_script('form-wizard', 'ajaxurl', array(
-        'url' => admin_url('admin-ajax.php'),
-    ));
+    wp_localize_script('form-wizard', 'ajaxurl', admin_url('admin-ajax.php'));
 }
 add_action('wp_enqueue_scripts', 'metronic_enqueue_custom_scripts');
+
 
 
 
@@ -100,8 +99,8 @@ function save_project_step_ajax() {
     }
 
     foreach ($fields as $key => $value) {
-        // Можно заменить на update_field($key, $value, $project_id) если ты используешь ACF
         update_post_meta($project_id, '_project_field_' . sanitize_key($key), sanitize_text_field($value));
+        // или update_field($key, $value, $project_id); если используешь ACF
     }
 
     wp_send_json_success('Saved');
