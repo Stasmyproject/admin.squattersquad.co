@@ -1,0 +1,15 @@
+/*
+Theme Name: Metronic WP
+Theme URI: https://squattersquad.co//metronic-wp
+Description: Custom WordPress theme with Metronic integration
+Author: Stan
+Author URI: https://squattersquad.co/
+Version: 1.0
+*/
+
+
+@media (min-width: 992px) {
+    .app-sidebar-menu .menu>.menu-item {
+        margin-left: -0.885rem!important;
+    }
+}
