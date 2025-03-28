@@ -1,5 +1,6 @@
 <?php
 
+
 // 💡 Новый размер изображений
 add_image_size('avatar-160', 160, 160, true); // true = crop (обрезать)
 
@@ -64,6 +65,7 @@ function metronic_enqueue_styles() {
 }
 add_action('wp_enqueue_scripts', 'metronic_enqueue_styles');
 
+
 // 💡 Пользовательский крипт для пошаговой формы сделал GPT
 function metronic_enqueue_custom_scripts() {
     wp_enqueue_script(
@@ -80,6 +82,7 @@ function metronic_enqueue_custom_scripts() {
     ));
 }
 add_action('wp_enqueue_scripts', 'metronic_enqueue_custom_scripts');
+
 
 
 
