@@ -16,7 +16,7 @@ $is_form_page = str_starts_with($current_slug, 'form-');
 $draft_project_id = 0;
 
 // --- Гостевой режим: если это форма и пользователь НЕ авторизован ---
-if ($is_form_page && !$is_logged_in) {
+if ($is_form_page) {
     $draft_project_id = isset($_COOKIE['draft_project_id']) ? intval($_COOKIE['draft_project_id']) : 0;
 
     if (!$draft_project_id || get_post_type($draft_project_id) !== 'project') {
@@ -24,10 +24,9 @@ if ($is_form_page && !$is_logged_in) {
             'post_type'   => 'project',
             'post_status' => 'draft',
             'post_title'  => 'Temporary Project',
-            'post_author' => 0,
+            'post_author' => $is_logged_in ? get_current_user_id() : 0,
         ]);
 
-        // ВАЖНО: setcookie ДО get_header()
         setcookie('draft_project_id', $draft_project_id, time() + WEEK_IN_SECONDS, '/');
         $_COOKIE['draft_project_id'] = $draft_project_id;
     }
@@ -35,6 +34,7 @@ if ($is_form_page && !$is_logged_in) {
     $GLOBALS['metronic_draft_project_id'] = $draft_project_id;
     echo "<script>window.GUEST_PROJECT_ID = '{$draft_project_id}';</script>";
 }
+
 
 // --- Управляем классами кнопки свертывания меню ---
 $toggle_button_class = 'app-sidebar-toggle btn btn-icon btn-shadow btn-sm btn-color-muted btn-active-color-primary h-30px w-30px position-absolute top-50 start-100 translate-middle rotate';
