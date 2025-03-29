@@ -817,9 +817,21 @@ function save_project_step_callback() {
     $project_id = isset($_POST['project_id']) ? intval($_POST['project_id']) : 0;
         $are_you = sanitize_text_field($_POST['are_you'] ?? '');
         $legal_residence = sanitize_text_field($_POST['legal_residence'] ?? '');
-    $title = sanitize_text_field($_POST['post_title'] ?? '');
+        $squatters_duration = sanitize_text_field($_POST['squatters_duration'] ?? '');
+        $police_contacted = sanitize_text_field($_POST['police_contacted'] ?? '');
+        $utility_services = sanitize_text_field($_POST['utility_services'] ?? '');
+        $receive_mail = sanitize_text_field($_POST['receive_mail'] ?? '');
     $content = wp_kses_post($_POST['post_content'] ?? '');
     $city = sanitize_text_field($_POST['city'] ?? '');
+
+    // Получаем город
+    $city = sanitize_text_field($_POST['city'] ?? 'Unknown City');
+
+    // Генерируем дату
+    $date = date('M d, Y');
+
+    // Собираем автоназвание
+    $title = 'Case - ' . $city . ' - ' . $date;
 
 
 
@@ -850,6 +862,10 @@ function save_project_step_callback() {
     // Сохраняем кастомные поля
         update_post_meta($project_id, 'are_you', $are_you);
         update_post_meta($project_id, 'legal_residence', $legal_residence);
+        update_post_meta($project_id, 'squatters_duration', $squatters_duration);
+        update_post_meta($project_id, 'police_contacted', $police_contacted);
+        update_post_meta($project_id, 'utility_services', $utility_services);
+        update_post_meta($project_id, 'receive_mail', $receive_mail);
     update_post_meta($project_id, 'city', $city);
 
 

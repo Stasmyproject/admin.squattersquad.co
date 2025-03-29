@@ -20,14 +20,110 @@ function initFormWizard() {
         progressBar.style.width = progressPercent + '%';
         progressBar.setAttribute('aria-valuenow', progressPercent);
     }
-
-
-
     }
 
 
-
     showStep(currentStep);
+
+    // ✅ Каскадная загрузка USCities.json
+    fetch('/wp-content/themes/metronic-wp/assets/data/USCities.json')
+      .then(res => res.json())
+      .then(data => {
+          const stateSelect = wizard.querySelector('#state');
+          const countySelect = wizard.querySelector('#county');
+          const citySelect = wizard.querySelector('#city_select');
+          const zipSelect = wizard.querySelector('#zip');
+
+          const states = [...new Set(data.map(entry => entry.state))].sort();
+
+          // 1. Заполняем ШТАТЫ
+          states.forEach(stateCode => {
+              const opt = document.createElement('option');
+              opt.value = stateCode;
+              opt.textContent = stateCode;
+              stateSelect.appendChild(opt);
+          });
+
+          // 2. При выборе ШТАТА
+          stateSelect.addEventListener('change', () => {
+              const selectedState = stateSelect.value;
+              countySelect.innerHTML = '<option value="">Select County</option>';
+              citySelect.innerHTML = '<option value="">Select City</option>';
+              zipSelect.innerHTML = '<option value="">Select ZIP Code</option>';
+              countySelect.disabled = true;
+              citySelect.disabled = true;
+              zipSelect.disabled = true;
+
+              if (!selectedState) return;
+
+              const counties = [...new Set(data
+                  .filter(entry => entry.state === selectedState)
+                  .map(entry => entry.county))].sort();
+
+              counties.forEach(county => {
+                  const opt = document.createElement('option');
+                  opt.value = county;
+                  opt.textContent = county;
+                  countySelect.appendChild(opt);
+              });
+
+              countySelect.disabled = false;
+          });
+
+          // 3. При выборе ОКРУГА
+          countySelect.addEventListener('change', () => {
+              const selectedState = stateSelect.value;
+              const selectedCounty = countySelect.value;
+              citySelect.innerHTML = '<option value="">Select City</option>';
+              zipSelect.innerHTML = '<option value="">Select ZIP Code</option>';
+              citySelect.disabled = true;
+              zipSelect.disabled = true;
+
+              if (!selectedCounty) return;
+
+              const cities = [...new Set(data
+                  .filter(entry => entry.state === selectedState && entry.county === selectedCounty)
+                  .map(entry => entry.city))].sort();
+
+              cities.forEach(city => {
+                  const opt = document.createElement('option');
+                  opt.value = city;
+                  opt.textContent = city;
+                  citySelect.appendChild(opt);
+              });
+
+              citySelect.disabled = false;
+          });
+
+          // 4. При выборе ГОРОДА
+          citySelect.addEventListener('change', () => {
+              const selectedState = stateSelect.value;
+              const selectedCounty = countySelect.value;
+              const selectedCity = citySelect.value;
+
+              zipSelect.innerHTML = '<option value="">Select ZIP Code</option>';
+              zipSelect.disabled = true;
+
+              if (!selectedCity) return;
+
+              const zips = [...new Set(data
+                  .filter(entry =>
+                      entry.state === selectedState &&
+                      entry.county === selectedCounty &&
+                      entry.city === selectedCity)
+                  .map(entry => entry.zip_code))].sort();
+
+              zips.forEach(zip => {
+                  const opt = document.createElement('option');
+                  opt.value = zip;
+                  opt.textContent = zip;
+                  zipSelect.appendChild(opt);
+              });
+
+              zipSelect.disabled = false;
+          });
+      });
+
 
     wizard.querySelectorAll('.next-step').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -53,9 +149,17 @@ function initFormWizard() {
             const projectId = wizard.dataset.projectId;
                 const areYou = wizard.querySelector('select[name="are_you"]')?.value || '';
                 const legalResidence = wizard.querySelector('select[name="legal_residence"]')?.value || '';
-            const title = wizard.querySelector('input[name="post_title"]')?.value.trim() || '';
+                const squattersDuration = wizard.querySelector('select[name="squatters_duration"]')?.value || '';
+                const policeContacted = wizard.querySelector('select[name="police_contacted"]')?.value || '';
+                const utilityServices = wizard.querySelector('select[name="utility_services"]')?.value || '';
+                const receiveMail = wizard.querySelector('select[name="receive_mail"]')?.value || '';
+                const moneyRequestedToLeave = wizard.querySelector('select[name="money_requested_to_leave"]')?.value || '';
             const content = wizard.querySelector('textarea[name="post_content"]')?.value.trim() || '';
-            const city = wizard.querySelector('input[name="city"]')?.value.trim() || '';
+                const state = wizard.querySelector('select[name="state"]')?.value || '';
+                const county = wizard.querySelector('select[name="county"]')?.value || '';
+                const city = wizard.querySelector('select[name="city"]')?.value || '';
+                const zip = wizard.querySelector('select[name="zip"]')?.value || '';
+
 
 
             if (!projectId || parseInt(projectId) <= 0) {
@@ -70,13 +174,20 @@ function initFormWizard() {
                 },
                 body: new URLSearchParams({
                     action: 'save_project_step',
-                     are_you: areYou,
-                     legal_residence: legalResidence,
+                        are_you: areYou,
+                        legal_residence: legalResidence, 
+                        squatters_duration: squattersDuration,
+                        police_contacted: policeContacted,
+                        utility_services: utilityServices,
+                        receive_mail: receiveMail,
+                        money_requested_to_leave: moneyRequestedToLeave, 
                     project_id: projectId,
-                    post_title: title,
                     post_content: content,
-                    city: city,
-                    
+                        state: state,
+                        county: county,
+                        city: city,
+                        zip: zip,
+                                            
                 })
             })
             .then(res => res.json())
@@ -102,3 +213,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
 // ✅ Можно вызвать вручную, если подгружается через AJAX
 // initFormWizard();
+
+
+
