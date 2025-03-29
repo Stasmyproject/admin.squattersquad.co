@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', function () {
             } else {
                 alert("❌ Error: " + res.data);
             }
-        })
+        }) 
         .catch(err => {
             console.error(err);
             alert("AJAX error");

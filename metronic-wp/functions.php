@@ -72,6 +72,7 @@ add_action('wp_enqueue_scripts', 'metronic_enqueue_styles');
 
 
 
+
 // 💡 Глобальная переменная + глобальные скрипты
 function metronic_enqueue_scripts() {
 

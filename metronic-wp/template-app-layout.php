@@ -1,7 +1,7 @@
 <?php
 /**
  * Template Name: App Layout
- */
+ */ 
 
 // Определим авторизацию
 $is_logged_in = is_user_logged_in();
