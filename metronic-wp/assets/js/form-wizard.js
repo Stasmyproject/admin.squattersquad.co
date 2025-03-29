@@ -11,7 +11,21 @@ function initFormWizard() {
             step.style.display = i === index ? 'block' : 'none';
             step.classList.toggle('active', i === index);
         });
+
+    // 🔥 Обновляем прогресс
+    const progressBar = wizard.querySelector('.progress-bar');
+    if (progressBar) {
+        const totalSteps = steps.length;
+        const progressPercent = Math.round(((index + 1) / totalSteps) * 100);
+        progressBar.style.width = progressPercent + '%';
+        progressBar.setAttribute('aria-valuenow', progressPercent);
     }
+
+
+
+    }
+
+
 
     showStep(currentStep);
 
@@ -37,10 +51,12 @@ function initFormWizard() {
     if (submitButton) {
         submitButton.addEventListener('click', () => {
             const projectId = wizard.dataset.projectId;
+                const areYou = wizard.querySelector('select[name="are_you"]')?.value || '';
+                const legalResidence = wizard.querySelector('select[name="legal_residence"]')?.value || '';
             const title = wizard.querySelector('input[name="post_title"]')?.value.trim() || '';
             const content = wizard.querySelector('textarea[name="post_content"]')?.value.trim() || '';
             const city = wizard.querySelector('input[name="city"]')?.value.trim() || '';
-            const areYou = wizard.querySelector('select[name="are_you"]')?.value || '';
+
 
             if (!projectId || parseInt(projectId) <= 0) {
                 alert("❌ Project ID is missing or invalid.");
@@ -54,11 +70,13 @@ function initFormWizard() {
                 },
                 body: new URLSearchParams({
                     action: 'save_project_step',
+                     are_you: areYou,
+                     legal_residence: legalResidence,
                     project_id: projectId,
                     post_title: title,
                     post_content: content,
                     city: city,
-                    are_you: areYou
+                    
                 })
             })
             .then(res => res.json())

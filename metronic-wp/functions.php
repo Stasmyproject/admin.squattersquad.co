@@ -815,10 +815,15 @@ add_action('wp_ajax_nopriv_save_project_step', 'save_project_step_callback');
 function save_project_step_callback() {
     // Защита: project_id должен быть целым
     $project_id = isset($_POST['project_id']) ? intval($_POST['project_id']) : 0;
+        $are_you = sanitize_text_field($_POST['are_you'] ?? '');
+        $legal_residence = sanitize_text_field($_POST['legal_residence'] ?? '');
     $title = sanitize_text_field($_POST['post_title'] ?? '');
     $content = wp_kses_post($_POST['post_content'] ?? '');
     $city = sanitize_text_field($_POST['city'] ?? '');
-    $are_you = sanitize_text_field($_POST['are_you'] ?? '');
+
+
+
+
 
     // Если проект не существует или не является 'project', создаём новый
     if (!$project_id || get_post_type($project_id) !== 'project') {
@@ -843,8 +848,10 @@ function save_project_step_callback() {
     }
 
     // Сохраняем кастомные поля
+        update_post_meta($project_id, 'are_you', $are_you);
+        update_post_meta($project_id, 'legal_residence', $legal_residence);
     update_post_meta($project_id, 'city', $city);
-    update_post_meta($project_id, 'are_you', $are_you);
+
 
     wp_send_json_success(['project_id' => $project_id]);
 }
