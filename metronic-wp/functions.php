@@ -66,47 +66,6 @@ function metronic_enqueue_styles() {
 add_action('wp_enqueue_scripts', 'metronic_enqueue_styles');
 
 
-// 💡 Пользовательский крипт для пошаговой формы сделал GPT
-function metronic_enqueue_custom_scripts() {
-    wp_enqueue_script(
-        'form-wizard',
-        get_template_directory_uri() . '/assets/js/form-wizard.js',
-        array(),
-        null,
-        true
-    );
-
-    // Прокидываем переменную ajaxurl
-    wp_localize_script('form-wizard', 'ajaxurl', admin_url('admin-ajax.php'));
-}
-add_action('wp_enqueue_scripts', 'metronic_enqueue_custom_scripts');
-
-
-
-
-
-// 💡 Обработчик для формы
-add_action('wp_ajax_save_project_step', 'save_project_step_ajax');
-add_action('wp_ajax_nopriv_save_project_step', 'save_project_step_ajax');
-
-function save_project_step_ajax() {
-    $project_id = isset($_POST['project_id']) ? intval($_POST['project_id']) : 0;
-    $fields_raw = isset($_POST['fields']) ? $_POST['fields'] : '{}';
-    $fields = json_decode(stripslashes($fields_raw), true);
-
-    if (!$project_id || get_post_type($project_id) !== 'project') {
-        wp_send_json_error('Invalid project ID');
-    }
-
-    foreach ($fields as $key => $value) {
-        update_post_meta($project_id, '_project_field_' . sanitize_key($key), sanitize_text_field($value));
-        // или update_field($key, $value, $project_id); если используешь ACF
-    }
-
-    wp_send_json_success('Saved');
-}
-
-
 
 
 
@@ -297,6 +256,11 @@ function metronic_enqueue_scripts() {
                 null,
                 true
             );
+
+            wp_localize_script(
+                'form-wizard', 'ajaxurl', [
+                'url' => admin_url('admin-ajax.php'),
+            ]);
          
     }
 
@@ -762,19 +726,30 @@ function metronic_register_project_post_type() {
         'labels' => array(
             'name' => 'Projects',
             'singular_name' => 'Project',
+            'add_new' => 'Add Project',
             'add_new_item' => 'Add New Project',
             'edit_item' => 'Edit Project',
+            'new_item' => 'New Project',
+            'view_item' => 'View Project',
+            'search_items' => 'Search Projects',
+            'not_found' => 'No Projects found',
+            'not_found_in_trash' => 'No Projects found in Trash',
         ),
         'public' => true,
-        'has_archive' => false,
-        'show_in_menu' => true,
+        'has_archive' => true,
+        'rewrite' => array('slug' => 'projects'),
+        'show_in_rest' => true, // 👈 обязательно для Gutenberg
+        'supports' => array('title', 'editor', 'author', 'thumbnail', 'custom-fields'),
+        'menu_position' => 5,
         'menu_icon' => 'dashicons-portfolio',
-        'supports' => array('title', 'editor', 'thumbnail'),
-        'capability_type' => 'post',
-        'map_meta_cap' => true,
+        'show_in_menu' => true,
     ));
 }
 add_action('init', 'metronic_register_project_post_type');
+
+
+
+
 
 
 // 💡 2. Привязка проекта к пользователю
@@ -802,6 +777,66 @@ function metronic_restrict_project_list($query) {
     }
 }
 add_action('pre_get_posts', 'metronic_restrict_project_list');
+
+
+
+
+// 💡 Пользовательский крипт для пошаговой формы сделал GPT
+function metronic_enqueue_custom_scripts() {
+    wp_enqueue_script(
+        'form-wizard',
+        get_template_directory_uri() . '/assets/js/form-wizard.js',
+        array(),
+        null,
+        true
+    );
+
+    // Прокидываем переменную ajaxurl
+    wp_localize_script('form-wizard', 'ajaxurl', array(
+    'url' => admin_url('admin-ajax.php'),
+));
+}
+add_action('wp_enqueue_scripts', 'metronic_enqueue_custom_scripts');
+
+
+
+
+
+// 💡 Обработчик для формы
+add_action('wp_ajax_save_project_step', 'save_project_step_callback');
+add_action('wp_ajax_nopriv_save_project_step', 'save_project_step_callback'); // ДЛЯ НЕАВТОРИЗОВАННЫХ
+
+
+
+function save_project_step_callback() {
+    $project_id = isset($_POST['project_id']) ? intval($_POST['project_id']) : 0;
+    $title = sanitize_text_field($_POST['post_title']);
+    $content = wp_kses_post($_POST['post_content']);
+
+    if (!$project_id || get_post_type($project_id) !== 'project') {
+        // создаём новый проект
+        $project_id = wp_insert_post([
+            'post_type'    => 'project',
+            'post_status'  => 'draft',
+            'post_title'   => $title,
+            'post_content' => $content,
+        ]);
+    } else {
+        // обновляем проект
+        wp_update_post([
+            'ID'           => $project_id,
+            'post_title'   => $title,
+            'post_content' => $content,
+        ]);
+    }
+
+    if (is_wp_error($project_id)) {
+        wp_send_json_error('Не удалось сохранить проект');
+    } else {
+        wp_send_json_success(['project_id' => $project_id]);
+    }
+}
+
 
 
 
