@@ -804,18 +804,24 @@ add_action('wp_enqueue_scripts', 'metronic_enqueue_custom_scripts');
 
 
 // 💡 Обработчик для формы
+
+
+
+
+// Регистрируем AJAX-хендлер для авторизованных и гостей
 add_action('wp_ajax_save_project_step', 'save_project_step_callback');
-add_action('wp_ajax_nopriv_save_project_step', 'save_project_step_callback'); // ДЛЯ НЕАВТОРИЗОВАННЫХ
-
-
+add_action('wp_ajax_nopriv_save_project_step', 'save_project_step_callback');
 
 function save_project_step_callback() {
+    // Защита: project_id должен быть целым
     $project_id = isset($_POST['project_id']) ? intval($_POST['project_id']) : 0;
-    $title = sanitize_text_field($_POST['post_title']);
-    $content = wp_kses_post($_POST['post_content']);
+    $title = sanitize_text_field($_POST['post_title'] ?? '');
+    $content = wp_kses_post($_POST['post_content'] ?? '');
+    $city = sanitize_text_field($_POST['city'] ?? '');
+    $are_you = sanitize_text_field($_POST['are_you'] ?? '');
 
+    // Если проект не существует или не является 'project', создаём новый
     if (!$project_id || get_post_type($project_id) !== 'project') {
-        // создаём новый проект
         $project_id = wp_insert_post([
             'post_type'    => 'project',
             'post_status'  => 'draft',
@@ -823,7 +829,7 @@ function save_project_step_callback() {
             'post_content' => $content,
         ]);
     } else {
-        // обновляем проект
+        // Обновление существующего проекта
         wp_update_post([
             'ID'           => $project_id,
             'post_title'   => $title,
@@ -831,14 +837,34 @@ function save_project_step_callback() {
         ]);
     }
 
+    // Проверка на ошибки
     if (is_wp_error($project_id)) {
         wp_send_json_error('Не удалось сохранить проект');
-    } else {
-        wp_send_json_success(['project_id' => $project_id]);
     }
+
+    // Сохраняем кастомные поля
+    update_post_meta($project_id, 'city', $city);
+    update_post_meta($project_id, 'are_you', $are_you);
+
+    wp_send_json_success(['project_id' => $project_id]);
 }
 
 
 
+// Подключаем JS и передаём ajaxurl
+add_action('wp_enqueue_scripts', 'enqueue_form_wizard_script');
+function enqueue_form_wizard_script() {
+    wp_enqueue_script(
+        'form-wizard',
+        get_template_directory_uri() . '/assets/js/form-wizard.js',
+        ['jquery'],
+        null,
+        true
+    );
+
+    wp_localize_script('form-wizard', 'ajaxurl', [
+        'url' => admin_url('admin-ajax.php'),
+    ]);
+}
 
 
