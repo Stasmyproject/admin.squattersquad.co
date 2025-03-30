@@ -822,7 +822,10 @@ function save_project_step_callback() {
         $utility_services = sanitize_text_field($_POST['utility_services'] ?? '');
         $receive_mail = sanitize_text_field($_POST['receive_mail'] ?? '');
     $content = wp_kses_post($_POST['post_content'] ?? '');
-    $city = sanitize_text_field($_POST['city'] ?? '');
+        $state = sanitize_text_field($_POST['state'] ?? '');
+        $county = sanitize_text_field($_POST['county'] ?? '');
+        $city = sanitize_text_field($_POST['city'] ?? '');
+        $zip = sanitize_text_field($_POST['zip'] ?? '');
 
     // Получаем город
     $city = sanitize_text_field($_POST['city'] ?? 'Unknown City');
@@ -866,7 +869,11 @@ function save_project_step_callback() {
         update_post_meta($project_id, 'police_contacted', $police_contacted);
         update_post_meta($project_id, 'utility_services', $utility_services);
         update_post_meta($project_id, 'receive_mail', $receive_mail);
-    update_post_meta($project_id, 'city', $city);
+
+        update_post_meta($project_id, 'state', $state);
+        update_post_meta($project_id, 'county', $county);
+        update_post_meta($project_id, 'city', $city);
+        update_post_meta($project_id, 'zip', $zip);
 
 
     wp_send_json_success(['project_id' => $project_id]);
