@@ -857,6 +857,11 @@ function save_project_step_callback() {
         ]);
     }
 
+    // Устанавливаем статус проекта по умолчанию
+    if (!is_wp_error($project_id)) {
+        update_post_meta($project_id, 'project_status', 'Pending');
+    }
+
     // Проверка на ошибки
     if (is_wp_error($project_id)) {
         wp_send_json_error('Не удалось сохранить проект');
@@ -881,6 +886,69 @@ function save_project_step_callback() {
 
 
 
+// 💡 Функция создания нового преокта
+add_action('wp_ajax_create_new_project', 'handle_create_new_project');
+
+function handle_create_new_project() {
+    if (!is_user_logged_in()) {
+        wp_send_json_error('User not logged in');
+    }
+
+    $user_id = get_current_user_id();
+
+    $project_id = wp_insert_post([
+        'post_type'   => 'project',
+        'post_status' => 'draft',
+        'post_title'  => 'Untitled Project',
+        'post_author' => $user_id,
+    ]);
+
+    if (is_wp_error($project_id)) {
+        wp_send_json_error('Error creating project');
+    }
+
+    update_post_meta($project_id, 'project_status', 'Pending');
+
+    // Сохраняем ID в куку (если нужно) — или просто работаем через $_GET
+    setcookie('draft_project_id', $project_id, time() + 3600, "/");
+
+    $form_url = get_permalink(148); // ← ID страницы формы
+    $form_url = add_query_arg('project_id', $project_id, $form_url);
+
+    wp_send_json_success([
+        'project_id'  => $project_id,
+        'project_url' => $form_url
+    ]);
+}
+
+
+
+// 💡 Функция диаграмы в разделе пои проекты
+add_action('wp_enqueue_scripts', function () {
+    if (is_page('my-projects')) {
+        wp_enqueue_script(
+            'dashboard-js',
+            get_template_directory_uri() . '/assets/js/dashboard.js',
+            ['chart-js'],
+            null,
+            true
+        );
+
+        // Предположим, что ты где-то до этого сформировал $status_counts
+        global $status_counts;
+
+        // Защита от ошибки
+        $status_counts = is_array($status_counts) ? $status_counts : [];
+
+        // Передача в JS
+        wp_localize_script('dashboard-js', 'dashboardChartData', [
+            'data' => array_values($status_counts),
+        ]);
+    }
+});
+
+
+
 // Подключаем JS и передаём ajaxurl
 add_action('wp_enqueue_scripts', 'enqueue_form_wizard_script');
 function enqueue_form_wizard_script() {
@@ -896,5 +964,40 @@ function enqueue_form_wizard_script() {
         'url' => admin_url('admin-ajax.php'),
     ]);
 }
+
+
+
+// 💡 Фильтрация пунктов меню по ролям и статусу авторизации
+function filter_menu_for_user($items) {
+    $is_logged_in = is_user_logged_in();
+    $is_admin     = current_user_can('administrator');
+
+    foreach ($items as $key => $item) {
+        $classes = $item->classes;
+
+        // Только для авторизованных
+        if (in_array('logged-in-only', $classes) && !$is_logged_in) {
+            unset($items[$key]);
+            continue;
+        }
+
+        // Только для гостей
+        if (in_array('guest-only', $classes) && $is_logged_in) {
+            unset($items[$key]);
+            continue;
+        }
+
+        // Только для админов
+        if (in_array('admin-only', $classes) && !$is_admin) {
+            unset($items[$key]);
+            continue;
+        }
+
+        // always-visible можно оставить как есть — не фильтруется
+    }
+
+    return $items;
+}
+add_filter('wp_nav_menu_objects', 'filter_menu_for_user', 10, 1);
 
 

@@ -140,6 +140,29 @@ get_header();
 
                             <!--begin::Content-->
                               <!-- 🔥 Контентная часть -->
+                                <?php
+                                    $slug = basename(get_page_uri());
+                                if ($slug === 'my-projects') {
+                                    $user_id = get_current_user_id();
+                                    $statuses = ['Pending', 'In Process', 'On Hold', 'Completed'];
+                                    $status_counts = [];
+
+                                    foreach ($statuses as $status) {
+                                        $query = new WP_Query([
+                                            'post_type'   => 'project',
+                                            'post_status' => 'publish',
+                                            'meta_key'    => 'project_status',
+                                            'meta_value'  => $status,
+                                            'author'      => $user_id,
+                                            'fields'      => 'ids',
+                                        ]);
+                                        $status_counts[$status] = $query->found_posts;
+                                    }
+
+                                    $total_projects = array_sum($status_counts);
+                                }
+                                ?>
+
                               <?php
                               $post_slug = get_post_field('post_name');
                               $template_path = get_template_directory() . '/partials/content-' . $post_slug . '.php';

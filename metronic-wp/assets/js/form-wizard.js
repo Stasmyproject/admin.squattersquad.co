@@ -25,6 +25,10 @@ function initFormWizard() {
 
     showStep(currentStep);
 
+    // ✅ Показываем форму, скрываем лоадер (Metronic way)
+    document.getElementById('form_loader')?.classList.add('d-none');
+    document.getElementById('form_wrapper')?.style?.removeProperty('display');
+
     // ✅ Каскадная загрузка USCities.json
     fetch('/wp-content/themes/metronic-wp/assets/data/USCities.json')
       .then(res => res.json())
@@ -215,4 +219,35 @@ document.addEventListener('DOMContentLoaded', function () {
 // initFormWizard();
 
 
+// стздание нового преокта через кнопку создать преокт
+document.addEventListener('DOMContentLoaded', function () {
+    const btn = document.getElementById('create-new-project');
 
+    if (btn) {
+        btn.addEventListener('click', function (e) {
+            e.preventDefault();
+
+            fetch(ajaxurl.url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: new URLSearchParams({
+                    action: 'create_new_project'
+                })
+            })
+            .then(res => res.json())
+            .then(res => {
+                if (res.success && res.data.project_url) {
+                    window.location.href = res.data.project_url;
+                } else {
+                    alert('❌ Could not create a new project');
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                alert('AJAX error');
+            });
+        });
+    }
+});
