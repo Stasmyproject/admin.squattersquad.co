@@ -398,32 +398,32 @@ $city = get_post_meta($project_id, 'city', true);
                                                                 <div class="col-lg-6 fv-row">
                                                                     <div class="mb-4">
                                                                         <label class="form-label">State</label>
-                                                                        <select name="state" id="state" class="form-select form-select-solid form-select-lg">
-                                                                            <option value="">Select State</option>
+                                                                        <select name="state" id="state" class="form-select form-select-solid form-select-lg" required>
+                                                                            <option value="" >Select State</option>
                                                                         </select>
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-lg-6 fv-row">
                                                                     <div class="mb-4">
                                                                         <label class="form-label">County</label>
-                                                                        <select name="county" id="county" class="form-select form-select-solid form-select-lg" disabled>
-                                                                            <option value="">Select County</option>
+                                                                        <select name="county" id="county" class="form-select form-select-solid form-select-lg" disabled required>
+                                                                            <option value="" >Select County</option>
                                                                         </select>
                                                                     </div>                         
                                                                 </div>
                                                                 <div class="col-lg-6 fv-row">
                                                                     <div class="mb-4">
                                                                         <label class="form-label">City</label>
-                                                                        <select name="city" id="city_select" class="form-select form-select-solid form-select-lg" disabled>
-                                                                            <option value="">Select City</option>
+                                                                        <select name="city" id="city_select" class="form-select form-select-solid form-select-lg" disabled required>
+                                                                            <option value="" required>Select City</option>
                                                                         </select>
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-lg-6 fv-row">
                                                                     <div class="mb-4">
                                                                         <label class="form-label">ZIP Code</label>
-                                                                        <select name="zip" id="zip" class="form-select form-select-solid form-select-lg" disabled>
-                                                                            <option value="">Select ZIP Code</option>
+                                                                        <select name="zip" id="zip" class="form-select form-select-solid form-select-lg" disabled required>
+                                                                            <option value="" >Select ZIP Code</option>
                                                                         </select>
                                                                     </div>
                                                                 </div>

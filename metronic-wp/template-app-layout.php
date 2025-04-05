@@ -195,12 +195,36 @@ get_header();
                                 $post_slug = get_post_field('post_name');
                                 $template_path = get_template_directory() . '/partials/content-' . $post_slug . '.php';
 
-                                if (file_exists($template_path)) {
+                                // Обработка по-умолчанию для страниц
+                                if ( is_shop() ) {
+                                    // Специальный вывод архива товаров (страница магазина)
+                                    ?>
+                                    <div class="card card-flush shadow-sm">
+                                        <div class="card-body">
+                                            <?php
+                                            woocommerce_output_all_notices();
+                                            woocommerce_catalog_ordering();
+                                            ?>
+
+                                            <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
+                                                <?php while ( have_posts() ) : the_post(); ?>
+                                                    <div class="col">
+                                                        <?php wc_get_template_part( 'content', 'product' ); ?>
+                                                    </div>
+                                                <?php endwhile; ?>
+                                            </div>
+
+                                            <?php woocommerce_pagination(); ?>
+                                        </div>
+                                    </div>
+                                    <?php
+                                } elseif ( file_exists($template_path) ) {
                                     include $template_path;
                                 } else {
                                     echo '<div class="alert alert-warning">Контент для этой страницы пока не добавлен.</div>';
                                 }
                                 ?>
+
 
 
 
