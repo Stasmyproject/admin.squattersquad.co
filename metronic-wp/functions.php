@@ -1,5 +1,7 @@
 <?php
 
+add_theme_support('woocommerce');
+
 
 // 💡 Новый размер изображений
 add_image_size('avatar-160', 160, 160, true); // true = crop (обрезать)
@@ -180,6 +182,21 @@ function metronic_enqueue_scripts() {
                 );
             }
     }
+
+
+    // 🔄 Только на странице товара
+    if ( is_singular('product') ) {
+        
+        wp_enqueue_script(
+            'metronic-fslightbox',
+            get_template_directory_uri() . '/metronic//assets/plugins/custom/fslightbox/fslightbox.bundle.js',
+            array('jquery'), // или 'metronic-scripts', если он уже зарегистрирован
+            null,
+            true
+        );
+        
+    }
+
 
 
     // 💡 вывод анимации для регистрации и атворизации, все красивости и переход по ссылке, отложил на потом
@@ -738,7 +755,7 @@ function metronic_register_project_post_type() {
         ),
         'public' => true,
         'has_archive' => true,
-        'rewrite' => array('slug' => 'projects'),
+        'rewrite' => array('slug' => 'project'),
         'show_in_rest' => true, // 👈 обязательно для Gutenberg
         'supports' => array('title', 'editor', 'author', 'thumbnail', 'custom-fields'),
         'menu_position' => 5,
@@ -999,5 +1016,24 @@ function filter_menu_for_user($items) {
     return $items;
 }
 add_filter('wp_nav_menu_objects', 'filter_menu_for_user', 10, 1);
+
+// 💡 Это подменяет шаблон single-project.php на твой Metronic layout.
+add_filter('template_include', function ($template) {
+    if (is_singular('project')) {
+        return get_template_directory() . '/template-app-layout.php';
+    }
+    return $template;
+});
+
+
+// 💡💡💡 отключаем стандартный вывод товара woocomerce
+add_action('wp', 'disable_default_wc_product_hooks');
+function disable_default_wc_product_hooks() {
+    if ( is_product() ) {
+        remove_all_actions('woocommerce_single_product_summary');
+        remove_all_actions('woocommerce_after_single_product_summary');
+        remove_all_actions('woocommerce_after_single_product');
+    }
+}
 
 

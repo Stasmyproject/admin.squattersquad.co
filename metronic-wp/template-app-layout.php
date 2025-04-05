@@ -132,16 +132,33 @@ get_header();
                     <div class="app-main flex-column flex-row-fluid" id="kt_app_main">
                         <!--begin::Content wrapper-->
                         <div class="d-flex flex-column flex-column-fluid">
-                            <?php if ($is_logged_in): ?>
+
+
                             <!--begin::Toolbar-->
-                                <?php get_template_part('partials/toolbar'); ?>
+                                <!--begin::Toolbar-->
+                                <?php
+                                $is_product_page   = is_singular('product');
+                                $is_signs_page     = is_page('signs-and-notices');
+                                $is_wc_page        = function_exists('is_woocommerce') && ( is_cart() || is_checkout() || is_account_page() );
+
+                                if ( $is_logged_in ) {
+                                    if ( $is_product_page || $is_signs_page || $is_wc_page ) {
+                                        get_template_part('partials/toolbar-woocommerce');
+                                    } else {
+                                        get_template_part('partials/toolbar');
+                                    }
+                                }
+                                ?>
+                                <!--end::Toolbar-->
                             <!--end::Toolbar-->
-                            <?php endif; ?>
 
                             <!--begin::Content-->
                               <!-- 🔥 Контентная часть -->
                                 <?php
-                                    $slug = basename(get_page_uri());
+                                // Получаем текущий слаг страницы
+                                $slug = basename(get_page_uri());
+
+                                // 💡 Блок подсчёта проектов по статусу (для страницы my-projects)
                                 if ($slug === 'my-projects') {
                                     $user_id = get_current_user_id();
                                     $statuses = ['Pending', 'In Process', 'On Hold', 'Completed'];
@@ -161,18 +178,41 @@ get_header();
 
                                     $total_projects = array_sum($status_counts);
                                 }
+
+                                // 🛍 Страница отдельного товара WooCommerce
+                                if (is_singular('product')) {
+                                    get_template_part('partials/content-single-product');
+                                    return;
+                                }
+
+                                // 📁 Страница отдельного проекта
+                                if (is_singular('project')) {
+                                    get_template_part('partials/content-single-project');
+                                    return;
+                                }
+
+                                // 📄 Все остальные страницы — ищем content-файл по слагу
+                                $post_slug = get_post_field('post_name');
+                                $template_path = get_template_directory() . '/partials/content-' . $post_slug . '.php';
+
+                                if (file_exists($template_path)) {
+                                    include $template_path;
+                                } else {
+                                    echo '<div class="alert alert-warning">Контент для этой страницы пока не добавлен.</div>';
+                                }
                                 ?>
 
-                              <?php
-                              $post_slug = get_post_field('post_name');
-                              $template_path = get_template_directory() . '/partials/content-' . $post_slug . '.php';
 
-                              if (file_exists($template_path)) {
-                                  include $template_path;
-                              } else {
-                                  echo '<div class="alert alert-warning">Контент для этой страницы пока не добавлен.</div>';
-                              }
-                              ?>
+
+
+
+
+                                
+
+
+
+
+
                             <!--end::Content-->
                         </div>
                         <!--end::Content wrapper-->

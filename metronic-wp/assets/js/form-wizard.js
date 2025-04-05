@@ -251,3 +251,49 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 });
+
+
+// Универсальный обработчик "Next", исключая шаг 9
+$('.next-step').on('click', function (e) {
+    const $step = $(this).closest('.form-step');
+    const currentStep = parseInt($step.data('step'));
+
+    // ❗ Пропускаем шаг 9 — он имеет собственную логику
+    if (currentStep === 9) return;
+
+    const $next = $step.next('.form-step');
+    if ($next.length) {
+        $step.removeClass('active').hide();
+        $next.addClass('active').fadeIn();
+    }
+});
+
+
+
+// Шаг 9 — отдельная валидация и переход
+$(document).on('click', '.form-step.step-9 .next-step', function (e) {
+    e.preventDefault();
+
+    let valid = true;
+
+    $('.form-step.step-9 select[required]').each(function () {
+        const $el = $(this);
+        if (!$el.val() || $el.prop('disabled')) {
+            $el.addClass('is-invalid');
+            valid = false;
+        } else {
+            $el.removeClass('is-invalid');
+        }
+    });
+
+    if (!valid) {
+        alert('Please fill in all required address fields.');
+        return;
+    }
+
+    // ✅ Только если валидация прошла — двигаем на шаг 10
+    $('.form-step').removeClass('active').hide();
+    $('.form-step.step-10').addClass('active').fadeIn();
+});
+
+

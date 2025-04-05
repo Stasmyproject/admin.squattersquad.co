@@ -14,7 +14,7 @@
 
                                                     <!--begin::Heading-->
                                                     <div class="fs-2hx fw-bold"><?php echo $total_projects; ?></div>
-                                                    <div class="fs-4 fw-semibold text-gray-500 mb-7">Current Projects</div>
+                                                    <div class="fs-4 fw-semibold text-gray-500 mb-7">Current 22Projects</div>
                                                     <!--end::Heading-->
 
                                                     <!--begin::Wrapper-->

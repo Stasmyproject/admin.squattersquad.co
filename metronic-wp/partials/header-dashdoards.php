@@ -1605,6 +1605,7 @@
                                 <!--end::Menu-->
                             </div>
                             <!--end::Menu wrapper-->
+
                             <!--begin::Navbar-->
                             <div class="app-navbar flex-shrink-0">
                                 <!--begin::Search-->
@@ -1621,6 +1622,7 @@
                                             </div>
                                         </div>
                                         <!--end::Search toggle-->
+
                                         <!--begin::Menu-->
                                         <div data-kt-search-element="content" class="menu menu-sub menu-sub-dropdown p-7 w-325px w-md-375px">
                                             <!--begin::Wrapper-->
@@ -2310,7 +2312,9 @@
                                     <!--begin::Menu-->
                                     <div class="menu menu-sub menu-sub-dropdown menu-column w-350px w-lg-375px" data-kt-menu="true" id="kt_menu_notifications">
                                         <!--begin::Heading-->
-                                        <div class="d-flex flex-column bgi-no-repeat rounded-top" style="background-image:url('assets/media/misc/menu-header-bg.jpg')">
+                                        <div class="d-flex flex-column bgi-no-repeat rounded-top"
+     style="background-image: url('<?php echo esc_url( get_template_directory_uri() . '/metronic/assets/media/misc/menu-header-bg.jpg' ); ?>')">
+
                                             <!--begin::Title-->
                                             <h3 class="text-white fw-semibold px-9 mt-10 mb-6">Notifications 
                                             <span class="fs-8 opacity-75 ps-3">24 reports</span></h3>
@@ -2557,6 +2561,7 @@
                                                 <!--end::View more-->
                                             </div>
                                             <!--end::Tab panel-->
+
                                             <!--begin::Tab panel-->
                                             <div class="tab-pane fade show active" id="kt_topbar_notifications_2" role="tabpanel">
                                                 <!--begin::Wrapper-->
@@ -2578,7 +2583,7 @@
                                                     <!--end::Section-->
                                                     <!--begin::Illustration-->
                                                     <div class="text-center px-4">
-                                                        <img class="mw-100 mh-200px" alt="image" src="assets/media/illustrations/sketchy-1/1.png" />
+                                                        <img class="mw-100 mh-200px" alt="image" src="<?php echo get_template_directory_uri(); ?>/metronic/assets/media/illustrations/sketchy-1/1.png" />
                                                     </div>
                                                     <!--end::Illustration-->
                                                 </div>

@@ -1,23 +1,4 @@
-                        <?php
-                        function filter_menu_for_user($items) {
-                            $is_logged_in = is_user_logged_in();
 
-                            foreach ($items as $key => $item) {
-                                $classes = $item->classes;
-
-                                // Скрыть, если только для авторизованных, а юзер — гость
-                                if (in_array('logged-in-only', $classes) && !$is_logged_in) {
-                                    unset($items[$key]);
-                                }
-
-                                // Можно добавить больше условий (admin-only, guest-only и т.д.)
-                            }
-
-                            return $items;
-                        }
-
-                        add_filter('wp_nav_menu_objects', 'filter_menu_for_user', 10, 1);
-                        ?>
 
                         <!--begin::sidebar menu-->
                         <div class="app-sidebar-menu overflow-hidden flex-column-fluid">
