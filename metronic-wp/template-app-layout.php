@@ -135,21 +135,31 @@ get_header();
 
 
                             <!--begin::Toolbar-->
-                                <!--begin::Toolbar-->
-                                <?php
-                                $is_product_page   = is_singular('product');
-                                $is_signs_page     = is_page('signs-and-notices');
-                                $is_wc_page        = function_exists('is_woocommerce') && ( is_cart() || is_checkout() || is_account_page() );
+                             <!--begin::Toolbar-->
+                            <?php
+                            $is_product_page     = is_singular('product');
+                            $is_signs_page       = is_page('signs-and-notices');
+                            $is_create_doc_page  = is_page('create-document');
+                            $is_document_page    = is_singular('document') || is_post_type_archive('document') || is_page('my-documents') || is_page('documents') || $is_create_doc_page;
 
-                                if ( $is_logged_in ) {
-                                    if ( $is_product_page || $is_signs_page || $is_wc_page ) {
-                                        get_template_part('partials/toolbar-woocommerce');
-                                    } else {
-                                        get_template_part('partials/toolbar');
-                                    }
+                            $is_wc_page = function_exists('is_woocommerce') && (
+                                is_cart() ||
+                                is_checkout() ||
+                                is_account_page() ||
+                                is_shop()
+                            );
+
+                            if ( $is_logged_in ) {
+                                if ( $is_product_page || $is_signs_page || $is_wc_page ) {
+                                    get_template_part('partials/toolbar-woocommerce');
+                                } elseif ( $is_document_page ) {
+                                    get_template_part('partials/toolbar-documents');
+                                } else {
+                                    get_template_part('partials/toolbar');
                                 }
-                                ?>
-                                <!--end::Toolbar-->
+                            }
+                            ?>
+                            <!--end::Toolbar-->
                             <!--end::Toolbar-->
 
                             <!--begin::Content-->
@@ -192,31 +202,87 @@ get_header();
                                 }
 
                                 // 📄 Все остальные страницы — ищем content-файл по слагу
-                                $post_slug = get_post_field('post_name');
+                                $post_slug = get_post_field('post_name', get_the_ID());
+//проверка 
+echo '<div style="padding:10px; background:#ffe; border:1px solid #ccc">';
+echo '<strong>Post Slug:</strong> ' . esc_html($post_slug) . '<br>';
+echo '<strong>Template Path:</strong> ' . esc_html($template_path) . '<br>';
+echo '<strong>File Exists:</strong> ' . (file_exists($template_path) ? 'Yes' : 'No');
+echo '</div>';
+echo 'Form path: ' . $template_path . PHP_EOL;
+echo 'Form exists: ' . (file_exists($template_path) ? 'yes' : 'no') . PHP_EOL;
+                   
                                 $template_path = get_template_directory() . '/partials/content-' . $post_slug . '.php';
 
                                 // Обработка по-умолчанию для страниц
                                 if ( is_shop() ) {
                                     // Специальный вывод архива товаров (страница магазина)
                                     ?>
-                                    <div class="card card-flush shadow-sm">
-                                        <div class="card-body">
-                                            <?php
-                                            woocommerce_output_all_notices();
-                                            woocommerce_catalog_ordering();
-                                            ?>
 
-                                            <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
-                                                <?php while ( have_posts() ) : the_post(); ?>
-                                                    <div class="col">
-                                                        <?php wc_get_template_part( 'content', 'product' ); ?>
-                                                    </div>
-                                                <?php endwhile; ?>
+                                    <!--begin::Content-->
+                                    <div id="kt_app_content" class="app-content flex-column-fluid">
+                                        <!--begin::Content container-->
+                                        <div id="kt_app_content_container" class="app-container container-xxl">
+
+                                            <!--begin::Card body-->
+                                            <div class="card-body px-0">
+                                                <?php woocommerce_output_all_notices(); ?>
+
+                                                <div class="row g-6">
+                                                    <?php if ( have_posts() ) : ?>
+                                                        <?php while ( have_posts() ) : the_post(); global $product; ?>
+                                                            <div class="col-md-3">
+                                                                <div class="card p-5 h-100 d-flex flex-column justify-content-between text-center">
+
+                                                                    <!-- Название -->
+                                                                    <div>
+                                                                        <h4 class="fw-bold mb-2"><?php the_title(); ?></h4>
+
+                                                                        <!-- Изображение -->
+                                                                        <?php if ( has_post_thumbnail() ) : ?>
+                                                                            <div class="mb-3">
+                                                                                <a href="<?php the_permalink(); ?>">
+                                                                                    <?php the_post_thumbnail('medium', ['class' => 'img-fluid rounded']); ?>
+                                                                                </a>
+                                                                            </div>
+                                                                        <?php endif; ?>
+
+                                                                        <!-- Описание -->
+                                                                        <p class="text-muted">
+                                                                            <?php echo wp_trim_words( get_the_excerpt(), 20 ); ?>
+                                                                        </p>
+                                                                    </div>
+
+                                                                    <!-- Цена и кнопка -->
+                                                                    <div class="mt-4">
+                                                                        <span class="fs-6 fw-bold text-primary"><?php echo $product->get_price_html(); ?></span><br>
+                                                                        <a href="<?php the_permalink(); ?>" class="btn btn-sm btn-primary mt-2">
+                                                                            Посмотреть и купить
+                                                                        </a>
+                                                                    </div>
+
+                                                                </div>
+                                                            </div>
+                                                        <?php endwhile; ?>
+                                                    <?php else : ?>
+                                                        <div class="col-12">
+                                                            <div class="alert alert-warning">Нет доступных товаров.</div>
+                                                        </div>
+                                                    <?php endif; ?>
+                                                </div>
+
+                                                <!-- Пагинация -->
+                                                <div class="mt-10">
+                                                    <?php woocommerce_pagination(); ?>
+                                                </div>
+
                                             </div>
+                                            <!--end::Card body-->
 
-                                            <?php woocommerce_pagination(); ?>
                                         </div>
                                     </div>
+                                    <!--end::Content-->
+
                                     <?php
                                 } elseif ( file_exists($template_path) ) {
                                     include $template_path;
@@ -224,18 +290,6 @@ get_header();
                                     echo '<div class="alert alert-warning">Контент для этой страницы пока не добавлен.</div>';
                                 }
                                 ?>
-
-
-
-
-
-
-
-                                
-
-
-
-
 
                             <!--end::Content-->
                         </div>

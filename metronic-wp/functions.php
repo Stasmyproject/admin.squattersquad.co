@@ -197,6 +197,17 @@ function metronic_enqueue_scripts() {
         
     }
 
+    //🔄 Только на странице документа
+    if (is_page('documents')) {
+        wp_enqueue_script(
+            'metronic-fslightbox',
+            get_template_directory_uri() . '/metronic/assets/plugins/custom/fslightbox/fslightbox.bundle.js',
+            array('jquery'),
+            null,
+            true
+        );
+    }
+
 
 
     // 💡 вывод анимации для регистрации и атворизации, все красивости и переход по ссылке, отложил на потом
@@ -284,8 +295,12 @@ function metronic_enqueue_scripts() {
 
 
 
+
+
 }
 add_action('wp_enqueue_scripts', 'metronic_enqueue_scripts');
+
+
 
 
 
@@ -1037,3 +1052,90 @@ function disable_default_wc_product_hooks() {
 }
 
 
+
+// 💡💡💡 💡💡 Регистрируем новый тип записи для документов
+function register_document_post_type() {
+    $labels = array(
+        'name'               => 'Documents',
+        'singular_name'      => 'Document',
+        'add_new'            => 'Add New',
+        'add_new_item'       => 'New Document',
+        'edit_item'          => 'Edit Document',
+        'new_item'           => 'New Document',
+        'view_item'          => 'View Document',
+        'search_items'       => 'Search Documents',
+        'not_found'          => 'No documents found',
+        'not_found_in_trash' => 'No documents found in Trash',
+        'menu_name'          => 'My Documents',
+    );
+
+    $args = array(
+        'label'               => 'Documents',
+        'labels'              => $labels,
+        'public'              => false,
+        'publicly_queryable'  => true,
+        'show_ui'             => true,
+        'show_in_menu'        => true,
+        'capability_type'     => 'post',
+        'hierarchical'        => false,
+        'menu_position'       => 25,
+        'menu_icon'           => 'dashicons-media-document',
+        'supports'            => array('title', 'editor', 'author', 'custom-fields'),
+        'has_archive'         => false,
+        'rewrite'             => array('slug' => 'documents'),
+        'show_in_rest'        => true, // enables Gutenberg + REST API
+    );
+
+    register_post_type('document', $args);
+}
+add_action('init', 'register_document_post_type');
+
+// 💡💡💡 Регистрируем кастомную таксономию для кастомного типа записи документ
+function register_document_type_taxonomy() {
+    $labels = array(
+        'name'              => 'Document Types',
+        'singular_name'     => 'Document Type',
+        'search_items'      => 'Search Types',
+        'all_items'         => 'All Types',
+        'edit_item'         => 'Edit Type',
+        'update_item'       => 'Update Type',
+        'add_new_item'      => 'Add New Type',
+        'new_item_name'     => 'New Type Name',
+        'menu_name'         => 'Document Types',
+    );
+
+    $args = array(
+        'hierarchical'      => false, // like tags (set to true if you want category-like)
+        'labels'            => $labels,
+        'show_ui'           => true,
+        'show_admin_column' => true,
+        'show_in_rest'      => true,
+        'rewrite'           => array('slug' => 'document-type'),
+    );
+
+    register_taxonomy('document_type', array('document'), $args);
+}
+add_action('init', 'register_document_type_taxonomy');
+
+// 💡💡💡 подключаем скрипт для работы только на страницах документов
+function enqueue_document_form_script() {
+    if (
+        is_page('documents') &&
+        isset($_GET['type']) &&
+        in_array($_GET['type'], [
+            'notice_to_vacate',
+            'cease_and_desist',
+            'affidavit_ownership',
+            // добавь сюда остальные типы по мере добавления
+        ])
+    ) {
+        wp_enqueue_script(
+            'document-wizard',
+            get_template_directory_uri() . '/assets/js/forms/document-wizard.js',
+            array('jquery'),
+            null,
+            true
+        );
+    }
+}
+add_action('wp_enqueue_scripts', 'enqueue_document_form_script');
