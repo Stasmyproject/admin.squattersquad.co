@@ -135,31 +135,38 @@ get_header();
 
 
                             <!--begin::Toolbar-->
-                             <!--begin::Toolbar-->
-                            <?php
-                            $is_product_page     = is_singular('product');
-                            $is_signs_page       = is_page('signs-and-notices');
-                            $is_create_doc_page  = is_page('create-document');
-                            $is_document_page    = is_singular('document') || is_post_type_archive('document') || is_page('my-documents') || is_page('documents') || $is_create_doc_page;
+                                <!--begin::Toolbar-->
+                                <?php
+                                $is_product_page     = is_singular('product');
+                                $is_signs_page       = is_page('signs-and-notices');
+                                $is_create_doc_page  = is_page('create-document');
+                                $is_choose_doc_page  = is_page('choose-document'); // ✅
 
-                            $is_wc_page = function_exists('is_woocommerce') && (
-                                is_cart() ||
-                                is_checkout() ||
-                                is_account_page() ||
-                                is_shop()
-                            );
+                                $is_document_page    = is_singular('document') 
+                                    || is_post_type_archive('document') 
+                                    || is_page('my-documents') 
+                                    || is_page('documents') 
+                                    || $is_create_doc_page 
+                                    || $is_choose_doc_page; // ✅
 
-                            if ( $is_logged_in ) {
-                                if ( $is_product_page || $is_signs_page || $is_wc_page ) {
-                                    get_template_part('partials/toolbar-woocommerce');
-                                } elseif ( $is_document_page ) {
-                                    get_template_part('partials/toolbar-documents');
-                                } else {
-                                    get_template_part('partials/toolbar');
+                                $is_wc_page = function_exists('is_woocommerce') && (
+                                    is_cart() ||
+                                    is_checkout() ||
+                                    is_account_page() ||
+                                    is_shop()
+                                );
+
+                                if ( $is_logged_in ) {
+                                    if ( $is_product_page || $is_signs_page || $is_wc_page ) {
+                                        get_template_part('partials/toolbar-woocommerce');
+                                    } elseif ( $is_document_page ) {
+                                        get_template_part('partials/toolbar-documents');
+                                    } else {
+                                        get_template_part('partials/toolbar');
+                                    }
                                 }
-                            }
-                            ?>
-                            <!--end::Toolbar-->
+                                ?>
+                                <!--end::Toolbar-->
                             <!--end::Toolbar-->
 
                             <!--begin::Content-->
