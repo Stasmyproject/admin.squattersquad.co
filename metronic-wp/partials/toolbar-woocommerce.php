@@ -18,9 +18,7 @@
                                     <!--begin::Actions-->
                                     <div class="d-flex align-items-center gap-2 gap-lg-3">
                                         <!--begin::Secondary button-->
-                                                <div class="d-flex justify-content-end mb-4">
-                                                    <?php woocommerce_catalog_ordering(); ?>
-                                                </div>
+
                                         <!--end::Real button--> 
                                     </div>
                                     <!--end::Actions-->

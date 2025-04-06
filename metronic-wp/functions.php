@@ -1082,7 +1082,7 @@ function register_document_post_type() {
         'menu_icon'           => 'dashicons-media-document',
         'supports'            => array('title', 'editor', 'author', 'custom-fields'),
         'has_archive'         => false,
-        'rewrite'             => array('slug' => 'documents'),
+        'rewrite'             => array('slug' => 'documents-list'),
         'show_in_rest'        => true, // enables Gutenberg + REST API
     );
 

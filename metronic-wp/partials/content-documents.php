@@ -62,7 +62,7 @@
                                                     <a class="btn btn-sm btn-primary flex-shrink-0 me-2" data-bs-target="#kt_modal_bidding" data-bs-toggle="modal">Buy</a>
                                                     <!--end::Link-->
                                                     <!--begin::Link-->
-                                                    <a href="<?php echo esc_url( site_url('/documents/create/?type=notice-to-vacate') ); ?>" class="btn btn-sm btn-light flex-shrink-0">
+                                                    <a href="<?php echo esc_url( site_url('/create/?type=notice-to-vacate') ); ?>" class="btn btn-sm btn-light flex-shrink-0">
 
                                                         Create Document
                                                     </a>

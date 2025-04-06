@@ -166,7 +166,8 @@ get_header();
                               <!-- 🔥 Контентная часть -->
                                 <?php
                                 // Получаем текущий слаг страницы
-                                $slug = basename(get_page_uri());
+                                global $post;
+                                $slug = isset($post->post_name) ? $post->post_name : '';
 
                                 // 💡 Блок подсчёта проектов по статусу (для страницы my-projects)
                                 if ($slug === 'my-projects') {
@@ -203,16 +204,8 @@ get_header();
 
                                 // 📄 Все остальные страницы — ищем content-файл по слагу
                                 $post_slug = get_post_field('post_name', get_the_ID());
-//проверка 
-echo '<div style="padding:10px; background:#ffe; border:1px solid #ccc">';
-echo '<strong>Post Slug:</strong> ' . esc_html($post_slug) . '<br>';
-echo '<strong>Template Path:</strong> ' . esc_html($template_path) . '<br>';
-echo '<strong>File Exists:</strong> ' . (file_exists($template_path) ? 'Yes' : 'No');
-echo '</div>';
-echo 'Form path: ' . $template_path . PHP_EOL;
-echo 'Form exists: ' . (file_exists($template_path) ? 'yes' : 'no') . PHP_EOL;
-                   
                                 $template_path = get_template_directory() . '/partials/content-' . $post_slug . '.php';
+
 
                                 // Обработка по-умолчанию для страниц
                                 if ( is_shop() ) {
