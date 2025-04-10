@@ -1,0 +1,24 @@
+{
+  "title": "Advance Directive",
+  "slug": "advance-directive",
+  "steps": [
+    {
+      "type": "text",
+      "label": "Your Full Name",
+      "name": "full_name",
+      "required": true
+    },
+    {
+      "type": "text",
+      "label": "Your First Name",
+      "name": "first_name",
+      "required": true
+    },
+    {
+      "type": "radio",
+      "label": "Do you want to assign a health proxy?",
+      "name": "has_proxy",
+      "options": ["Yes", "No"]
+    }
+  ]
+}

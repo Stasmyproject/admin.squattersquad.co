@@ -1159,53 +1159,68 @@ add_action('template_redirect', function () {
 
 
 // 💡💡💡 регистрируем новый горизонтальный пункт меню который будет удлировать боковой 
-// 💡 Кастомный Walker для Metronic-меню
-class Metronic_Menu_Walker extends Walker_Nav_Menu {
-    function start_lvl(&$output, $depth = 0, $args = null) {
-        $output .= '<div class="menu-sub menu-sub-lg-down-accordion menu-sub-lg-dropdown menu-active-bg px-lg-2 py-lg-4 w-lg-225px">';
-    }
+function register_custom_menus() {
+    register_nav_menu('main-horizontal-menu', 'Main Horizontal Menu');
+}
+add_action('after_setup_theme', 'register_custom_menus');
 
-    function end_lvl(&$output, $depth = 0, $args = null) {
+// 💡💡💡 подключаем кастомный класс
+class Metronic_Menu_Walker extends Walker_Nav_Menu {
+
+    // Старт элемента меню
+function start_el(&$output, $item, $depth = 0, $args = [], $id = 0) {
+    $classes = empty($item->classes) ? [] : (array) $item->classes;
+    $class_names = join(' ', apply_filters('nav_menu_css_class', array_filter($classes), $item));
+
+    // Есть ли дочерние пункты
+    $has_children = in_array('menu-item-has-children', $classes);
+
+    // Проверка активного состояния
+    $is_active = in_array('current-menu-item', $classes) || in_array('current-menu-parent', $classes) || in_array('current-menu-ancestor', $classes);
+    $active_class = $is_active ? ' active' : '';
+
+    if ($depth === 0) {
+        $output .= '<div data-kt-menu-trigger="{default: \'click\', lg: \'hover\'}" data-kt-menu-placement="bottom-start" class="menu-item menu-lg-down-accordion menu-sub-lg-down-indention me-0 me-lg-2">';
+        
+        if ($has_children) {
+            $output .= '<span class="menu-link' . $active_class . '">';
+            $output .= '<span class="menu-title">' . esc_html($item->title) . '</span>';
+            $output .= '<span class="menu-arrow d-lg-none"></span>';
+            $output .= '</span>';
+        } else {
+            $output .= '<a class="menu-link' . $active_class . '" href="' . esc_url($item->url) . '">';
+            $output .= '<span class="menu-title">' . esc_html($item->title) . '</span>';
+            $output .= '</a>';
+        }
+    } else {
+        $output .= '<div class="menu-item">';
+        $output .= '<a class="menu-link' . $active_class . '" href="' . esc_url($item->url) . '">';
+        $output .= '<span class="menu-bullet"><span class="bullet bullet-dot"></span></span>';
+        $output .= '<span class="menu-title">' . esc_html($item->title) . '</span>';
+        $output .= '</a>';
+    }
+}
+
+    // Закрытие элемента
+    function end_el(&$output, $item, $depth = 0, $args = []) {
         $output .= '</div>';
     }
 
-    function start_el(&$output, $item, $depth = 0, $args = null, $id = 0) {
-        $has_children = in_array('menu-item-has-children', $item->classes);
-        $trigger = $has_children ? ' data-kt-menu-trigger="{default:\'click\', lg: \'hover\'}" data-kt-menu-placement="right-start"' : '';
+    // Старт подменю
+    function start_lvl(&$output, $depth = 0, $args = []) {
+        $class = ($depth === 0) 
+            ? 'menu-sub menu-sub-lg-down-accordion menu-sub-lg-dropdown px-lg-2 py-lg-4 w-lg-250px' 
+            : 'menu-sub menu-sub-lg-down-accordion menu-sub-lg-dropdown menu-active-bg px-lg-2 py-lg-4 w-lg-225px';
 
-        $output .= '<div class="menu-item menu-lg-down-accordion"' . $trigger . '>';
-
-        $output .= '<span class="menu-link">';
-
-        // Добавим иконку, если задана через CSS класс menu-icon-xxx
-        $icon_class = '';
-        foreach ($item->classes as $class) {
-            if (strpos($class, 'menu-icon-') === 0) {
-                $icon_class = str_replace('menu-icon-', '', $class);
-                break;
-            }
-        }
-
-        if ($icon_class) {
-            $output .= '<span class="menu-icon"><i class="ki-duotone ' . esc_attr($icon_class) . ' fs-2"></i></span>';
-        }
-
-        $output .= '<span class="menu-title">' . esc_html($item->title) . '</span>';
-
-        if ($has_children) {
-            $output .= '<span class="menu-arrow"></span>';
-        }
-
-        $output .= '</span>';
-
-        if (!$has_children && $item->url && $item->url !== '#') {
-            $output .= '<a class="d-none" href="' . esc_url($item->url) . '">' . esc_html($item->title) . '</a>';
-        }
+        $output .= '<div class="' . $class . '">';
     }
 
-    function end_el(&$output, $item, $depth = 0, $args = null) {
+    // Закрытие подменю
+    function end_lvl(&$output, $depth = 0, $args = []) {
         $output .= '</div>';
     }
 }
+
+
 
 

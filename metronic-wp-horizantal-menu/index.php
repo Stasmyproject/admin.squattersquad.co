@@ -8,10 +8,4 @@
 //exit;
 //
 
-add_action('template_redirect', function () {
-    if (is_front_page() && !is_admin()) {
-        wp_redirect(site_url('/home-landing/'));
-        exit;
-    }
-});
 ?>

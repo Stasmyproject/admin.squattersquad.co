@@ -1,26 +1,36 @@
 function initFormWizard() {
+
+
     const wizard = document.querySelector('.form-wizard');
     console.log("wizard найден:", wizard);
     if (!wizard) return;
 
-    const steps = wizard.querySelectorAll('.form-step');
+    // ❗ Не трогаем JSON-формы
+    if (wizard.hasAttribute('data-json-form')) {
+        console.log("⛔ Это JSON-форма, выходим из form-wizard.js");
+        return;
+    }
+
+    const steps = wizard.querySelectorAll('.form-step'); // 👈 ВОТ ЭТОГО НЕ ХВАТАЕТ
     let currentStep = 0;
 
+
     function showStep(index) {
-        steps.forEach((step, i) => {
-            step.style.display = i === index ? 'block' : 'none';
-            step.classList.toggle('active', i === index);
+        steps.forEach((step) => {
+            const stepNumber = parseInt(step.dataset.step);
+            step.style.display = stepNumber === index ? 'block' : 'none';
+            step.classList.toggle('active', stepNumber === index);
         });
 
-    // 🔥 Обновляем прогресс
-    const progressBar = wizard.querySelector('.progress-bar');
-    if (progressBar) {
-        const totalSteps = steps.length;
-        const progressPercent = Math.round(((index + 1) / totalSteps) * 100);
-        progressBar.style.width = progressPercent + '%';
-        progressBar.setAttribute('aria-valuenow', progressPercent);
-    }
-    }
+        // 🔥 Обновляем прогресс
+        const progressBar = wizard.querySelector('.progress-bar');
+        if (progressBar) {
+            const totalSteps = steps.length;
+            const progressPercent = Math.round(((index + 1) / totalSteps) * 100);
+            progressBar.style.width = progressPercent + '%';
+            progressBar.setAttribute('aria-valuenow', progressPercent);
+        }
+    }   
 
 
     showStep(currentStep);
@@ -254,46 +264,51 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 // Универсальный обработчик "Next", исключая шаг 9
-$('.next-step').on('click', function (e) {
-    const $step = $(this).closest('.form-step');
-    const currentStep = parseInt($step.data('step'));
+// ❗ Работает только если это НЕ JSON-форма
+// ❗ Не трогаем JSON-формы
+if ($('.form-wizard[data-json-form="1"]').length > 0) {
+    console.log("⛔ JSON-форма — jQuery обработчики отключены");
+} else {
+    // Универсальный обработчик "Next", исключая шаг 9
+    $('.next-step').on('click', function (e) {
+        const $step = $(this).closest('.form-step');
+        const currentStep = parseInt($step.data('step'));
+        if (currentStep === 9) return;
 
-    // ❗ Пропускаем шаг 9 — он имеет собственную логику
-    if (currentStep === 9) return;
-
-    const $next = $step.next('.form-step');
-    if ($next.length) {
-        $step.removeClass('active').hide();
-        $next.addClass('active').fadeIn();
-    }
-});
-
-
-
-// Шаг 9 — отдельная валидация и переход
-$(document).on('click', '.form-step.step-9 .next-step', function (e) {
-    e.preventDefault();
-
-    let valid = true;
-
-    $('.form-step.step-9 select[required]').each(function () {
-        const $el = $(this);
-        if (!$el.val() || $el.prop('disabled')) {
-            $el.addClass('is-invalid');
-            valid = false;
-        } else {
-            $el.removeClass('is-invalid');
+        const $next = $step.next('.form-step');
+        if ($next.length) {
+            $step.removeClass('active').hide();
+            $next.addClass('active').fadeIn();
         }
     });
 
-    if (!valid) {
-        alert('Please fill in all required address fields.');
-        return;
-    }
+    // Шаг 9 — отдельная валидация и переход
+    $(document).on('click', '.form-step.step-9 .next-step', function (e) {
+        e.preventDefault();
 
-    // ✅ Только если валидация прошла — двигаем на шаг 10
-    $('.form-step').removeClass('active').hide();
-    $('.form-step.step-10').addClass('active').fadeIn();
-});
+        let valid = true;
+
+        $('.form-step.step-9 select[required]').each(function () {
+            const $el = $(this);
+            if (!$el.val() || $el.prop('disabled')) {
+                $el.addClass('is-invalid');
+                valid = false;
+            } else {
+                $el.removeClass('is-invalid');
+            }
+        });
+
+        if (!valid) {
+            alert('Please fill in all required address fields.');
+            return;
+        }
+
+        $('.form-step').removeClass('active').hide();
+        $('.form-step.step-10').addClass('active').fadeIn();
+    });
+}
+
+
+
 
 

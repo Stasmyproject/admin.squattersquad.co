@@ -1,5 +1,5 @@
 /*
-Theme Name: Metronic WP
+Theme Name: Metronic WP Horizantal
 Theme URI: https://squattersquad.co//metronic-wp
 Description: Custom WordPress theme with Metronic integration
 Author: Stan
@@ -34,3 +34,49 @@ Version: 1.0
 
     margin: -10px -6px 0!important;
 }
+
+.drop-admin-bar {
+  margin-top: 32px !important;
+}
+
+/*Меням цвет фона выделенного заголовка в основном меню*/
+.menu-link.active {
+    background-color: #0b0c10!important;
+    font-weight: 600;
+    color: #009ef7; /* или основной цвет темы */
+}
+
+
+/*стили для прогресс бара уже под джейсон*/
+   .form-progress-bar {
+        display: flex;
+        justify-content: space-between;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #eee;
+        margin-bottom: 30px;
+    }
+
+    .progress-checkpoint {
+        text-align: center;
+        flex-grow: 1;
+        position: relative;
+    }
+
+    .progress-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: #ccc;
+        margin: 0 auto 5px;
+        transition: background 0.3s;
+    }
+
+    .progress-checkpoint.active .progress-dot {
+        background: #009EF7; /* Metronic primary color */
+    }
+
+    .progress-label {
+        font-size: 12px;
+        color: #666;
+        white-space: nowrap;
+    }

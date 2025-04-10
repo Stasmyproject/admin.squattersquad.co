@@ -1,0 +1,7 @@
+/your-theme
+   /forms
+      /definitions         ← Здесь будем хранить JSON-файлы
+   /template-parts
+      /forms
+         render.php        ← Главный рендер
+         /steps            ← Отдельные типы шагов (text, radio и т.д.)

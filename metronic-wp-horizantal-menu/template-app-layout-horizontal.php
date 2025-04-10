@@ -8,6 +8,8 @@ $is_logged_in = is_user_logged_in();
 
 // Только теперь — загружаем header
 get_header();
+echo '<div style="padding: 10px; background: #e0f7fa;">[DEBUG] Старт шаблона</div>';
+
 ?>
 
 
@@ -38,42 +40,75 @@ get_header();
 						<div class="d-flex flex-column flex-column-fluid">
 							<!--begin::Toolbar-->
                                 <!--begin::Toolbar-->
-                                <?php
-                                $is_product_page     = is_singular('product');
-                                $is_signs_page       = is_page('signs-and-notices');
-                                $is_create_doc_page  = is_page('create-document');
-                                $is_choose_doc_page  = is_page('choose-document'); // ✅
+                                    <!--begin::Toolbar-->
+                                    <?php
+                                    $is_product_page     = is_singular('product');
+                                    $is_signs_page       = is_page('signs-and-notices');
+                                    $is_create_doc_page  = is_page('create-document');
+                                    $is_choose_doc_page  = is_page('choose-document');
 
-                                $is_document_page    = is_singular('document') 
-                                    || is_post_type_archive('document') 
-                                    || is_page('my-documents') 
-                                    || is_page('documents') 
-                                    || $is_create_doc_page 
-                                    || $is_choose_doc_page; // ✅
+                                    $is_document_page    = is_singular('document') 
+                                        || is_post_type_archive('document') 
+                                        || is_page('my-documents') 
+                                        || is_page('documents') 
+                                        || $is_create_doc_page 
+                                        || $is_choose_doc_page;
 
-                                $is_wc_page = function_exists('is_woocommerce') && (
-                                    is_cart() ||
-                                    is_checkout() ||
-                                    is_account_page() ||
-                                    is_shop()
-                                );
+                                    $is_wc_page = function_exists('is_woocommerce') && (
+                                        is_cart() ||
+                                        is_checkout() ||
+                                        is_account_page() ||
+                                        is_shop()
+                                    );
 
-                                if ( $is_logged_in ) {
-                                    if ( $is_product_page || $is_signs_page || $is_wc_page ) {
-                                        get_template_part('partials/toolbar-woocommerce');
-                                    } elseif ( $is_document_page ) {
-                                        get_template_part('partials/toolbar-documents');
-                                    } else {
-                                        get_template_part('partials/toolbar');
+                                    // 🔹 Новый флаг: является ли это страницей с JSON-формой
+                                    $is_json_form_page = !empty(get_post_meta(get_the_ID(), 'json_form_slug', true));
+
+                                    // 🔒 Проверка авторизации и вывод нужного toolbar'а
+                                    if ( $is_logged_in && !$is_json_form_page ) {
+                                        if ( $is_product_page || $is_signs_page || $is_wc_page ) {
+                                            get_template_part('partials/toolbar-woocommerce');
+                                        } elseif ( $is_document_page ) {
+                                            get_template_part('partials/toolbar-documents');
+                                        } else {
+                                            get_template_part('partials/toolbar');
+                                        }
                                     }
-                                }
-                                ?>
+                                    ?>
+                                    <!--end::Toolbar-->
+
                                 <!--end::Toolbar-->
 							<!--end::Toolbar-->
 
                             <!--begin::Content-->
                               <!-- 🔥 Контентная часть -->
                                 <?php
+
+                                // ➤ Касается создания формы и больше ничего
+                                while (have_posts()) : the_post();
+
+                                    // echo '<div style="padding: 10px; background: #ffe0b2;">[DEBUG] Страница найдена: ' . get_the_title() . '</div>';
+
+                                    // ✅ Получаем произвольное поле "json_form_slug" без ACF
+                                    // Это значение ты задаёшь вручную в разделе "Пользовательские поля" при редактировании страницы
+                                    $form_slug = get_post_meta(get_the_ID(), 'json_form_slug', true);
+
+                                    // ➤ Проверка: это страница, где нужно отобразить форму (тип document И есть slug формы)
+                                    if (get_post_type() === 'page' && !empty($form_slug)) {
+                                        // ⬇️ Подключаем JSON-форму через универсальный шаблон рендера
+                                        get_template_part('template-parts/forms/render', null, ['slug' => $form_slug]);
+                                    } else {
+                                        // 🟢 Стандартный вывод для проектов, постов и остальных страниц
+                                        get_template_part('template-parts/content', get_post_type());
+                                    }
+
+                                endwhile;
+
+
+
+
+
+
                                 // Получаем текущий слаг страницы
                                 global $post;
                                 $slug = isset($post->post_name) ? $post->post_name : '';

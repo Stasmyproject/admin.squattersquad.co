@@ -1,0 +1,51 @@
+{
+  "title": "Business Plan",
+  "slug": "business-plan",
+  "sections": [
+    {
+      "label": "Company Details",
+      "steps": [
+        {
+          "type": "text",
+          "label": "Company Name",
+          "name": "company_name"
+        },
+        {
+          "type": "text",
+          "label": "Legal Form",
+          "name": "legal_form"
+        }
+      ]
+    },
+    {
+      "label": "Product",
+      "steps": [
+        {
+          "type": "textarea",
+          "label": "Describe your product",
+          "name": "product_description"
+        }
+      ]
+    },
+    {
+      "label": "Finances",
+      "steps": [
+        {
+          "type": "text",
+          "label": "Initial Capital",
+          "name": "initial_capital"
+        }
+      ]
+    },
+    {
+      "label": "Effective Date",
+      "steps": [
+        {
+          "type": "text",
+          "label": "Effective From",
+          "name": "effective_from"
+        }
+      ]
+    }
+  ]
+}
