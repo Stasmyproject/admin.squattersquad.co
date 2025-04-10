@@ -815,7 +815,7 @@ add_action('pre_get_posts', 'metronic_restrict_project_list');
 
 
 
-// 💡 Пользовательский крипт для пошаговой формы сделал GPT
+💡 Пользовательский крипт для пошаговой формы сделал GPT
 function metronic_enqueue_custom_scripts() {
     wp_enqueue_script(
         'form-wizard',
