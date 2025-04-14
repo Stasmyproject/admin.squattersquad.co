@@ -231,6 +231,8 @@ echo '<div style="padding: 10px; background: #e0f7fa;">[DEBUG] Старт шаб
                             <!--end::Content-->
 						</div>
 						<!--end::Content wrapper-->
+
+                        
 						<!--begin::Footer-->
 						<div id="kt_app_footer" class="app-footer">
 							<!--begin::Footer container-->

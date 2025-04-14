@@ -36,12 +36,14 @@ $document_type = 'notice_to_vacate';
 
                                                 <!-- Прогресс -->
                                                  <div class="progress h-8px w-100 bg-light-success">
-                                                  <div class="progress-bar  bg-success"
+                                                    <div class="progress-bar  bg-success"
                                                        role="progressbar"
                                                        style="width: 0%;"
                                                        aria-valuenow="0"
                                                        aria-valuemin="0"
-                                                       aria-valuemax="100"></div>
+                                                       aria-valuemax="100">
+                                                        
+                                                    </div>
                                                 </div>
 
                                                 <div class="card-body">

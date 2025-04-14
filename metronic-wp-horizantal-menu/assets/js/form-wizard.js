@@ -1,5 +1,7 @@
 function initFormWizard() {
     const wizard = document.querySelector('.form-wizard');
+
+
     console.log("wizard найден:", wizard);
     if (!wizard) return;
 
@@ -23,7 +25,19 @@ function initFormWizard() {
     }
 
 
+
+
+
+
     showStep(currentStep);
+    const firstStep = wizard.querySelector('.form-step.active');
+if (firstStep) {
+    const faqData = firstStep.dataset.faq ? JSON.parse(firstStep.dataset.faq) : [];
+    renderFAQ(faqData);
+}
+
+
+
 
     // ✅ Показываем форму, скрываем лоадер (Metronic way)
     document.getElementById('form_loader')?.classList.add('d-none');
@@ -46,7 +60,11 @@ function initFormWizard() {
               opt.value = stateCode;
               opt.textContent = stateCode;
               stateSelect.appendChild(opt);
+              if (parentElement) {
+                    parentElement.appendChild(dynamicField);
+                }
           });
+
 
           // 2. При выборе ШТАТА
           stateSelect.addEventListener('change', () => {
@@ -146,6 +164,8 @@ function initFormWizard() {
             }
         });
     });
+
+
 
     const submitButton = wizard.querySelector('.submit-form');
     if (submitButton) {
@@ -265,6 +285,12 @@ $('.next-step').on('click', function (e) {
     if ($next.length) {
         $step.removeClass('active').hide();
         $next.addClass('active').fadeIn();
+    }
+    
+    const activeStep = document.querySelector('.form-step.active');
+    if (activeStep) {
+        const faqData = activeStep.dataset.faq ? JSON.parse(activeStep.dataset.faq) : [];
+        renderFAQ(faqData);
     }
 });
 

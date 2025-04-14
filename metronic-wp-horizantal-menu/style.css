@@ -40,12 +40,19 @@ Version: 1.0
 }
 
 /*Меням цвет фона выделенного заголовка в основном меню*/
-.menu-link.active {
+/*.menu-link.active {
     background-color: #0b0c10!important;
     font-weight: 600;
     color: #009ef7; /* или основной цвет темы */
+{
 }
 
+.menu-link.active {
+    box-shadow: none !important;
+    background: transparent !important;
+    font-weight: 600;
+    color: #009ef7; /* или любой нужный цвет */
+}
 
 /*стили для прогресс бара уже под джейсон*/
    .form-progress-bar {

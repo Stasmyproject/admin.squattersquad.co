@@ -1,3 +1,4 @@
+				
 				<!--begin::Header-->
 				<div id="kt_app_header" 
 					 class="app-header <?php echo current_user_can('administrator') ? 'drop-admin-bar' : ''; ?>"
@@ -1801,6 +1802,11 @@
 										<!--begin::Menu item-->
 										<div class="menu-item px-5">
 											<a href="account/statements.html" class="menu-link px-5">My Statements</a>
+										</div>
+										<!--end::Menu item-->
+										<!--begin::Menu item-->
+										<div class="menu-item px-5">
+											<a href="https://admin.squattersquad.co/documents/" class="menu-link px-5">My Documents</a>
 										</div>
 										<!--end::Menu item-->
 										<!--begin::Menu separator-->

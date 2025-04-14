@@ -815,7 +815,7 @@ add_action('pre_get_posts', 'metronic_restrict_project_list');
 
 
 
-💡 Пользовательский крипт для пошаговой формы сделал GPT
+//💡 Пользовательский крипт для пошаговой формы сделал GPT
 function metronic_enqueue_custom_scripts() {
     wp_enqueue_script(
         'form-wizard',
@@ -1166,60 +1166,97 @@ add_action('after_setup_theme', 'register_custom_menus');
 
 // 💡💡💡 подключаем кастомный класс
 class Metronic_Menu_Walker extends Walker_Nav_Menu {
+    // Элемент
+    public function start_el(&$output, $item, $depth = 0, $args = [], $id = 0) {
+        $classes = empty($item->classes) ? [] : (array) $item->classes;
+        $has_children = in_array('menu-item-has-children', $classes);
+        $is_active = in_array('current-menu-item', $classes) || in_array('current-menu-parent', $classes) || in_array('current-menu-ancestor', $classes);
+        $active_class = $is_active ? ' active' : '';
+        $class_names = join(' ', apply_filters('nav_menu_css_class', array_filter($classes), $item));
 
-    // Старт элемента меню
-function start_el(&$output, $item, $depth = 0, $args = [], $id = 0) {
-    $classes = empty($item->classes) ? [] : (array) $item->classes;
-    $class_names = join(' ', apply_filters('nav_menu_css_class', array_filter($classes), $item));
 
-    // Есть ли дочерние пункты
-    $has_children = in_array('menu-item-has-children', $classes);
 
-    // Проверка активного состояния
-    $is_active = in_array('current-menu-item', $classes) || in_array('current-menu-parent', $classes) || in_array('current-menu-ancestor', $classes);
-    $active_class = $is_active ? ' active' : '';
 
-    if ($depth === 0) {
-        $output .= '<div data-kt-menu-trigger="{default: \'click\', lg: \'hover\'}" data-kt-menu-placement="bottom-start" class="menu-item menu-lg-down-accordion menu-sub-lg-down-indention me-0 me-lg-2">';
-        
-        if ($has_children) {
-            $output .= '<span class="menu-link' . $active_class . '">';
-            $output .= '<span class="menu-title">' . esc_html($item->title) . '</span>';
-            $output .= '<span class="menu-arrow d-lg-none"></span>';
-            $output .= '</span>';
+
+        if ($depth === 0) {
+            $output .= '<div class="menu-item menu-lg-down-accordion' . ($has_children ? ' menu-sub-lg-down-indention' : '') . ' me-0 me-lg-2"';
+            if ($has_children) {
+                $output .= ' data-kt-menu-trigger="{default: \'click\', lg: \'hover\'}" data-kt-menu-placement="bottom-start"';
+            }
+            $output .= '>';
+
+
+            if ($has_children) {
+                $output .= '<span class="menu-link' . $active_class . '">';
+                $output .= '<span class="menu-title">' . esc_html($item->title) . '</span>';
+                $output .= '<span class="menu-arrow"></span>'; // ✅ стрелка видна всегда
+                $output .= '</span>';
+            } else {
+                $output .= '<a class="menu-link' . $active_class . '" href="' . esc_url($item->url) . '">';
+                $output .= '<span class="menu-title">' . esc_html($item->title) . '</span>';
+                $output .= '</a>';
+            }
         } else {
-            $output .= '<a class="menu-link' . $active_class . '" href="' . esc_url($item->url) . '">';
-            $output .= '<span class="menu-title">' . esc_html($item->title) . '</span>';
-            $output .= '</a>';
+            $output .= '<div class="menu-item' . ($has_children ? ' menu-accordion' : '') . '"';
+            if ($has_children) {
+                $output .= ' data-kt-menu-trigger="hover" data-kt-menu-placement="right-start"';
+            }
+            $output .= '>';
+
+            if ($has_children) {
+                $output .= '<span class="menu-link' . $active_class . '">';
+                $output .= '<span class="menu-bullet"><span class="bullet bullet-dot"></span></span>';
+                $output .= '<span class="menu-title">' . esc_html($item->title) . '</span>';
+                $output .= '<span class="menu-arrow"></span>';
+                $output .= '</span>';
+            } else {
+                $output .= '<a class="menu-link' . $active_class . '" href="' . esc_url($item->url) . '">';
+                $output .= '<span class="menu-bullet"><span class="bullet bullet-dot"></span></span>';
+                $output .= '<span class="menu-title">' . esc_html($item->title) . '</span>';
+                $output .= '</a>';
+            }
         }
-    } else {
-        $output .= '<div class="menu-item">';
-        $output .= '<a class="menu-link' . $active_class . '" href="' . esc_url($item->url) . '">';
-        $output .= '<span class="menu-bullet"><span class="bullet bullet-dot"></span></span>';
-        $output .= '<span class="menu-title">' . esc_html($item->title) . '</span>';
-        $output .= '</a>';
     }
-}
 
     // Закрытие элемента
-    function end_el(&$output, $item, $depth = 0, $args = []) {
+    public function end_el(&$output, $item, $depth = 0, $args = []) {
         $output .= '</div>';
     }
 
-    // Старт подменю
-    function start_lvl(&$output, $depth = 0, $args = []) {
-        $class = ($depth === 0) 
-            ? 'menu-sub menu-sub-lg-down-accordion menu-sub-lg-dropdown px-lg-2 py-lg-4 w-lg-250px' 
-            : 'menu-sub menu-sub-lg-down-accordion menu-sub-lg-dropdown menu-active-bg px-lg-2 py-lg-4 w-lg-225px';
+    // Открытие подменю
+    public function start_lvl(&$output, $depth = 0, $args = []) {
+        $class = $depth === 0
+            ? 'menu-sub menu-sub-lg-down-accordion menu-sub-lg-dropdown px-lg-2 py-lg-4 w-lg-250px'
+            : 'menu-sub menu-sub-dropdown menu-sub-indention px-4 py-3 w-225px';
 
         $output .= '<div class="' . $class . '">';
     }
 
     // Закрытие подменю
-    function end_lvl(&$output, $depth = 0, $args = []) {
+    public function end_lvl(&$output, $depth = 0, $args = []) {
         $output .= '</div>';
     }
 }
+
+
+
+
+// подключение ппошаговой формы для Jason 
+function enqueue_progress_tracker_script() {
+    wp_enqueue_script(
+        'progress-tracker',
+        get_template_directory_uri() . '/assets/js/progress-tracker.js',
+        ['jquery'],
+        null,
+        true
+    );
+}
+add_action('wp_enqueue_scripts', 'enqueue_progress_tracker_script');
+
+
+
+// 💡💡💡 Подключаем PHP-файл для обработки формы
+require_once get_template_directory() . '/forms/save-form-handler.php';
 
 
 

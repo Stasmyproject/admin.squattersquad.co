@@ -9,13 +9,33 @@
           "type": "text",
           "label": "Company Name",
           "name": "company_name",
-          "placeholder": "Enter company name"
+          "placeholder": "Enter company name",
+          "faq": [
+                    {
+                      "question": "What to do if you don't have a name for your company?",
+                      "answer": "You can use a placeholder name and change it later."
+                    },
+                    {
+                      "question": "Should the name match registration?",
+                      "answer": "Yes, ideally it should match your legal entity."
+                    }
+                  ]
         },
         {
           "type": "text",
           "label": "Legal Form",
           "name": "legal_form",
-          "placeholder": "LLC, Inc., etc."
+          "placeholder": "LLC, Inc., etc.",
+          "faq": [
+                    {
+                      "question": "Дргое название",
+                      "answer": "Другой ответ"
+                    },
+                    {
+                      "question": "Еще одно название",
+                      "answer": "Еще один ответ"
+                    }
+                  ]
         }
       ]
     },
@@ -51,6 +71,40 @@
           "placeholder": "MM/DD/YYYY"
         }
       ]
+    },
+    {
+      "label": "Target Market",
+      "steps": [
+        {
+          "type": "textarea",
+          "label": "Who is your target market?",
+          "name": "target_market",
+          "placeholder": "Describe your customer segment"
+        }
+      ]
+    },
+    {
+      "label": "Marketing Strategy",
+      "steps": [
+        {
+          "type": "textarea",
+          "label": "Describe your marketing approach",
+          "name": "marketing_strategy",
+          "placeholder": "How will you attract and retain customers?"
+        }
+      ]
+    },
+    {
+      "label": "Team",
+      "steps": [
+        {
+          "type": "text",
+          "label": "Founders or key team members",
+          "name": "team_members",
+          "placeholder": "List key individuals"
+        }
+      ]
     }
   ]
 }
+
