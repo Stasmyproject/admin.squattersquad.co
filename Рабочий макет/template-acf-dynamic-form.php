@@ -5,9 +5,6 @@
 acf_form_head();
 get_header();
 
-// переменная для вывода
-$doc_id = get_the_ID();
-
 // Определим авторизацию
 $is_logged_in = is_user_logged_in();
 
@@ -104,93 +101,30 @@ if (!acf_get_field_group($form_group_key)) {
             <!-- 🔵 Форма слева -->
 
             <div class="flex-grow-1 col-12 col-lg-6" style="min-width: 0;">
-                <div id="acf-form-wrapper">
-                    <?php
-                    acf_form([
-                        'updated_message' => '',
-                        'html_after_fields' => '<input type="hidden" id="acf-saved-post-id" name="acf_saved_post_id" value="">',
-                        'post_id'       => 'new_post',
-                        'new_post'      => [
-                            'post_type'   => 'document',
-                            'post_status' => 'publish'
-                        ],
-                        'field_groups'  => [$form_group_key],
-                        'submit_value' => false, // Убираем стандартную кнопку
-                        'return' => add_query_arg('doc_id', '%post_id%', home_url('/document-saved/')),
-                        'honeypot'      => false,
-                        'form_attributes' => ['id' => 'json-form']
-                    ]);
-                    ?>
-                </div>
-                <div id="payment-wrapper" class="d-none">
-                    <?php if (!empty($_GET['post_id'])): ?>
-                        <input type="hidden" id="acf-saved-post-id" value="<?php echo esc_attr($_GET['post_id']); ?>">
-                    <?php endif; ?>
-                    <!-- 💳 Оплата -->
-                    <div class="bg-light p-5 rounded shadow-sm">
-                        <h3 class="fw-bold mb-4">Your document is ready to download!</h3>
-                        <div class="fs-1 fw-bold text-success mb-3">$1.95 USD</div>
-
-
-
-                        <!-- 👇 Кнопка сохранить -->
-
-
-                        <button id="download-pdf-btn" class="btn btn-success">📥 Скачать PDF</button>
-
-                        
-                        <button type="submit" class="btn btn-success w-100 mb-3" form="json-form">
-                            Save Project
-                        </button>
-
-                        
-
-
-
-
-                        <!-- 👇 Кнопка скачать (оплатить) -->
-<!--                         <button id="pay-and-download" class="btn btn-success w-100 mb-3">
-                            Pay & Download
-                        </button> -->
-<!-- 
-                        <button id="download-pdf" class="btn btn-success w-100 mb-3">
-                            📄 Download PDF
-                        </button>
- -->
-
-
-                        <div class="small text-muted text-center mb-3">7-Day Access</div>
-
-
-
-
-                        <div class="bg-white border rounded p-4">
-                            <p class="mb-2"><strong>All your benefits:</strong></p>
-                            <ul class="mb-0">
-                                <li>✔ Instant access to legal library</li>
-                                <li>✔ Edit & download unlimited documents</li>
-                                <li>✔ Cancel any time</li>
-                                <li>✔ Contact: +1 XXX XXX XXXX</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
+                <?php
+                acf_form([
+                    'post_id'       => 'new_post',
+                    'new_post'      => [
+                        'post_type'   => 'document',
+                        'post_status' => 'publish'
+                    ],
+                    'field_groups'  => [$form_group_key],
+                    'submit_value'  => 'Сохранить',
+                    'return'        => home_url('/kabinet/'),
+                    'honeypot'      => false,
+                    'form_attributes' => ['id' => 'json-form']
+                ]);
+                ?>
             </div>
 
             <!-- 🟢 Превью справа -->
-            <div class=" col-12 col-lg-6" id="doc-preview-wrapper">
-                <div class=" dynamic-scale mx-auto" id="doc-print-content">
+            <div class=" col-12 col-lg-6">
+                <div class=" dynamic-scale mx-auto">
                     <?php get_template_part('template-parts/doc-preview'); ?>
                 </div>
             </div>
 
         </div>
-
-
-
-
-
-
 
         <!-- ✅ Финальный экран: оплата + предпросмотр -->
         <div id="final-payment-screen" class="d-none d-flex flex-column flex-lg-row gap-5 mt-10">
@@ -343,7 +277,7 @@ function updateProgress() {
             const backBtn = document.createElement('button');
             backBtn.type = 'button';
             backBtn.className = 'btn btn-secondary';
-            backBtn.textContent = '← Назад';
+            backBtn.textContent = '← Back';
             backBtn.onclick = () => showStep(index - 1);
             nav.appendChild(backBtn);
         }
@@ -352,18 +286,14 @@ function updateProgress() {
             const nextBtn = document.createElement('button');
             nextBtn.type = 'button';
             nextBtn.className = 'btn btn-primary ms-auto';
-            nextBtn.textContent = 'Далее →';
+            nextBtn.textContent = 'Next →';
             nextBtn.onclick = () => showStep(index + 1);
             nav.appendChild(nextBtn);
         }
 
-        if (index === steps.length - 1) {
-            const finishBtn = document.createElement('button');
-            finishBtn.type = 'button';
-            finishBtn.className = 'btn btn-success ms-auto';
-            finishBtn.textContent = 'Continue to Download →';
-            finishBtn.onclick = () => showStep(steps.length); // финальный шаг
-            nav.appendChild(finishBtn);
+        if (index === steps.length - 1 && submitBtn) {
+            submitBtn.style.display = 'inline-block';
+            nav.appendChild(submitBtn);
         }
 
         fieldsWrapper.appendChild(nav);
@@ -374,54 +304,42 @@ function updateProgress() {
 function showStep(index) {
     currentStep = index;
 
-    // Показываем нужную группу полей
+    // Показываем/скрываем поля текущего шага
     steps.forEach((group, i) => {
         group.forEach(el => {
             el.style.display = i === index ? 'block' : 'none';
         });
     });
 
-    // Превью всегда видно
+    // Предпросмотр документа
     const previewWrapper = document.getElementById('doc-preview-wrapper');
-    previewWrapper?.classList.remove('d-none');
-    updatePreviewFields();
-
-    // Переключаем форму и оплату
-    const formWrapper = document.getElementById('acf-form-wrapper');
-    const paymentWrapper = document.getElementById('payment-wrapper');
-
-    if (index === steps.length) {
-        formWrapper?.classList.add('d-none');
-        paymentWrapper?.classList.remove('d-none');
-    } else {
-        formWrapper?.classList.remove('d-none');
-        paymentWrapper?.classList.add('d-none');
+    if (previewWrapper) {
+        if (index === steps.length - 1) {
+            previewWrapper.classList.remove('d-none');
+        } else {
+            previewWrapper.classList.add('d-none');
+        }
+        updatePreviewFields(); // ⬅️ обновляем в любом случае
     }
 
-    // Обновим прогресс
+    // Обновление прогресса
     updateProgress(index);
 
-    // Привязка live-обновления
+    // Live-обновление прогресса и предпросмотра по вводу
     form.querySelectorAll('input, textarea, select').forEach(input => {
         input.addEventListener('input', () => {
             updateProgress();
             updatePreviewFields();
         });
-
         input.addEventListener('change', () => {
             updateProgress();
             updatePreviewFields();
         });
     });
 
-    // Получаем ID созданного документа из скрытого поля
-    const savedPostId = document.querySelector('#acf-saved-post-id')?.value;
-    console.log('📌 Сохранённый пост:', savedPostId);
-
     clearNav();
     renderNav(index);
 }
-
 
 
 
@@ -495,6 +413,11 @@ function showStep(index) {
     }
 
 
+
+    // Запускаем первый шаг
+    showStep(0);
+    updatePreviewFields(); // ⬅️ добавляем эту строку
+
     // Делаем последним шагом блок с предложениме оплаты
     form.addEventListener('submit', function (e) {
         setTimeout(function () {
@@ -507,78 +430,7 @@ function showStep(index) {
                 updatePreviewFields(); // обновим предпросмотр
             }
         }, 300); // задержка, чтобы дождаться отправки
-    }); 
-
-
-    // Для теста добавим JS-обработчики (в скрипт) 
-    document.addEventListener('DOMContentLoaded', function () {
-        const saveBtn = document.getElementById('save-project');
-        const payBtn = document.getElementById('pay-and-download');
-
-        if (saveBtn) {
-            saveBtn.addEventListener('click', () => {
-                alert('✅ Project saved (test mode)');
-                // Здесь позже добавим реальную отправку формы или сохранение в базу
-            });
-        }
-
-        if (payBtn) {
-            payBtn.addEventListener('click', () => {
-                alert('💰 Redirecting to payment (test mode)');
-                // Здесь позже можно вставить ссылку на платёж или подписку
-            });
-        }
-    });
-
-
-    // отправляем скрытую форму
-    document.addEventListener('DOMContentLoaded', function () {
-        const saveBtn = document.getElementById('save-project');
-        const form = document.getElementById('json-form');
-
-        if (saveBtn && form) {
-            saveBtn.addEventListener('click', function (e) {
-                e.preventDefault();
-                form.requestSubmit(); // 👈 гарантированная отправка
-            });
-        }
-    });
-
-
-    // Запускаем первый шаг
-    showStep(0);
-    updatePreviewFields(); // 👈 вот это добавь
-
-  
-});
-</script>
-
-
-<!-- Генератор PDF документа -->
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-  const downloadBtn = document.getElementById('download-pdf-btn');
-
-  if (downloadBtn) {
-    downloadBtn.addEventListener('click', function () {
-      const element = document.getElementById('doc-preview-wrapper');
-
-      if (!element) {
-        alert('Документ не найден!');
-        return;
-      }
-
-      const opt = {
-        margin:       0,
-        filename:     'document.pdf',
-        image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2 },
-        jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
-      };
-
-      html2pdf().set(opt).from(element).save();
-    });
-  }
+    });   
 });
 </script>
 
@@ -620,7 +472,6 @@ document.addEventListener('DOMContentLoaded', function () {
             <!--end::Page-->
         </div>
         <!--end::App-->
-
 
 
 <?php get_footer(); ?>
