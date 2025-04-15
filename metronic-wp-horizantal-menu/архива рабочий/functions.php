@@ -1091,13 +1091,6 @@ function register_document_post_type() {
 }
 add_action('init', 'register_document_post_type');
 
-
-
-
-
-
-
-
 // 💡💡💡 Регистрируем кастомную таксономию для кастомного типа записи документ
 function register_document_type_taxonomy() {
     $labels = array(
@@ -1113,7 +1106,7 @@ function register_document_type_taxonomy() {
     );
 
     $args = array(
-        'hierarchical'      => true, // как категории
+        'hierarchical'      => false, // like tags (set to true if you want category-like)
         'labels'            => $labels,
         'show_ui'           => true,
         'show_admin_column' => true,
@@ -1261,89 +1254,10 @@ function enqueue_progress_tracker_script() {
 add_action('wp_enqueue_scripts', 'enqueue_progress_tracker_script');
 
 
-// 💡💡💡 Делаем поля ACF похожими на метроник
-add_filter('acf/prepare_field', function ($field) {
-    // Только для фронтенда
-    if (is_admin()) return $field;
 
-    // Добавим классы по типу поля
-    switch ($field['type']) {
-        case 'text':
-        case 'email':
-        case 'number':
-        case 'url':
-        case 'password':
-        case 'date_picker':
-        case 'time_picker':
-        case 'date_time_picker':
-        case 'textarea':
-            $field['wrapper']['class'] .= ' mb-4';
-            $field['class'] .= ' form-control';
-            break;
+// 💡💡💡 Подключаем PHP-файл для обработки формы
+require_once get_template_directory() . '/forms/save-form-handler.php';
 
-        case 'select':
-        case 'checkbox':
-        case 'radio':
-            $field['wrapper']['class'] .= ' mb-4';
-            $field['class'] .= ' form-select'; // или 'form-check' если checkbox
-            break;
-    }
-
-    return $field;
-});
-
-// 💡💡💡 Формирование названия для нового документа
-add_action('acf/save_post', 'set_document_title_and_type', 20);
-function set_document_title_and_type($post_id) {
-    if (get_post_type($post_id) !== 'document') return;
-
-    // Получаем slug страницы
-    if (!isset($_SERVER['HTTP_REFERER'])) return;
-    $referer = esc_url_raw($_SERVER['HTTP_REFERER']);
-    $page_slug = basename(parse_url($referer, PHP_URL_PATH));
-
-    // Преобразуем slug в название типа (можешь сделать словарь)
-    $slug_map = [
-        'business-plan-form' => 'Business Plan',
-        'nda-agreement-form' => 'Non-Disclosure Agreement',
-        'contract-template-form' => 'Contract Template',
-        'advance-directive-form' => 'Advance Directive',
-        // ➕ Добавляй по мере надобности
-    ];
-
-    $doc_type_name = $slug_map[$page_slug] ?? 'Без категории';
-
-    // Ищем или создаём термин в таксономии
-    $term = get_term_by('name', $doc_type_name, 'document_type');
-    if (!$term) {
-        $term = wp_insert_term($doc_type_name, 'document_type');
-        if (is_wp_error($term)) return;
-        $term_id = $term['term_id'];
-    } else {
-        $term_id = $term->term_id;
-    }
-
-    // Назначаем документу тип
-    wp_set_post_terms($post_id, [$term_id], 'document_type', false);
-
-    // Формируем заголовок
-    $company = get_field('company_name', $post_id);
-    $type = get_field('legal_form', $post_id);
-    $date = get_field('effective_from', $post_id);
-
-    $title_parts = [];
-    if ($doc_type_name) $title_parts[] = $doc_type_name;
-    if ($company) $title_parts[] = $company;
-    if ($type) $title_parts[] = $type;
-    if ($date) $title_parts[] = 'от ' . $date;
-
-    $title = implode(' ', $title_parts);
-
-    wp_update_post([
-        'ID' => $post_id,
-        'post_title' => $title
-    ]);
-}
 
 
 

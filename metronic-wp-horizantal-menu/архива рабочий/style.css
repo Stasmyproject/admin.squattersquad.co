@@ -179,30 +179,22 @@ Version: 1.0
 
 
 /* Контейнер с прокруткой вокруг документа */
-/*.doc-preview-container {
+.doc-preview-container {
     width: 100%;
-    max-height: 800px; 
-    overflow-y: auto;  
+    max-height: 800px; /* ✅ ограничим видимую высоту */
+    overflow-y: auto;  /* ✅ прокрутка только снаружи */
     background: #f9f9f9;
     padding: 1rem;
     border-radius: 6px;
     border: 1px solid #e3e3e3;
-}*/
- 
-
-/* родитель с overflow-y, но без x */
-.doc-preview-container {
-    overflow-y: auto;
-    overflow-x: hidden;
-    max-height: 90vh;
-    position: relative;
 }
+ 
 
 
 /* Сам "лист бумаги" */
-/*.doc-page {
+.doc-page {
     width: 210mm;
-    height: 297mm; 
+    height: 297mm; /* ✅ фиксируем A4 */
     margin: auto;
     padding: 20mm 15mm 25mm 20mm;
     background: white;
@@ -211,21 +203,8 @@ Version: 1.0
     font-family: Georgia, serif;
     color: #000;
     position: relative;
-    overflow: hidden; 
+    overflow: hidden; /* ✅ отключаем прокрутку */
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-}*/
-
-.doc-page {
-    width: 210mm;
-    height: 297mm;
-    background: #fff;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    transform-origin: top left;
-    overflow: hidden;
-    padding: 20mm;
-    font-family: Georgia, serif;
 }
-
-

@@ -1,0 +1,121 @@
+{
+  "key": "group_business_plan_form",
+  "title": "Business Plan",
+  "fields": [
+    {
+      "key": "tab_company_info",
+      "label": "Company Info",
+      "type": "tab",
+      "placement": "top"
+    },
+    {
+      "key": "field_company_name",
+      "label": "Company Name",
+      "name": "company_name",
+      "type": "text",
+      "placeholder": "Enter company name"
+    },
+    {
+      "key": "field_legal_form",
+      "label": "Legal Form",
+      "name": "legal_form",
+      "type": "text",
+      "placeholder": "LLC, Inc., etc."
+    },
+    {
+      "key": "tab_product",
+      "label": "Product",
+      "type": "tab",
+      "placement": "top"
+    },
+    {
+      "key": "field_product_description",
+      "label": "Describe your product",
+      "name": "product_description",
+      "type": "textarea",
+      "placeholder": "What is your product or service?"
+    },
+    {
+      "key": "tab_finances",
+      "label": "Finances",
+      "type": "tab",
+      "placement": "top"
+    },
+    {
+      "key": "field_initial_capital",
+      "label": "Initial Capital",
+      "name": "initial_capital",
+      "type": "text",
+      "placeholder": "$10,000"
+    },
+    {
+      "key": "tab_dates",
+      "label": "Dates",
+      "type": "tab",
+      "placement": "top"
+    },
+    {
+      "key": "field_effective_from",
+      "label": "Effective From",
+      "name": "effective_from",
+      "type": "text",
+      "placeholder": "MM/DD/YYYY"
+    },
+    {
+      "key": "tab_market",
+      "label": "Target Market",
+      "type": "tab",
+      "placement": "top"
+    },
+    {
+      "key": "field_target_market",
+      "label": "Who is your target market?",
+      "name": "target_market",
+      "type": "textarea",
+      "placeholder": "Describe your customer segment"
+    },
+    {
+      "key": "tab_marketing",
+      "label": "Marketing Strategy",
+      "type": "tab",
+      "placement": "top"
+    },
+    {
+      "key": "field_marketing_strategy",
+      "label": "Describe your marketing approach",
+      "name": "marketing_strategy",
+      "type": "textarea",
+      "placeholder": "How will you attract and retain customers?"
+    },
+    {
+      "key": "tab_team",
+      "label": "Team",
+      "type": "tab",
+      "placement": "top"
+    },
+    {
+      "key": "field_team_members",
+      "label": "Founders or key team members",
+      "name": "team_members",
+      "type": "text",
+      "placeholder": "List key individuals"
+    }
+  ],
+  "location": [
+    [
+      {
+        "param": "post_type",
+        "operator": "==",
+        "value": "document"
+      }
+    ]
+  ],
+  "menu_order": 0,
+  "position": "normal",
+  "style": "default",
+  "label_placement": "top",
+  "instruction_placement": "label",
+  "hide_on_screen": "",
+  "active": true,
+  "description": ""
+}
