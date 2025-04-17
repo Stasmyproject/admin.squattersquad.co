@@ -106,27 +106,22 @@ if (!acf_get_field_group($form_group_key)) {
             <div class="flex-grow-1 col-12 col-lg-6" style="min-width: 0;">
                  <div id="acf-form-wrapper">
                     <?php
-                    acf_form([
-                        'post_id'       => 'new_post',
-                        'new_post'      => [
-                            'post_type'   => 'document',
-                            'post_status' => 'publish'
-                        ],
-                        'field_groups'  => [$form_group_key],
-                        'submit_value'  => false,
-                        'return'        => false,
-                        'form_attributes' => [
-                            'id' => 'json-form'
-                        ]
-                    ]);
+                        acf_form([
+                            'post_id' => 'new_post',
+                            'new_post' => [
+                                'post_type'   => 'document',
+                                'post_status' => 'publish'
+                            ],
+                            'field_groups'  => [$form_group_key],
+                            'submit_value' => false,
+                            'return' => false, // ❗ без перехода
+                            'honeypot' => false,
+                            'form_attributes' => ['id' => 'json-form']
+                        ]);
                     ?>
 
-                    <!-- 👇 ВСТАВЬ ЭТУ КНОПКУ ВНУТРЬ -->
-                    <button type="submit" class="btn btn-success w-100 mt-4" id="save-project">
-                        Save & Скачать проект
-                    </button>
                 </div>
-                
+
                 <div id="payment-wrapper" class="d-none">
                     <?php if (!empty($_GET['post_id'])): ?>
                         <input type="hidden" id="acf-saved-post-id" value="<?php echo esc_attr($_GET['post_id']); ?>">
@@ -294,27 +289,27 @@ if (!acf_get_field_group($form_group_key)) {
 
 
 
-<!-- JavaScript – авто-масштаб под родителя -->
+
 <script>
+// ### 1. ✅ Авто-масштаб предпросмотра PDF
 function scalePreviewToFit() {
-    const preview = document.querySelector('.doc-page');
-    const container = document.querySelector('.doc-preview-container');
-    if (!preview || !container) return;
+        const preview = document.querySelector('.doc-page');
+        const container = document.querySelector('.doc-preview-container');
+        if (!preview || !container) return;
 
-    const originalWidth = 210 * 3.7795; // A4 в пикселях ≈ 794px
-    const containerWidth = container.clientWidth;
+        const originalWidth = 210 * 3.7795; // A4 в пикселях ≈ 794px
+        const containerWidth = container.clientWidth;
 
-    const scale = containerWidth / originalWidth;
-    preview.style.transform = `scale(${scale})`;
-}
+        const scale = containerWidth / originalWidth;
+        preview.style.transform = `scale(${scale})`;
+    }
 
-// Запуск при загрузке и изменении окна
-window.addEventListener('load', scalePreviewToFit);
-window.addEventListener('resize', scalePreviewToFit);
-</script>
+    // Запуск при загрузке и изменении окна
+    window.addEventListener('load', scalePreviewToFit);
+    window.addEventListener('resize', scalePreviewToFit);
 
-<!-- Скрипт прогресс бара -->
-<script>
+
+// ### 2. ✅ Скрипт прогресс-бара + пошаговая навигация
 document.addEventListener('DOMContentLoaded', function () {
     const form = document.querySelector('#json-form') || document.querySelector('.acf-form form');
     if (!form) return;
@@ -360,15 +355,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
     let currentStep = 0;
 
-
-function updateProgress() {
-    const allInputs = steps.flatMap(group =>
-        group.flatMap(field =>
-            [...field.querySelectorAll('input, textarea, select')].filter(el =>
-                el.type !== 'hidden' && !el.disabled && !el.closest('.acf-hidden-by-conditional-logic')
+    // ### 4. ✅ Подсчёт заполненных полей (прогресс%)
+    function updateProgress() {
+        const allInputs = steps.flatMap(group =>
+            group.flatMap(field =>
+                [...field.querySelectorAll('input, textarea, select')].filter(el =>
+                    el.type !== 'hidden' && !el.disabled && !el.closest('.acf-hidden-by-conditional-logic')
+                )
             )
-        )
-    );
+        );
 
     const filledCount = allInputs.filter(input => {
         if (input.type === 'checkbox' || input.type === 'radio') {
@@ -394,6 +389,7 @@ function updateProgress() {
         form.querySelectorAll('.acf-nav').forEach(nav => nav.remove());
     }
 
+    // ### 5. ✅ Навигационные кнопки (назад, далее, сохранить)
     function renderNav(index) {
         const nav = document.createElement('div');
         nav.className = 'acf-nav d-flex justify-content-between mt-5';
@@ -429,7 +425,7 @@ function updateProgress() {
     }
 
 
-
+// ### 6. ✅ Скрытие/показ блоков формы и оплаты
 function showStep(index) {
     currentStep = index;
 
@@ -461,6 +457,7 @@ function showStep(index) {
     updateProgress(index);
 
     // Привязка live-обновления
+    // ### 7. ✅ Live-обновление предпросмотра при вводе
     form.querySelectorAll('input, textarea, select').forEach(input => {
         input.addEventListener('input', () => {
             updateProgress();
@@ -484,6 +481,7 @@ function showStep(index) {
 
 
 
+// ### 3. ✅ Формирование предпросмотра документа (preview)
 
     function updatePreviewFields() {
         document.querySelectorAll('.doc-field').forEach(field => {
@@ -497,6 +495,7 @@ function showStep(index) {
         });
     }
 
+
      // Привязка live-обновлений на поля
     form.querySelectorAll('input, textarea, select').forEach(input => {
         input.addEventListener('input', () => {
@@ -509,6 +508,7 @@ function showStep(index) {
             updatePreviewFields();
         });
     });   
+
 
     // Включаем кликабельность шагов
     document.querySelectorAll('.progress-nav-item').forEach(item => {
@@ -556,62 +556,63 @@ function showStep(index) {
 
 
 
-    // Для теста добавим JS-обработчики (в скрипт) 
-    document.addEventListener('DOMContentLoaded', function () {
-        const saveBtn = document.getElementById('save-project');
-        const payBtn = document.getElementById('pay-and-download');
-
-        if (saveBtn) {
-            saveBtn.addEventListener('click', () => {
-                alert('✅ Project saved (test mode)');
-                // Здесь позже добавим реальную отправку формы или сохранение в базу
-            });
-        }
-
-        if (payBtn) {
-            payBtn.addEventListener('click', () => {
-                alert('💰 Redirecting to payment (test mode)');
-                // Здесь позже можно вставить ссылку на платёж или подписку
-            });
-        }
-    });
 
 
 
 
-    // Запускаем первый шаг
+    // ### 10. ✅ Инициализация шага №0
     showStep(0);
     updatePreviewFields(); // 👈 вот это добавь
   
 });
 </script>
 
-
-<!-- Генератор PDF документа -->
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-  const downloadBtn = document.getElementById('download-pdf-btn');
+(function($){
+    console.log("📣 ACF Submit Script loaded");
 
-  if (downloadBtn) {
-    downloadBtn.addEventListener('click', function () {
-      const element = document.getElementById('doc-preview-wrapper');
+    acf.addAction('submit_success', function($form, response){
+        console.log("🎯 submit_success сработал!");
+        console.log("📦 Ответ:", response);
 
-      if (!element) {
-        alert('Документ не найден!');
-        return;
-      }
+        const postId = response?.data?.post_id;
 
-      const opt = {
-        margin:       0,
-        filename:     'document.pdf',
-        image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2 },
-        jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
-      };
+        if (postId) {
+            console.log("📌 Получен post ID:", postId);
 
-      html2pdf().set(opt).from(element).save();
+            // Генерируем PDF на сервере и скачиваем
+            const pdfUrl = `/wp-admin/admin-ajax.php?action=generate_pdf&doc_id=${postId}`;
+            console.log("📥 Скачиваем PDF:", pdfUrl);
+            window.location.href = pdfUrl;
+        } else {
+            console.error("❌ postId не получен");
+        }
     });
-  }
+
+    acf.addAction('submit_fail', function($form, e){
+        console.error("❌ submit_fail", e);
+    });
+
+    acf.addAction('prepare_for_ajax', function($form){
+        console.log("📤 prepare_for_ajax: форма отправляется");
+    });
+})(jQuery);
+</script>
+
+
+
+<script>
+// ### 9. ✅ Ручной submit формы по кнопке
+document.addEventListener('DOMContentLoaded', function () {
+    const saveBtn = document.getElementById('save-project');
+    const form = document.getElementById('json-form');
+
+    if (saveBtn && form) {
+        saveBtn.addEventListener('click', function (e) {
+            e.preventDefault();
+            form.requestSubmit(); // 👉 отправка формы
+        });
+    }
 });
 </script>
 
