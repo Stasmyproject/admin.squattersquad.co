@@ -69,8 +69,13 @@ add_action('wp_enqueue_scripts', 'metronic_enqueue_styles');
 
 
 
-
-
+// 💡 подключаем скрипт ACF
+add_action('wp_enqueue_scripts', 'enqueue_acf_form_scripts', 20);
+function enqueue_acf_form_scripts() {
+    if (function_exists('acf_enqueue_scripts')) {
+        acf_enqueue_scripts();
+    }
+}
 
 
 
@@ -1363,72 +1368,58 @@ add_action('wp_enqueue_scripts', function() {
 
 
 
-// Герентим PDF через Ajaks
-add_action('wp_ajax_generate_pdf', 'handle_generate_pdf');
-add_action('wp_ajax_nopriv_generate_pdf', 'handle_generate_pdf');
+// Функция сохранения документа и генерации PDF
+add_action('wp_ajax_generate_pdf', 'generate_pdf_callback');
+add_action('wp_ajax_nopriv_generate_pdf', 'generate_pdf_callback');
 
-function handle_generate_pdf() {
+function generate_pdf_callback() {
     $doc_id = isset($_GET['doc_id']) ? intval($_GET['doc_id']) : 0;
 
-    if (!$doc_id) {
-        wp_die('❌ Document ID is missing.');
-    }
-
-    $post_type = get_post_type($doc_id);
-    if ($post_type !== 'document') {
-        wp_die('❌ Invalid post type. Expected "document", got "' . esc_html($post_type) . '"');
+    if (!$doc_id || get_post_type($doc_id) !== 'document') {
+        wp_die('Документ не найден');
     }
 
     require_once get_template_directory() . '/libs/mpdf/vendor/autoload.php';
 
-    $mpdf = new \Mpdf\Mpdf([
-        'format' => 'A4',
-        'margin_top' => 20,
-        'margin_bottom' => 20,
-        'margin_left' => 15,
-        'margin_right' => 15,
-    ]);
-
-    $fields = get_fields($doc_id);
-
-    ob_start();
-
-    echo '<h1 style="font-family: sans-serif; font-size: 20pt; margin-bottom: 20px;">Document Preview</h1>';
-
-    if ($fields && is_array($fields)) {
-        foreach ($fields as $field_key => $value) {
-            $field_object = get_field_object($field_key, $doc_id);
-            $label = $field_object['label'] ?? ucfirst(str_replace('_', ' ', $field_key));
-            $value_clean = is_array($value) ? implode(', ', array_map('esc_html', $value)) : esc_html($value);
-
-            echo '<p style="font-family: sans-serif; font-size: 12pt; margin: 10px 0;"><strong>' . esc_html($label) . ':</strong> ' . $value_clean . '</p>';
-        }
-    } else {
-        echo '<p style="color: red;">No ACF fields found for this document.</p>';
-    }
-
-    $html = ob_get_clean();
-
+    $mpdf = new \Mpdf\Mpdf(['mode' => 'utf-8', 'format' => 'A4']);
+    $title = get_the_title($doc_id);
+    $content = get_post_field('post_content', $doc_id);
+    $html = "<h1>$title</h1><p>$content</p>";
     $mpdf->WriteHTML($html);
-    $mpdf->Output("document-$doc_id.pdf", 'D');
 
+    header('Content-Type: application/pdf');
+    header('Content-Disposition: attachment; filename="project-' . $doc_id . '.pdf"');
+    $mpdf->Output('project.pdf', 'I');
     exit;
 }
 
 
 
-
-
-
-// Скрипт генерации PDF будет работать только на нужно странице
 add_action('wp_enqueue_scripts', function () {
-    if (is_page_template('template-acf-dynamic-form.php')) {
-wp_enqueue_script('ajax-pdf-gen', get_template_directory_uri() . '/assets/js/pdf-gen.js', ['jquery'], null, true);
+    wp_enqueue_script('acf-form');
+    wp_enqueue_script('acf-input');
+    wp_enqueue_style('acf-global');
+}, 100);
 
-wp_localize_script('ajax-pdf-gen', 'pdfGenData', [
-    'ajax_url' => admin_url('admin-ajax.php'),
-]);
+
+add_action('wp_enqueue_scripts', function () {
+    if (function_exists('acf_enqueue_uploader')) {
+        acf_enqueue_uploader(); // на всякий случай
     }
-});
+
+    wp_enqueue_script('acf-input'); // ACF input core
+    wp_enqueue_script('acf-form');  // 🚀 вот это главный скрипт для форм!
+    wp_enqueue_style('acf-global'); // базовая стилизация
+}, 100);
+
+
+add_action('wp_enqueue_scripts', function () {
+    wp_enqueue_script('jquery-ui-core');        // ✅ обязательно
+    wp_enqueue_script('jquery-ui-autocomplete'); // если вдруг поле его требует
+    wp_enqueue_script('acf-input');
+    wp_enqueue_script('acf-form');
+    wp_enqueue_style('acf-global');
+}, 100);
+
 
 

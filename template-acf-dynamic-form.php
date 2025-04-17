@@ -2,7 +2,7 @@
 /**
  * Template Name: ACF Dynamic Form
  */
-acf_form_head();
+acf_form_head(); // 👈 ЭТО ДОЛЖНО БЫТЬ ПЕРВЫМ!
 get_header();
 
 // переменная для вывода
@@ -104,24 +104,29 @@ if (!acf_get_field_group($form_group_key)) {
             <!-- 🔵 Форма слева -->
 
             <div class="flex-grow-1 col-12 col-lg-6" style="min-width: 0;">
-                <div id="acf-form-wrapper">
+                 <div id="acf-form-wrapper">
                     <?php
                     acf_form([
-                        'updated_message' => '',
-                        'html_after_fields' => '<input type="hidden" id="acf-saved-post-id" name="acf_saved_post_id" value="">',
                         'post_id'       => 'new_post',
                         'new_post'      => [
                             'post_type'   => 'document',
                             'post_status' => 'publish'
                         ],
                         'field_groups'  => [$form_group_key],
-                        'submit_value' => false, // Убираем стандартную кнопку
-                        'return' => add_query_arg('doc_id', '%post_id%', home_url('/document-saved/')),
-                        'honeypot'      => false,
-                        'form_attributes' => ['id' => 'json-form']
+                        'submit_value'  => false,
+                        'return'        => false,
+                        'form_attributes' => [
+                            'id' => 'json-form'
+                        ]
                     ]);
                     ?>
+
+                    <!-- 👇 ВСТАВЬ ЭТУ КНОПКУ ВНУТРЬ -->
+                    <button type="submit" class="btn btn-success w-100 mt-4" id="save-project">
+                        Save & Скачать проект
+                    </button>
                 </div>
+                
                 <div id="payment-wrapper" class="d-none">
                     <?php if (!empty($_GET['post_id'])): ?>
                         <input type="hidden" id="acf-saved-post-id" value="<?php echo esc_attr($_GET['post_id']); ?>">
@@ -131,35 +136,11 @@ if (!acf_get_field_group($form_group_key)) {
                         <h3 class="fw-bold mb-4">Your document is ready to download!</h3>
                         <div class="fs-1 fw-bold text-success mb-3">$1.95 USD</div>
 
-
-
-                        <!-- 👇 Кнопка сохранить -->
-
-
-                        <button id="download-pdf-btn" class="btn btn-success">📥 Скачать PDF</button>
-
                         
-                        <button type="submit" class="btn btn-success w-100 mb-3" form="json-form">
-                            Save Project
-                        </button>
-
-                        
-
-
-
-
                         <!-- 👇 Кнопка скачать (оплатить) -->
-<!--                         <button id="pay-and-download" class="btn btn-success w-100 mb-3">
-                            Pay & Download
-                        </button> -->
-<!-- 
-                        <button id="download-pdf" class="btn btn-success w-100 mb-3">
-                            📄 Download PDF
+                        <button type="submit" class="btn btn-success w-100 mb-3" id="save-project">
+                            Сохранить и скачать PDF
                         </button>
- -->
-
-
-                        <div class="small text-muted text-center mb-3">7-Day Access</div>
 
 
 
@@ -175,6 +156,10 @@ if (!acf_get_field_group($form_group_key)) {
                         </div>
                     </div>
                 </div>
+
+
+
+
             </div>
 
             <!-- 🟢 Превью справа -->
@@ -185,6 +170,7 @@ if (!acf_get_field_group($form_group_key)) {
             </div>
 
         </div>
+
 
 
 
@@ -228,6 +214,79 @@ if (!acf_get_field_group($form_group_key)) {
     </div>
 </div>
 
+<script>
+(function($){
+    console.log("🔍 ACF debug started");
+
+    // Проверим, что форма вообще существует
+    const form = $('#json-form');
+    if (!form.length) {
+        console.warn("⚠️ Форма #json-form не найдена в DOM");
+    } else {
+        console.log("✅ Форма найдена: #json-form");
+    }
+
+    // Проверим подключен ли ACF
+    if (typeof acf === 'undefined') {
+        console.error("❌ ACF не подключен (acf не определён)");
+    } else {
+        console.log("✅ ACF доступен:", acf);
+
+        // Подключим дебаг по отправке
+        acf.addAction('prepare_for_ajax', function($form){
+            console.log("📤 prepare_for_ajax: форма отправляется через ACF", $form);
+        });
+
+        acf.addAction('submit_success', function($form, response){
+            console.log("🎯 submit_success: отправка прошла УСПЕШНО!");
+            console.log("📦 Ответ:", response);
+
+            const postId = response?.data?.post_id;
+            console.log("🆔 Получен post ID:", postId);
+
+            if (postId) {
+                const downloadUrl = `/wp-admin/admin-ajax.php?action=generate_pdf&doc_id=${postId}`;
+                console.log("📥 Переход к PDF:", downloadUrl);
+                window.location.href = downloadUrl;
+            } else {
+                console.error("🚫 postId пустой или не получен");
+            }
+        });
+
+        acf.addAction('submit_fail', function($form, e){
+            console.error("❌ submit_fail: ошибка при сабмите", e);
+        });
+    }
+})(jQuery);
+</script>
+
+<script>
+    // Проверим: работает ли вообще JS
+
+(function($){
+    console.log("📣 ACF Submit Script loaded");
+
+    acf.addAction('prepare_for_ajax', function($form){
+        console.log("📤 prepare_for_ajax: ACF начал отправку");
+    });
+
+    acf.addAction('submit_success', function($form, response){
+        console.log("📨 Ответ от ACF:", response);
+
+        const postId = response?.data?.post_id;
+        console.log("📌 Получен post ID через submit_success:", postId);
+
+        if (postId && postId !== 'new_post') {
+            window.location.href = '/wp-admin/admin-ajax.php?action=generate_pdf&doc_id=' + postId;
+        } else {
+            console.error("❌ Post ID не получен");
+        }
+    });
+})(jQuery);
+
+
+
+</script>
 
 
 
@@ -495,19 +554,6 @@ function showStep(index) {
     }
 
 
-    // Делаем последним шагом блок с предложениме оплаты
-    form.addEventListener('submit', function (e) {
-        setTimeout(function () {
-            const formWrapper = document.getElementById('acf-form-wrapper');
-            const paymentWrapper = document.getElementById('payment-wrapper');
-
-            if (formWrapper && paymentWrapper) {
-                formWrapper.classList.add('d-none');
-                paymentWrapper.classList.remove('d-none');
-                updatePreviewFields(); // обновим предпросмотр
-            }
-        }, 300); // задержка, чтобы дождаться отправки
-    }); 
 
 
     // Для теста добавим JS-обработчики (в скрипт) 
@@ -531,24 +577,11 @@ function showStep(index) {
     });
 
 
-    // отправляем скрытую форму
-    document.addEventListener('DOMContentLoaded', function () {
-        const saveBtn = document.getElementById('save-project');
-        const form = document.getElementById('json-form');
-
-        if (saveBtn && form) {
-            saveBtn.addEventListener('click', function (e) {
-                e.preventDefault();
-                form.requestSubmit(); // 👈 гарантированная отправка
-            });
-        }
-    });
 
 
     // Запускаем первый шаг
     showStep(0);
     updatePreviewFields(); // 👈 вот это добавь
-
   
 });
 </script>
@@ -620,7 +653,9 @@ document.addEventListener('DOMContentLoaded', function () {
             <!--end::Page-->
         </div>
         <!--end::App-->
-
+<script>
+  console.log("✅ Проверка — JS работает");
+</script>
 
 
 <?php get_footer(); ?>
