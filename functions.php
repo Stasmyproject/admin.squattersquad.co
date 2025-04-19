@@ -1359,6 +1359,20 @@ function set_document_title_and_type($post_id) {
     ]);
 }
 
+
+// подключаем скрипты ACF
+add_action('wp_enqueue_scripts', function () {
+    if (is_page_template('page-universal-form.php')) { // ← имя шаблона
+        wp_enqueue_script('acf-input'); // ACF JS
+        wp_enqueue_style('acf-input');  // ACF CSS
+
+        // Важное дополнение для Date Picker:
+        wp_enqueue_script('jquery-ui-datepicker');
+        wp_enqueue_style('jquery-ui-style', '//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css');
+    }
+});
+
+
 // подключаем скрипты ACF
 add_action('wp_enqueue_scripts', function() {
     if (is_page_template('template-acf-dynamic-form.php')) {
@@ -1369,44 +1383,99 @@ add_action('wp_enqueue_scripts', function() {
 
 
 
+
+
+
 // что серверный обработчик  Функция сохранения документа и генерации PDF
+// Обработчик генерации PDF
+// 👇 Подключаем PDF-генерацию через mPDF
+// 📥 Хук генерации PDF при клике на "Скачать"
+// 📥 Хук генерации PDF при клике на "Скачать"
 add_action('wp_ajax_generate_pdf', 'generate_pdf_callback');
 add_action('wp_ajax_nopriv_generate_pdf', 'generate_pdf_callback');
 
 function generate_pdf_callback() {
     $doc_id = isset($_GET['doc_id']) ? intval($_GET['doc_id']) : 0;
-    if (!$doc_id || get_post_type($doc_id) !== 'document') {
-        wp_die('Неверный ID документа');
+    if (!$doc_id) {
+        wp_die('❌ Ошибка: Не передан ID документа');
     }
 
-    // Подключение mPDF
-    if (!class_exists('\Mpdf\Mpdf')) {
-        require_once get_template_directory() . '/vendor/autoload.php'; // путь к mPDF
-    }
+    // Подключаем библиотеку mPDF
+    require_once get_template_directory() . '/vendor/autoload.php';
 
+    // ✅ Создаём экземпляр с отступом снизу
     $mpdf = new \Mpdf\Mpdf([
-        'mode' => 'utf-8',
-        'format' => 'A4',
-        'default_font' => 'dejavusans',
+        'margin_bottom' => 30,
     ]);
 
-    // Получаем поля ACF
-    $fields = [
-        'Название компании' => get_field('company_name', $doc_id),
-        'Описание продукта' => get_field('product_description', $doc_id),
-        'Дата начала' => get_field('effective_from', $doc_id),
-        'Целевая аудитория' => get_field('target_market', $doc_id),
-    ];
+    // 🔽 Добавляем логотип в футер
+    $logo_url = get_template_directory_uri() . '/assets/img/logo-footer.png';
+    $footerHTML = '
+        <div style="width: 100%; height: 30px; position: relative;">
+            <div style="position: absolute; bottom: 0; left: 0;">
+                <img src="' . $logo_url . '" style="height: 30px;" />
+            </div>
+        </div>
+    ';
+    $mpdf->SetHTMLFooter($footerHTML);
 
-    $html = '<h1 style="text-align:center;">Бизнес-план</h1>';
-    foreach ($fields as $label => $value) {
-        $html .= "<p><strong>{$label}:</strong> " . nl2br($value ?: '—') . "</p>";
+    // Получаем все поля формы
+    $fields = get_fields($doc_id);
+    if (!$fields) {
+        wp_die('❌ Ошибка: Нет данных для документа.');
     }
 
+    // Получаем slug шаблона из мета-поля
+    $template_slug = get_post_meta($doc_id, 'acf_template_slug', true);
+    if (!$template_slug) {
+        wp_die('⚠️ Шаблон не определён — не найдено мета-поле acf_template_slug.');
+    }
+
+    // 👉 Единственный шаблон
+    $template_file = get_template_directory() . '/acf-templates/base-template.php';
+
+    // 👇 Передаём переменные внутрь шаблона
+    $post_id = $doc_id;
+    $field_group_key = $template_slug;
+
+    ob_start();
+    if (file_exists($template_file)) {
+        include $template_file;
+    } else {
+        echo "<p>⚠️ Шаблон <code>{$template_slug}.php</code> не найден в /acf-templates/</p>";
+    }
+    $html = ob_get_clean();
+
+    // Генерация и отправка PDF
     $mpdf->WriteHTML($html);
-    $mpdf->Output("document-{$doc_id}.pdf", 'D'); // D — сразу скачать
+    $mpdf->Output("document-{$doc_id}.pdf", 'D');
     exit;
 }
+
+
+
+
+// 📝 Сохраняем ключ шаблона на основе URL страницы (slug)
+add_action('acf/save_post', function($post_id) {
+    // Только для новых записей типа 'document'
+    if (get_post_type($post_id) !== 'document') {
+        return;
+    }
+
+    // Проверим, что форма действительно создаёт новый пост
+    if (!empty($_POST['_acf_post_id']) && $_POST['_acf_post_id'] === 'new_post') {
+        // Парсим slug из URL формы (referer)
+        $referer = $_SERVER['HTTP_REFERER'] ?? '';
+        $slug = basename(parse_url($referer, PHP_URL_PATH));
+        $form_group_key = 'group_' . str_replace('-', '_', $slug);
+
+        update_post_meta($post_id, 'acf_template_slug', $form_group_key);
+
+        // Лог для отладки
+        error_log("✅ ACF шаблон сохранён: {$form_group_key} → post {$post_id}");
+    }
+}, 20);
+
 
 
 
