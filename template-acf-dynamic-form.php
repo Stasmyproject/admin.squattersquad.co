@@ -106,21 +106,27 @@ if (!acf_get_field_group($form_group_key)) {
             <div class="flex-grow-1 col-12 col-lg-6" style="min-width: 0;">
                  <div id="acf-form-wrapper">
                     <?php
-                        acf_form([
-                            'post_id' => 'new_post',
-                            'new_post' => [
-                                'post_type'   => 'document',
-                                'post_status' => 'publish'
-                            ],
-                            'field_groups'  => [$form_group_key],
-                            'submit_value' => false,
-                            'return' => false, // ❗ без перехода
-                            'honeypot' => false,
-                            'form_attributes' => ['id' => 'json-form']
-                        ]);
-                    ?>
+acf_form([
+    'post_id'       => 'new_post',
+    'new_post'      => [
+        'post_type'   => 'document',
+        'post_status' => 'publish'
+    ],
+    'field_groups'  => ['group_business_plan_form'],
+    'submit_value'  => 'Сохранить проект',
+    'return'        => home_url('/document-saved/?doc_id=%post_id%'), // ✅ Перенаправление
+    'form_attributes' => ['id' => 'json-form']
+]);
+                                       
 
-                </div>
+                                        
+                ?>
+
+
+
+
+
+         </div>
 
                 <div id="payment-wrapper" class="d-none">
                     <?php if (!empty($_GET['post_id'])): ?>
@@ -208,81 +214,6 @@ if (!acf_get_field_group($form_group_key)) {
 
     </div>
 </div>
-
-<script>
-(function($){
-    console.log("🔍 ACF debug started");
-
-    // Проверим, что форма вообще существует
-    const form = $('#json-form');
-    if (!form.length) {
-        console.warn("⚠️ Форма #json-form не найдена в DOM");
-    } else {
-        console.log("✅ Форма найдена: #json-form");
-    }
-
-    // Проверим подключен ли ACF
-    if (typeof acf === 'undefined') {
-        console.error("❌ ACF не подключен (acf не определён)");
-    } else {
-        console.log("✅ ACF доступен:", acf);
-
-        // Подключим дебаг по отправке
-        acf.addAction('prepare_for_ajax', function($form){
-            console.log("📤 prepare_for_ajax: форма отправляется через ACF", $form);
-        });
-
-        acf.addAction('submit_success', function($form, response){
-            console.log("🎯 submit_success: отправка прошла УСПЕШНО!");
-            console.log("📦 Ответ:", response);
-
-            const postId = response?.data?.post_id;
-            console.log("🆔 Получен post ID:", postId);
-
-            if (postId) {
-                const downloadUrl = `/wp-admin/admin-ajax.php?action=generate_pdf&doc_id=${postId}`;
-                console.log("📥 Переход к PDF:", downloadUrl);
-                window.location.href = downloadUrl;
-            } else {
-                console.error("🚫 postId пустой или не получен");
-            }
-        });
-
-        acf.addAction('submit_fail', function($form, e){
-            console.error("❌ submit_fail: ошибка при сабмите", e);
-        });
-    }
-})(jQuery);
-</script>
-
-<script>
-    // Проверим: работает ли вообще JS
-
-(function($){
-    console.log("📣 ACF Submit Script loaded");
-
-    acf.addAction('prepare_for_ajax', function($form){
-        console.log("📤 prepare_for_ajax: ACF начал отправку");
-    });
-
-    acf.addAction('submit_success', function($form, response){
-        console.log("📨 Ответ от ACF:", response);
-
-        const postId = response?.data?.post_id;
-        console.log("📌 Получен post ID через submit_success:", postId);
-
-        if (postId && postId !== 'new_post') {
-            window.location.href = '/wp-admin/admin-ajax.php?action=generate_pdf&doc_id=' + postId;
-        } else {
-            console.error("❌ Post ID не получен");
-        }
-    });
-})(jQuery);
-
-
-
-</script>
-
 
 
 
@@ -567,37 +498,7 @@ function showStep(index) {
 });
 </script>
 
-<script>
-(function($){
-    console.log("📣 ACF Submit Script loaded");
 
-    acf.addAction('submit_success', function($form, response){
-        console.log("🎯 submit_success сработал!");
-        console.log("📦 Ответ:", response);
-
-        const postId = response?.data?.post_id;
-
-        if (postId) {
-            console.log("📌 Получен post ID:", postId);
-
-            // Генерируем PDF на сервере и скачиваем
-            const pdfUrl = `/wp-admin/admin-ajax.php?action=generate_pdf&doc_id=${postId}`;
-            console.log("📥 Скачиваем PDF:", pdfUrl);
-            window.location.href = pdfUrl;
-        } else {
-            console.error("❌ postId не получен");
-        }
-    });
-
-    acf.addAction('submit_fail', function($form, e){
-        console.error("❌ submit_fail", e);
-    });
-
-    acf.addAction('prepare_for_ajax', function($form){
-        console.log("📤 prepare_for_ajax: форма отправляется");
-    });
-})(jQuery);
-</script>
 
 
 
@@ -615,6 +516,10 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 </script>
+
+<!--  -->
+
+
 
 
 
@@ -656,6 +561,50 @@ document.addEventListener('DOMContentLoaded', function () {
         <!--end::App-->
 <script>
   console.log("✅ Проверка — JS работает");
+</script>
+<script>
+(function($){
+    console.log("🔍 ACF debug started");
+
+    const form = $('#json-form');
+    if (!form.length) {
+        console.warn("⚠️ Форма #json-form не найдена в DOM");
+    } else {
+        console.log("✅ Форма найдена: #json-form");
+    }
+
+    if (typeof acf === 'undefined') {
+        console.error("❌ ACF не подключен");
+    } else {
+        console.log("✅ ACF доступен:", acf);
+
+        acf.addAction('prepare_for_ajax', function($form){
+            console.log("📤 prepare_for_ajax: отправка формы через ACF", $form);
+        });
+
+        acf.addAction('submit_success', function($form, response){
+            console.log("🎯 submit_success: отправка прошла УСПЕШНО!");
+            console.log("📦 Весь ответ:", response);
+
+            const postId = response?.data?.post_id;
+            console.log("📌 Получен post ID:", postId);
+
+            if (postId) {
+                document.getElementById('acf-saved-post-id').value = postId;
+
+                const downloadUrl = `/wp-admin/admin-ajax.php?action=generate_pdf&doc_id=${postId}`;
+                console.log("📥 Переход к PDF:", downloadUrl);
+                window.location.href = downloadUrl;
+            } else {
+                console.error("🚫 postId пустой или не получен");
+            }
+        });
+
+        acf.addAction('submit_fail', function($form, e){
+            console.error("❌ submit_fail: ошибка при сохранении", e);
+        });
+    }
+})(jQuery);
 </script>
 
 

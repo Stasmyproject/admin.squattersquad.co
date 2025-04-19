@@ -9,6 +9,7 @@ add_image_size('avatar-160', 160, 160, true); // true = crop (обрезать)
 // 💡 Добавляем поддержку миниатюр
 add_theme_support('post-thumbnails');
 
+
 // 💡 Глобальные стили
 function metronic_enqueue_styles() {
     // Глобальные стили — шрифт и базовые стили Metronic
@@ -1368,58 +1369,49 @@ add_action('wp_enqueue_scripts', function() {
 
 
 
-// Функция сохранения документа и генерации PDF
+// что серверный обработчик  Функция сохранения документа и генерации PDF
 add_action('wp_ajax_generate_pdf', 'generate_pdf_callback');
 add_action('wp_ajax_nopriv_generate_pdf', 'generate_pdf_callback');
 
 function generate_pdf_callback() {
     $doc_id = isset($_GET['doc_id']) ? intval($_GET['doc_id']) : 0;
-
     if (!$doc_id || get_post_type($doc_id) !== 'document') {
-        wp_die('Документ не найден');
+        wp_die('Неверный ID документа');
     }
 
-    require_once get_template_directory() . '/libs/mpdf/vendor/autoload.php';
+    // Подключение mPDF
+    if (!class_exists('\Mpdf\Mpdf')) {
+        require_once get_template_directory() . '/vendor/autoload.php'; // путь к mPDF
+    }
 
-    $mpdf = new \Mpdf\Mpdf(['mode' => 'utf-8', 'format' => 'A4']);
-    $title = get_the_title($doc_id);
-    $content = get_post_field('post_content', $doc_id);
-    $html = "<h1>$title</h1><p>$content</p>";
+    $mpdf = new \Mpdf\Mpdf([
+        'mode' => 'utf-8',
+        'format' => 'A4',
+        'default_font' => 'dejavusans',
+    ]);
+
+    // Получаем поля ACF
+    $fields = [
+        'Название компании' => get_field('company_name', $doc_id),
+        'Описание продукта' => get_field('product_description', $doc_id),
+        'Дата начала' => get_field('effective_from', $doc_id),
+        'Целевая аудитория' => get_field('target_market', $doc_id),
+    ];
+
+    $html = '<h1 style="text-align:center;">Бизнес-план</h1>';
+    foreach ($fields as $label => $value) {
+        $html .= "<p><strong>{$label}:</strong> " . nl2br($value ?: '—') . "</p>";
+    }
+
     $mpdf->WriteHTML($html);
-
-    header('Content-Type: application/pdf');
-    header('Content-Disposition: attachment; filename="project-' . $doc_id . '.pdf"');
-    $mpdf->Output('project.pdf', 'I');
+    $mpdf->Output("document-{$doc_id}.pdf", 'D'); // D — сразу скачать
     exit;
 }
 
 
 
-add_action('wp_enqueue_scripts', function () {
-    wp_enqueue_script('acf-form');
-    wp_enqueue_script('acf-input');
-    wp_enqueue_style('acf-global');
-}, 100);
 
 
-add_action('wp_enqueue_scripts', function () {
-    if (function_exists('acf_enqueue_uploader')) {
-        acf_enqueue_uploader(); // на всякий случай
-    }
-
-    wp_enqueue_script('acf-input'); // ACF input core
-    wp_enqueue_script('acf-form');  // 🚀 вот это главный скрипт для форм!
-    wp_enqueue_style('acf-global'); // базовая стилизация
-}, 100);
-
-
-add_action('wp_enqueue_scripts', function () {
-    wp_enqueue_script('jquery-ui-core');        // ✅ обязательно
-    wp_enqueue_script('jquery-ui-autocomplete'); // если вдруг поле его требует
-    wp_enqueue_script('acf-input');
-    wp_enqueue_script('acf-form');
-    wp_enqueue_style('acf-global');
-}, 100);
 
 
 
