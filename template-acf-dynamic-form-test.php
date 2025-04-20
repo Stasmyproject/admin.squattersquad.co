@@ -1,6 +1,6 @@
 <?php
 /**
- * Template Name: ACF Dynamic Form
+ * Template Name: ACF Dynamic Form Test
  */
 acf_form_head(); // 👈 ЭТО ДОЛЖНО БЫТЬ ПЕРВЫМ!
 get_header();
@@ -64,8 +64,6 @@ if (!acf_get_field_group($form_group_key)) {
 
                             <!--begin::Content-->
                               <!-- 🔥 Контентная часть -->
-
-
                                 <!-- 🔵 BEGIN: прогресс бар FU -->
                                 <!-- 🔵 BEGIN: FULL-WIDTH PROGRESS HEADER -->
                                 <div id="acf-progress-wrapper" style="background-color: #044583;margin-top: -40px;" class=" py-10 mb-5">
@@ -85,7 +83,6 @@ if (!acf_get_field_group($form_group_key)) {
                                     </div>
                                 </div>
                                 <!-- 🔵 END -->
-
                                 <!-- 🔵 END: прогресс бар-->           
 
 
@@ -113,13 +110,15 @@ acf_form([
         'post_status' => 'publish'
     ],
     'field_groups'  => ['group_business_plan_form'],
-    'submit_value'  => 'Сохранить проект',
-    'return'        => home_url('/document-saved/?doc_id=%post_id%'), // ✅ Перенаправление
-    'form_attributes' => ['id' => 'json-form']
+    'submit_value'  => 'Сохранить документ',
+    'return' => add_query_arg('post_id', '%post_id%', home_url('/document-saved')),
+    'form_attributes' => [
+        'id' => 'json-form'
+    ]
 ]);
                                        
 
-                                        
+
                 ?>
 
 
@@ -220,7 +219,19 @@ acf_form([
 
 
 
+<script >
+    acf.addAction('submit_success', function($form, response) {
+    const postId = response?.data?.post_id;
+    console.log("🎯 submit_success: postId =", postId);
 
+    if (postId) {
+        const redirectUrl = `/document-saved/?post_id=${postId}`;
+        window.location.href = redirectUrl;
+    } else {
+        console.error("❌ Post ID не получен");
+    }
+});
+</script>
 <script>
 // ### 1. ✅ Авто-масштаб предпросмотра PDF
 function scalePreviewToFit() {
@@ -607,5 +618,38 @@ document.addEventListener('DOMContentLoaded', function () {
 })(jQuery);
 </script>
 
+
+<?php get_footer(); ?>
+<?php
+// Проверим — загружены ли нужные скрипты и стили
+echo '<div style="padding:15px;background:#eef;border:1px solid #99f;margin-top:40px;">';
+echo '<strong>Debug info (Date Picker):</strong><br>';
+
+if (wp_script_is('jquery-ui-datepicker', 'enqueued')) {
+    echo '✅ jQuery UI Datepicker JS подключен<br>';
+} else {
+    echo '❌ jQuery UI Datepicker JS <b>не</b> подключен<br>';
+}
+
+if (wp_style_is('jquery-ui-style', 'enqueued')) {
+    echo '✅ jQuery UI стили подключены<br>';
+} else {
+    echo '❌ jQuery UI стили <b>не</b> подключены<br>';
+}
+
+if (wp_script_is('acf-input', 'enqueued')) {
+    echo '✅ ACF Input JS подключен<br>';
+} else {
+    echo '❌ ACF Input JS <b>не</b> подключен<br>';
+}
+
+if (wp_style_is('acf-input', 'enqueued')) {
+    echo '✅ ACF Input CSS подключен<br>';
+} else {
+    echo '❌ ACF Input CSS <b>не</b> подключен<br>';
+}
+
+echo '</div>';
+?>
 
 <?php get_footer(); ?>

@@ -43,6 +43,26 @@ error_reporting(E_ALL);
 echo '<div style="padding:10px;background:#f0f0f0;border-bottom:1px solid #ccc;">🔍 Шаблон ACF Dynamic Form загружен</div>';
 ?>
 
+        <!-- Решение: вручную активировать DatePicker -->
+        <script>
+        jQuery(document).ready(function ($) {
+            $('.acf-date-picker input[type="text"]').each(function () {
+                const $input = $(this);
+
+                // Если datepicker ещё не применён
+                if (!$input.hasClass('hasDatepicker')) {
+                    console.log('📅 Applying datepicker manually...');
+                    $input.datepicker({
+                        dateFormat: 'dd/mm/yy',
+                        changeMonth: true,
+                        changeYear: true,
+                        showAnim: "fadeIn"
+                    });
+                }
+            });
+        });
+        </script>
+
 
         <!--begin::Theme mode setup on page load-->
         <script>var defaultThemeMode = "light"; var themeMode; if ( document.documentElement ) { if ( document.documentElement.hasAttribute("data-bs-theme-mode")) { themeMode = document.documentElement.getAttribute("data-bs-theme-mode"); } else { if ( localStorage.getItem("data-bs-theme") !== null ) { themeMode = localStorage.getItem("data-bs-theme"); } else { themeMode = defaultThemeMode; } } if (themeMode === "system") { themeMode = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"; } document.documentElement.setAttribute("data-bs-theme", themeMode); }</script>
@@ -138,11 +158,16 @@ echo '<div style="padding:10px;background:#f0f0f0;border-bottom:1px solid #ccc;"
                                                 </div>
                                             </div>
                                             <!-- 🟢 Превью справа -->
+
                                             <div class=" col-12 col-lg-6" id="doc-preview-wrapper">
-                                                <div class=" dynamic-scale mx-auto" id="doc-print-content">
-                                                    <?php get_template_part('template-parts/doc-preview'); ?>
+                                                <div >
+                                                    <div id="doc-print-content" class="transform-scale fs-6 lh-lg" style="transform-origin: top left;">
+                                                        <?php get_template_part('template-parts/doc-preview'); ?>
+                                                    </div>
                                                 </div>
                                             </div>
+
+
                                         </div>
 
 
@@ -168,11 +193,11 @@ echo '<div style="padding:10px;background:#f0f0f0;border-bottom:1px solid #ccc;"
                                             </div>
 
                                             <!-- Правая колонка: предпросмотр -->
-                                            <div class="col-12 col-lg-6">
+<!--                                        <div class="col-12 col-lg-6">
                                                 <div class="doc-page scale-preview">
                                                     <?php get_template_part('doc-preview'); ?>
                                                 </div>
-                                            </div>
+                                            </div> -->
                                         </div>
 
                                     </div>
@@ -180,27 +205,33 @@ echo '<div style="padding:10px;background:#f0f0f0;border-bottom:1px solid #ccc;"
 
 
 
+
+
+
 <!-- Скрипты Прогресс бара -->
 <script>
-    // ### 2. ✅ Скрипт прогресс-бара + пошаговая навигация
 document.addEventListener('DOMContentLoaded', function () {
-    const form = document.querySelector('#json-form') || document.querySelector('.acf-form form');
-    if (!form) return;
 
+    // 1️⃣ Ищем ACF-форму
+    const form = document.querySelector('.acf-form form');
+    if (!form) return; // Если форма не найдена — выходим
+
+    // 2️⃣ Обёртка всех полей формы (внутри .acf-form)
     const fieldsWrapper = form.querySelector('.acf-fields');
+
+    // 3️⃣ Прячем кнопку сабмита (по умолчанию), покажем позже
     const submitBtn = form.querySelector('input[type=submit]');
     if (submitBtn) {
-        submitBtn.style.display = 'none'; // спрячем до последнего шага
+        submitBtn.style.display = 'none';
         submitBtn.classList.add('btn', 'btn-success', 'ms-auto');
     }
 
-
-    // Найдём все заголовки табов
+    // 4️⃣ Сканируем все табы (в ACF они визуально делят форму на шаги)
     const tabLabels = [...fieldsWrapper.querySelectorAll('.acf-field-tab')];
     const stepTitles = tabLabels.map(tab => tab.querySelector('.acf-label')?.innerText.trim());
 
-    // Группировка полей по шагам
-    const steps = stepTitles.map(() => []);
+    // 5️⃣ Группируем поля по шагам
+    const steps = stepTitles.map(() => []); // steps[0], steps[1], ...
     let currentGroup = -1;
 
     [...fieldsWrapper.children].forEach(el => {
@@ -213,9 +244,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (!steps.length) return;
 
-    
-
-    // Создаём визуальные шаги
+    // 6️⃣ Рендерим заголовки шагов (визуальные табы в прогресс-баре)
     const stepsWrapper = document.querySelector('#acf-progress-steps');
     const progressBar = document.querySelector('#acf-progress-bar');
 
@@ -225,16 +254,12 @@ document.addEventListener('DOMContentLoaded', function () {
         div.textContent = title;
         div.dataset.step = index;
         div.style.cursor = 'pointer';
-        stepsWrapper.appendChild(div);
+        stepsWrapper?.appendChild(div);
     });
 
     let currentStep = 0;
 
-
-
-
-
-    // ### 4. ✅ Подсчёт заполненных полей (прогресс%)
+    // 7️⃣ Функция: Обновляем прогрессбар
     function updateProgress() {
         const allInputs = steps.flatMap(group =>
             group.flatMap(field =>
@@ -244,34 +269,76 @@ document.addEventListener('DOMContentLoaded', function () {
             )
         );
 
-    const filledCount = allInputs.filter(input => {
-        if (input.type === 'checkbox' || input.type === 'radio') {
-            return input.checked;
+        const filledCount = allInputs.filter(input => {
+            if (input.type === 'checkbox' || input.type === 'radio') {
+                return input.checked;
+            }
+            return input.value.trim().length > 0;
+        }).length;
+
+        const percent = Math.round((filledCount / allInputs.length) * 100) || 0;
+
+        progressBar.style.width = percent + '%';
+        progressBar.setAttribute('aria-valuenow', percent);
+
+        document.querySelectorAll('.progress-nav-item').forEach((item, i) => {
+            const isActive = i === currentStep;
+            item.classList.toggle('text-white', isActive);
+            item.classList.toggle('text-muted', !isActive);
+            item.classList.toggle('fw-bold', isActive);
+        });
+    }
+
+    // 8️⃣ Функция: Показываем шаг формы по номеру
+    function showStep(index) {
+        currentStep = index;
+
+        // Показываем поля текущего шага, скрываем остальные
+        steps.forEach((group, i) => {
+            group.forEach(el => {
+                el.style.display = i === index ? 'block' : 'none';
+            });
+        });
+
+        // Показываем предпросмотр
+        const previewWrapper = document.getElementById('doc-preview-wrapper');
+        previewWrapper?.classList.remove('d-none');
+
+        // Обновляем предпросмотр
+        updatePreviewFields();
+
+        // Прячем/показываем форму и блок оплаты
+        const formWrapper = document.getElementById('acf-form-wrapper');
+        const paymentWrapper = document.getElementById('payment-wrapper');
+
+        if (index === steps.length) {
+            formWrapper?.classList.add('d-none');
+            paymentWrapper?.classList.remove('d-none');
+        } else {
+            formWrapper?.classList.remove('d-none');
+            paymentWrapper?.classList.add('d-none');
         }
-        return input.value.trim().length > 0;
-    }).length;
 
-    const percent = Math.round((filledCount / allInputs.length) * 100) || 0;
-    progressBar.style.width = percent + '%';
-    progressBar.setAttribute('aria-valuenow', percent);
+        // Обновляем прогресс
+        updateProgress();
 
-    document.querySelectorAll('.progress-nav-item').forEach((item, i) => {
-        const isActive = i === currentStep;
-        item.classList.toggle('text-white', isActive);
-        item.classList.toggle('text-muted', !isActive);
-        item.classList.toggle('fw-bold', isActive);
-    });
+        // Обновления при изменениях в форме
+        form.querySelectorAll('input, textarea, select').forEach(input => {
+            input.addEventListener('input', () => {
+                updateProgress();
+                updatePreviewFields();
+            });
+
+            input.addEventListener('change', () => {
+                updateProgress();
+                updatePreviewFields();
+            });
+        });
+
+        renderNav(index);
     }
 
-
-
-
-
-    function clearNav() {
-        form.querySelectorAll('.acf-nav').forEach(nav => nav.remove());
-    }
-
-    // ### 5. ✅ Навигационные кнопки (назад, далее, сохранить)
+    // 9️⃣ Функция: Навигационные кнопки (← Назад, Далее →)
     function renderNav(index) {
         const nav = document.createElement('div');
         nav.className = 'acf-nav d-flex justify-content-between mt-5';
@@ -299,100 +366,20 @@ document.addEventListener('DOMContentLoaded', function () {
             finishBtn.type = 'button';
             finishBtn.className = 'btn btn-success ms-auto';
             finishBtn.textContent = 'Continue to Download →';
-            finishBtn.onclick = () => showStep(steps.length); // финальный шаг
+            finishBtn.onclick = () => showStep(steps.length);
             nav.appendChild(finishBtn);
         }
 
+        clearNav();
         fieldsWrapper.appendChild(nav);
     }
 
+    // 1️⃣0️⃣ Очищаем старую навигацию перед созданием новой
+    function clearNav() {
+        form.querySelectorAll('.acf-nav').forEach(nav => nav.remove());
+    }
 
-            // ### 6. ✅ Скрытие/показ блоков формы и оплаты
-            function showStep(index) {
-                currentStep = index;
-
-                // Показываем нужную группу полей
-                steps.forEach((group, i) => {
-                    group.forEach(el => {
-                        el.style.display = i === index ? 'block' : 'none';
-                    });
-                });
-
-                // Превью всегда видно
-                const previewWrapper = document.getElementById('doc-preview-wrapper');
-                previewWrapper?.classList.remove('d-none');
-                updatePreviewFields();
-
-                // Переключаем форму и оплату
-                const formWrapper = document.getElementById('acf-form-wrapper');
-                const paymentWrapper = document.getElementById('payment-wrapper');
-
-                if (index === steps.length) {
-                    formWrapper?.classList.add('d-none');
-                    paymentWrapper?.classList.remove('d-none');
-                } else {
-                    formWrapper?.classList.remove('d-none');
-                    paymentWrapper?.classList.add('d-none');
-                }
-
-                // Обновим прогресс
-                updateProgress(index);
-
-                // Привязка live-обновления
-                // ### 7. ✅ Live-обновление предпросмотра при вводе
-                form.querySelectorAll('input, textarea, select').forEach(input => {
-                    input.addEventListener('input', () => {
-                        updateProgress();
-                        updatePreviewFields();
-                    });
-
-                    input.addEventListener('change', () => {
-                        updateProgress();
-                        updatePreviewFields();
-                    });
-                });
-
-                // Получаем ID созданного документа из скрытого поля
-                const savedPostId = document.querySelector('#acf-saved-post-id')?.value;
-                console.log('📌 Сохранённый пост:', savedPostId);
-
-                clearNav();
-                renderNav(index);
-            }
-
-
-
-
-        // ### 3. ✅ Формирование предпросмотра документа (preview)
-
-            function updatePreviewFields() {
-                document.querySelectorAll('.doc-field').forEach(field => {
-                    const name = field.dataset.source;
-                    const input = form.querySelector(`[name="${name}"]`);
-
-                    if (input) {
-                        const value = input.value?.trim() || '—';
-                        field.textContent = value;
-                    }
-                });
-            }
-
-
-                         // Привязка live-обновлений на поля
-                        form.querySelectorAll('input, textarea, select').forEach(input => {
-                            input.addEventListener('input', () => {
-                                updateProgress();
-                                updatePreviewFields();
-                            });
-
-                            input.addEventListener('change', () => {
-                                updateProgress();
-                                updatePreviewFields();
-                            });
-                        });   
-
-
-    // Включаем кликабельность шагов
+    // 🔁 Позволяет кликать по шагам прогресса
     document.querySelectorAll('.progress-nav-item').forEach(item => {
         item.addEventListener('click', function () {
             const stepIndex = parseInt(this.dataset.step);
@@ -402,12 +389,12 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-
+    // ✅ Главная функция: заполняет предпросмотр
     function updatePreviewFields() {
-        const wrapper = document.getElementById('doc-preview-content');
+        const wrapper = document.getElementById('doc-preview-content'); // 💡 этот ID должен быть в doc-preview.php
         if (!wrapper) return;
 
-        wrapper.innerHTML = ''; // Очищаем перед генерацией
+        wrapper.innerHTML = ''; // Очищаем содержимое
 
         [...form.querySelectorAll('.acf-fields > .acf-field')].forEach(field => {
             const type = field.dataset.type;
@@ -435,38 +422,34 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-
-
-
-
-
-
-
-    // ### 10. ✅ Инициализация шага №0
+    // 1️⃣1️⃣ Запускаем первый шаг
     showStep(0);
-    updatePreviewFields(); // 👈 вот это добавь
-  
+    updatePreviewFields();
 });
 </script>
+
 
 <!-- Скрипты которые работают с PDF документом -->
 <script>
     // ### 1. ✅ Авто-масштаб предпросмотра PDF
-    function scalePreviewToFit() {
-        const preview = document.querySelector('.doc-page');
-        const container = document.querySelector('.doc-preview-container');
+    function scaleBootstrapPreview() {
+        const preview = document.querySelector('.transform-scale');
+        const container = preview?.parentElement;
+
         if (!preview || !container) return;
 
-        const originalWidth = 210 * 3.7795; // A4 в пикселях ≈ 794px
+        const originalWidth = 794; // A4 в px при 96dpi
         const containerWidth = container.clientWidth;
+
+        if (containerWidth === 0) return;
 
         const scale = containerWidth / originalWidth;
         preview.style.transform = `scale(${scale})`;
+        preview.style.transformOrigin = 'top left';
     }
 
-    // Запуск при загрузке и изменении окна
-    window.addEventListener('load', scalePreviewToFit);
-    window.addEventListener('resize', scalePreviewToFit);
+    window.addEventListener('load', () => setTimeout(scaleBootstrapPreview, 100));
+    window.addEventListener('resize', scaleBootstrapPreview);
 </script>
 
 <script>
@@ -474,20 +457,53 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 
 <script>
-// ### 9. ✅ Ручной submit формы по кнопке
-document.addEventListener('DOMContentLoaded', function () {
-    const saveBtn = document.getElementById('save-project');
-    const form = document.getElementById('json-form');
+// // ### 9. ✅ Ручной submit формы по кнопке
+// document.addEventListener('DOMContentLoaded', function () {
+//     const saveBtn = document.getElementById('save-project');
+//     const form = document.getElementById('json-form');
 
-    if (saveBtn && form) {
-        saveBtn.addEventListener('click', function (e) {
-            e.preventDefault();
-            form.requestSubmit(); // 👉 отправка формы
-        });
-    }
-});
+//     if (saveBtn && form) {
+//         saveBtn.addEventListener('click', function (e) {
+//             e.preventDefault();
+//             form.requestSubmit(); // 👉 отправка формы
+//         });
+//     }
+// });
 </script>
 
 
+
+
+<?php
+// Проверим — загружены ли нужные скрипты и стили
+echo '<div style="padding:15px;background:#eef;border:1px solid #99f;margin-top:40px;">';
+echo '<strong>Debug info (Date Picker):</strong><br>';
+
+if (wp_script_is('jquery-ui-datepicker', 'enqueued')) {
+    echo '✅ jQuery UI Datepicker JS подключен<br>';
+} else {
+    echo '❌ jQuery UI Datepicker JS <b>не</b> подключен<br>';
+}
+
+if (wp_style_is('jquery-ui-style', 'enqueued')) {
+    echo '✅ jQuery UI стили подключены<br>';
+} else {
+    echo '❌ jQuery UI стили <b>не</b> подключены<br>';
+}
+
+if (wp_script_is('acf-input', 'enqueued')) {
+    echo '✅ ACF Input JS подключен<br>';
+} else {
+    echo '❌ ACF Input JS <b>не</b> подключен<br>';
+}
+
+if (wp_style_is('acf-input', 'enqueued')) {
+    echo '✅ ACF Input CSS подключен<br>';
+} else {
+    echo '❌ ACF Input CSS <b>не</b> подключен<br>';
+}
+
+echo '</div>';
+?>
 
 <?php get_footer(); ?>

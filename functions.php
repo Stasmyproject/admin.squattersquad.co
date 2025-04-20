@@ -1362,24 +1362,31 @@ function set_document_title_and_type($post_id) {
 
 // подключаем скрипты ACF
 add_action('wp_enqueue_scripts', function () {
-    if (is_page_template('page-universal-form.php')) { // ← имя шаблона
-        wp_enqueue_script('acf-input'); // ACF JS
-        wp_enqueue_style('acf-input');  // ACF CSS
+    // Убедимся, что мы на нужной странице (универсальная форма)
+    if (is_page_template('template-acf-dynamic-form.php') || is_page_template('page-universal-form.php')) {
 
-        // Важное дополнение для Date Picker:
+        // Подключаем jQuery UI Datepicker
         wp_enqueue_script('jquery-ui-datepicker');
+
+        // Стили jQuery UI
         wp_enqueue_style('jquery-ui-style', '//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css');
+
+        // Подключаем ACF JS (если требуется)
+        wp_enqueue_script('acf-input');
+        wp_enqueue_style('acf-input');
+
+        // Инициализируем datepicker (необходим кастомный код)
+        wp_add_inline_script('jquery-ui-datepicker', "
+            jQuery(document).ready(function($) {
+                $('input.hasDatepicker').datepicker({
+                    dateFormat: 'dd/mm/yy'
+                });
+            });
+        ");
     }
 });
 
 
-// подключаем скрипты ACF
-add_action('wp_enqueue_scripts', function() {
-    if (is_page_template('template-acf-dynamic-form.php')) {
-        // Подключаем скрипты и стили ACF, включая datepicker
-        acf_enqueue_scripts();
-    }
-});
 
 
 
@@ -1477,7 +1484,37 @@ add_action('acf/save_post', function($post_id) {
 }, 20);
 
 
+// РЕШЕНИЕ: подключение стилей по-человечески
+add_action('wp_enqueue_scripts', function () {
+    if (is_page_template('page-universal-form.php')) {
 
+        // ACF скрипты
+        acf_enqueue_scripts();
+
+        // jQuery UI Datepicker
+        wp_enqueue_script('jquery-ui-datepicker');
+
+        // 💡 Принудительное подключение стилей jQuery UI
+        wp_register_style(
+            'jquery-ui-style',
+            'https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/themes/smoothness/jquery-ui.min.css'
+        );
+        wp_enqueue_style('jquery-ui-style');
+    }
+});
+
+// РЕШЕНИЕ: локальное подключение jquery-ui.min.css календаря подключение стилей по-человечески
+wp_enqueue_style(
+    'jquery-ui-style',
+    get_template_directory_uri() . '/assets/css/jquery-ui.min.css'
+);
+
+// меняем тему календаря
+function enqueue_better_jquery_ui_style() {
+    // Например: Cupertino
+    wp_enqueue_style('jquery-ui-theme', 'https://code.jquery.com/ui/1.13.2/themes/cupertino/jquery-ui.css');
+}
+add_action('wp_enqueue_scripts', 'enqueue_better_jquery_ui_style');
 
 
 
