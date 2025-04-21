@@ -18,17 +18,10 @@ error_reporting(E_ALL);
 // Проверка — выводим маркер загрузки шаблона
 echo '<div style="padding:10px;background:#f0f0f0;border-bottom:1px solid #ccc;">🔍 Шаблон ACF Dynamic Form загружен</div>';
 
-
-
-
 // Получаем текущий slug страницы
 global $post;
 $slug = get_post_field('post_name', $post->ID);
 $form_group_key = 'group_' . str_replace('-', '_', $slug);
-
-
-
-
 
 // Проверка: существует ли такая группа в ACF (по ключу)
 if (!acf_get_field_group($form_group_key)) {
@@ -70,209 +63,131 @@ acf.addAction('ready_field', function(field){
             <?php //endif; ?>
 
 
-                <!--begin::Wrapper-->
-                <div class="app-wrapper flex-column flex-row-fluid" id="kt_app_wrapper">
-                    <!--begin::Main-->
-                    <div class="app-main flex-column flex-row-fluid" id="kt_app_main">
+            <!--begin::Wrapper-->
+            <div class="app-wrapper flex-column flex-row-fluid" id="kt_app_wrapper">
+                <!--begin::Main-->
+                <div class="app-main flex-column flex-row-fluid" id="kt_app_main">
+
+                    <!--begin::Content-->
+                      <!-- 🔥 Контентная часть -->
+                        <!-- 🔵 BEGIN: прогресс бар FU -->
+                        <!-- 🔵 BEGIN: FULL-WIDTH PROGRESS HEADER -->
+                        <div id="acf-progress-wrapper" style="background-color: #044583;margin-top: -40px;" class=" py-10 mb-5">
+                            <div class="app-container container-xxl">
+                                <h2 class="mb-15 text-white text-uppercase"><?php echo str_replace([' Form', ' form'], '', get_the_title()); ?></h2>
+                                <div class="d-flex flex-column gap-4">
+                                    <!-- Секции формы (метки шагов) -->
+                                    <div id="acf-progress-steps" class="d-flex justify-content-between">
+                                        <!-- Метки шагов будут подставлены через JS -->
+                                    </div>
+
+                                    <!-- Прогресс-бар -->
+                                    <div class="progress progress-sm w-100" style="height: 6px;">
+                                        <div class="progress-bar bg-success" id="acf-progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- 🔵 END -->
+                        <!-- 🔵 END: прогресс бар-->           
 
 
 
-                            <!--begin::Content-->
-                              <!-- 🔥 Контентная часть -->
-                                <!-- 🔵 BEGIN: прогресс бар FU -->
-                                <!-- 🔵 BEGIN: FULL-WIDTH PROGRESS HEADER -->
-                                <div id="acf-progress-wrapper" style="background-color: #044583;margin-top: -40px;" class=" py-10 mb-5">
-                                    <div class="app-container container-xxl">
-                                        <h2 class="mb-15 text-white text-uppercase"><?php echo str_replace([' Form', ' form'], '', get_the_title()); ?></h2>
-                                        <div class="d-flex flex-column gap-4">
-                                            <!-- Секции формы (метки шагов) -->
-                                            <div id="acf-progress-steps" class="d-flex justify-content-between">
-                                                <!-- Метки шагов будут подставлены через JS -->
-                                            </div>
+                        <!-- 🔲 BEGIN: CONTENT AREA -->
+                        <div id="kt_app_content" class="app-content flex-column-fluid">
+                            <div id="kt_app_content_container" class="app-container container-xxl">
+                                <div class="d-flex flex-column flex-lg-row gap-5">
 
-                                            <!-- Прогресс-бар -->
-                                            <div class="progress progress-sm w-100" style="height: 6px;">
-                                                <div class="progress-bar bg-success" id="acf-progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                    <!-- 🔵 Форма слева -->
+                                    <div class="flex-grow-1 col-12 col-lg-4" style="min-width: 0;">
+                                         <div id="acf-form-wrapper">
+                                            <?php
+                                            $acf_group = acf_get_field_group($form_group_key);
+                                            // echo '<div style="padding:10px;background:#d9edf7;border:1px solid #31708f;">';
+                                            // echo '<strong>📋 Используем ACF форму:</strong><br>';
+                                            // echo 'Группа: <code>' . $form_group_key . '</code><br>';
+                                            // echo '</div>';
+                                            // echo "<div style='background: #efe; padding: 10px;'>🧪 Используем группу: <code>$form_group_key</code></div>";
+
+                                            // echo "<div style='background:#eef;padding:10px;margin:10px 0;'>🛠️ DEBUG:<br>";
+                                            // echo "🔑 Slug: <code>$slug</code><br>";
+                                            // echo "🧩 Group Key: <code>$form_group_key</code><br>";
+                                            // if ($acf_group) {
+                                            //     echo "✅ ACF группа найдена: <strong>{$acf_group['title']}</strong>";
+                                            // } else {
+                                            //     echo "❌ ACF группа НЕ найдена";
+                                            // }
+                                            // echo "</div>";
+
+
+                                            acf_form([
+                                                'post_id'       => 'new_post',
+                                                'new_post'      => [
+                                                    'post_type'   => 'document',
+                                                    'post_status' => 'publish'
+                                                ],
+                                                'field_groups' => [$form_group_key], // Замени на свой ACF ключ
+
+                                                'submit_value'  => 'Сохранить документ',
+
+                                                'return' => add_query_arg('post_id', '%post_id%', home_url('/document-saved')),
+                                                'form_attributes' => ['id' => 'acf-form']
+                                            ]);
+                                            ?>
+                                         </div>
+                                        <div id="payment-wrapper" class="d-none">
+                                            <?php if (!empty($_GET['post_id'])): ?>
+                                                <input type="hidden" id="acf-saved-post-id" value="<?php echo esc_attr($_GET['post_id']); ?>">
+                                            <?php endif; ?>
+                                            <!-- 💳 Оплата -->
+                                            <div class="bg-light p-5 rounded shadow-sm">
+                                                <h3 class="fw-bold mb-4">Your document is ready to download!</h3>
+                                                <div class="fs-1 fw-bold text-success mb-3">$1.95 USD</div>
+
+                                                <!-- 👇 Кнопка скачать (оплатить) -->
+                                                <button type="button" class="btn btn-success w-100 mb-3" id="save-project">
+                                                    Сохранить и скачать PDF
+                                                </button>
+
+                                                <div class="bg-white border rounded p-4">
+                                                    <p class="mb-2"><strong>All your benefits:</strong></p>
+                                                    <ul class="mb-0">
+                                                        <li>✔ Instant access to legal library</li>
+                                                        <li>✔ Edit & download unlimited documents</li>
+                                                        <li>✔ Cancel any time</li>
+                                                        <li>✔ Contact: +1 XXX XXX XXXX</li>
+                                                    </ul>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
+
+                                    <!-- 🟢 Превью справа -->
+                                    <div class=" col-12 col-lg-8" id="doc-preview-wrapper">
+                                        <div class=" dynamic-scale mx-auto" id="doc-print-content">
+                                            <?php //get_template_part('acf-templates/base-template'); ?>
+
+                                            <?php 
+                                                $slug = get_post_field('post_name', $post->ID);
+                                                $slug = sanitize_title($slug);
+                                                $slug = str_replace('-', '_', $slug); // 🧼 ← самое важное
+
+                                                $preview_template_path = get_template_directory() . '/acf-templates/group_' . $slug . '.php';
+
+                                                if (file_exists($preview_template_path)) {
+                                                    include $preview_template_path;
+                                                } else {
+                                                    echo "<div class='alert alert-warning'>⚠️ Превью-шаблон не найден: <code>acf-templates/group_{$slug}.php</code></div>";
+                                                }
+                                            ?>
+                                        </div>
+                                    </div>
+
                                 </div>
-                                <!-- 🔵 END -->
-                                <!-- 🔵 END: прогресс бар-->           
 
-
-
-
-
-
-<!-- 🔲 BEGIN: CONTENT AREA -->
-<div id="kt_app_content" class="app-content flex-column-fluid">
-    <div id="kt_app_content_container" class="app-container container-xxl">
-
-
-
-        <div class="d-flex flex-column flex-lg-row gap-5">
-
-            <!-- 🔵 Форма слева -->
-
-            <div class="flex-grow-1 col-12 col-lg-6" style="min-width: 0;">
-                 <div id="acf-form-wrapper">
-<?php
-$acf_group = acf_get_field_group($form_group_key);
-echo '<div style="padding:10px;background:#d9edf7;border:1px solid #31708f;">';
-echo '<strong>📋 Используем ACF форму:</strong><br>';
-echo 'Группа: <code>' . $form_group_key . '</code><br>';
-echo '</div>';
-echo "<div style='background: #efe; padding: 10px;'>🧪 Используем группу: <code>$form_group_key</code></div>";
-
-echo "<div style='background:#eef;padding:10px;margin:10px 0;'>🛠️ DEBUG:<br>";
-echo "🔑 Slug: <code>$slug</code><br>";
-echo "🧩 Group Key: <code>$form_group_key</code><br>";
-if ($acf_group) {
-    echo "✅ ACF группа найдена: <strong>{$acf_group['title']}</strong>";
-} else {
-    echo "❌ ACF группа НЕ найдена";
-}
-echo "</div>";
-
-
-acf_form([
-    'post_id'       => 'new_post',
-    'new_post'      => [
-        'post_type'   => 'document',
-        'post_status' => 'publish'
-    ],
-    'field_groups' => [$form_group_key], // Замени на свой ACF ключ
-
-    'submit_value'  => 'Сохранить документ',
-
-    'return' => add_query_arg('post_id', '%post_id%', home_url('/document-saved')),
-    'form_attributes' => ['id' => 'acf-form']
-]);
-
-                     
-
-// if (!acf_get_field_group($form_group_key)) {
-//     echo '<p class="alert alert-warning">❌ Группа полей ACF не найдена: ' . esc_html($form_group_key) . '</p>';
-//     get_footer();
-//     exit;
-// }  
-                                       
-
-
-                ?>
-
-
-
-
-
-         </div>
-
-                <div id="payment-wrapper" class="d-none">
-                    <?php if (!empty($_GET['post_id'])): ?>
-                        <input type="hidden" id="acf-saved-post-id" value="<?php echo esc_attr($_GET['post_id']); ?>">
-                    <?php endif; ?>
-                    <!-- 💳 Оплата -->
-                    <div class="bg-light p-5 rounded shadow-sm">
-                        <h3 class="fw-bold mb-4">Your document is ready to download!</h3>
-                        <div class="fs-1 fw-bold text-success mb-3">$1.95 USD</div>
-
-                        
-                        <!-- 👇 Кнопка скачать (оплатить) -->
-                        <button type="button" class="btn btn-success w-100 mb-3" id="save-project">
-                            Сохранить и скачать PDF
-                        </button>
-
-
-
-
-
-
-                        <div class="bg-white border rounded p-4">
-                            <p class="mb-2"><strong>All your benefits:</strong></p>
-                            <ul class="mb-0">
-                                <li>✔ Instant access to legal library</li>
-                                <li>✔ Edit & download unlimited documents</li>
-                                <li>✔ Cancel any time</li>
-                                <li>✔ Contact: +1 XXX XXX XXXX</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-
-
-
-
-            </div>
-
-            <!-- 🟢 Превью справа -->
-            <div class=" col-12 col-lg-6" id="doc-preview-wrapper">
-                <div class=" dynamic-scale mx-auto" id="doc-print-content">
-                    <?php //get_template_part('acf-templates/base-template'); ?>
-
-                    <?php 
-                        $slug = get_post_field('post_name', $post->ID);
-                        $slug = sanitize_title($slug);
-                        $slug = str_replace('-', '_', $slug); // 🧼 ← самое важное
-
-                        $preview_template_path = get_template_directory() . '/acf-templates/group_' . $slug . '.php';
-
-                        if (file_exists($preview_template_path)) {
-                            include $preview_template_path;
-                        } else {
-                            echo "<div class='alert alert-warning'>⚠️ Превью-шаблон не найден: <code>acf-templates/group_{$slug}.php</code></div>";
-                        }
-
-
-                    ?>
-                </div>
-            </div>
-
-        </div>
-
-    </div>
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                        <!--begin::Footer-->
-                        <div id="kt_app_footer" class="app-footer">
-                            <!--begin::Footer container-->
-                            <div class="app-container container-xxl d-flex flex-column flex-md-row flex-center flex-md-stack py-3">
-                                <!--begin::Copyright-->
-                                <div class="text-gray-900 order-2 order-md-1">
-                                    <span class="text-muted fw-semibold me-1">2023&copy;</span>
-                                    <a href="https://keenthemes.com" target="_blank" class="text-gray-800 text-hover-primary">Keenthemes</a>
-                                </div>
-                                <!--end::Copyright-->
-                                <!--begin::Menu-->
-                                <ul class="menu menu-gray-600 menu-hover-primary fw-semibold order-1">
-                                    <li class="menu-item">
-                                        <a href="https://keenthemes.com" target="_blank" class="menu-link px-2">About</a>
-                                    </li>
-                                    <li class="menu-item">
-                                        <a href="https://devs.keenthemes.com" target="_blank" class="menu-link px-2">Support</a>
-                                    </li>
-                                    <li class="menu-item">
-                                        <a href="https://1.envato.market/EA4JP" target="_blank" class="menu-link px-2">Purchase</a>
-                                    </li>
-                                </ul>
-                                <!--end::Menu-->
                             </div>
-                            <!--end::Footer container-->
                         </div>
-                        <!--end::Footer-->
+
                     </div>
                     <!--end:::Main-->
                 </div>
@@ -281,6 +196,7 @@ acf_form([
             <!--end::Page-->
         </div>
         <!--end::App-->
+
 <?php get_footer(); ?>
 
 

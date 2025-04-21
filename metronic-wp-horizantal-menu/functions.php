@@ -1407,24 +1407,7 @@ add_action('wp_enqueue_scripts', function () {
 //         wp_die('❌ Ошибка: Не передан ID документа');
 //     }
 
-//     // Подключаем библиотеку mPDF
-//     require_once get_template_directory() . '/vendor/autoload.php';
 
-//     // ✅ Создаём экземпляр с отступом снизу
-//     $mpdf = new \Mpdf\Mpdf([
-//         'margin_bottom' => 30,
-//     ]);
-
-//     // 🔽 Добавляем логотип в футер
-//     $logo_url = get_template_directory_uri() . '/assets/img/logo-footer.png';
-//     $footerHTML = '
-//         <div style="width: 100%; height: 30px; position: relative;">
-//             <div style="position: absolute; bottom: 0; left: 0;">
-//                 <img src="' . $logo_url . '" style="height: 30px;" />
-//             </div>
-//         </div>
-//     ';
-//     $mpdf->SetHTMLFooter($footerHTML);
 
 //     // Получаем все поля формы
 //     $fields = get_fields($doc_id);
@@ -1555,12 +1538,19 @@ function handle_generate_pdf() {
         wp_die('❌ Invalid document');
     }
 
-    // Подключаем autoload
+    
+    // Подключаем библиотеку mPDF
     if (!class_exists('\Mpdf\Mpdf')) {
         require_once get_template_directory() . '/vendor/autoload.php';
     }
 
     ob_start();
+
+
+
+
+
+
 
     // ✅ Просто получаем готовый slug
     $acf_template_slug = get_post_meta($post_id, 'acf_template_slug', true);
@@ -1592,6 +1582,24 @@ function handle_generate_pdf() {
             'margin_bottom' => 20,
         ]);
 
+        // 💡💡💡💡💡💡💡💡💡💡💡
+        // ✅ Создаём экземпляр с отступом снизу
+
+        $mpdf->showImageErrors = true;
+
+        // 🔽 Добавляем логотип в футер
+        $logo_url = get_template_directory_uri() . '/assets/img/logo-footer.png';
+        $footerHTML = '
+            <div style="width: 100%; height: 30px; position: relative;">
+                <div style="position: absolute; bottom: 0; left: 0;">
+                    <img src="' . $logo_url . '" style="height: 30px;" />
+                </div>
+            </div>
+        ';
+        $mpdf->SetHTMLFooter($footerHTML);
+        // 💡💡💡💡💡💡💡💡💡💡💡
+
+
         $mpdf->WriteHTML($html);
 
         $filename = "{$template_file}-{$post_id}.pdf";
@@ -1610,13 +1618,7 @@ function handle_generate_pdf() {
 
 
 
-
-
-
-
-
-
-// Отключам спам фильтры для ACF временно !!!!!!!!!!!!!!!!!!!
+// 💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡Отключам спам фильтры для ACF временно !!!!!!!!!!!!!!!!!!!
 add_filter('acf/validate_form', function($validate) {
     $validate['honeypot'] = false; // отключаем honeypot
     $validate['spam'] = false;     // отключаем антиспам
