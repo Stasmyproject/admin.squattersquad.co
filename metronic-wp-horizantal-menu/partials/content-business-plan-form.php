@@ -25,61 +25,77 @@ get_header();
 </div>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    const steps = document.querySelectorAll('.acf-tab-group');
-    const groups = document.querySelectorAll('.acf-fields');
-    const nav = document.createElement('div');
-    nav.className = 'acf-nav d-flex justify-content-between mt-4';
+    const tabs = document.querySelectorAll('.acf-tab-wrap .acf-tab-button');
+    const fieldGroups = document.querySelectorAll('.acf-field-tab');
+    const form = document.querySelector('#json-form') || document.querySelector('.acf-form form');
 
+    if (!tabs.length || !form) return;
+
+    const fieldsWrapper = form.querySelector('.acf-fields');
+
+    const steps = [];
     let currentStep = 0;
 
+    // Скрыть стандартную кнопку ACF
+    const submitBtn = form.querySelector('input[type=submit]');
+    if (submitBtn) submitBtn.style.display = 'none';
+
+    // Найти все блоки полей после табов
+    const groups = Array.from(fieldsWrapper.children).reduce((acc, el) => {
+        if (el.classList.contains('acf-field-tab')) {
+            acc.push([]);
+        } else if (acc.length) {
+            acc[acc.length - 1].push(el);
+        }
+        return acc;
+    }, []);
+
+    function renderNavigation(stepIndex) {
+        const navWrapper = document.createElement('div');
+        navWrapper.className = 'acf-nav d-flex justify-content-between mt-4';
+
+        if (stepIndex > 0) {
+            const prevBtn = document.createElement('button');
+            prevBtn.type = 'button';
+            prevBtn.className = 'btn btn-secondary';
+            prevBtn.textContent = 'Назад';
+            prevBtn.onclick = () => showStep(stepIndex - 1);
+            navWrapper.appendChild(prevBtn);
+        }
+
+        if (stepIndex < groups.length - 1) {
+            const nextBtn = document.createElement('button');
+            nextBtn.type = 'button';
+            nextBtn.className = 'btn btn-primary ms-auto';
+            nextBtn.textContent = 'Далее';
+            nextBtn.onclick = () => showStep(stepIndex + 1);
+            navWrapper.appendChild(nextBtn);
+        } else if (submitBtn) {
+            submitBtn.style.display = 'inline-block';
+            navWrapper.appendChild(submitBtn);
+        }
+
+        groups[stepIndex][groups[stepIndex].length - 1].after(navWrapper);
+    }
+
     function showStep(index) {
+        currentStep = index;
+
         groups.forEach((group, i) => {
-            group.style.display = (i === index) ? 'block' : 'none';
+            group.forEach(el => {
+                el.style.display = i === index ? 'block' : 'none';
+            });
         });
 
-        // Обновить навигацию
-        nav.innerHTML = '';
-        if (index > 0) {
-            const prevBtn = document.createElement('button');
-            prevBtn.textContent = 'Назад';
-            prevBtn.className = 'btn btn-secondary';
-            prevBtn.onclick = () => {
-                currentStep--;
-                showStep(currentStep);
-            };
-            nav.appendChild(prevBtn);
-        }
+        // Удалить старые кнопки навигации
+        const oldNavs = form.querySelectorAll('.acf-nav');
+        oldNavs.forEach(nav => nav.remove());
 
-        if (index < groups.length - 1) {
-            const nextBtn = document.createElement('button');
-            nextBtn.textContent = 'Далее';
-            nextBtn.className = 'btn btn-primary ms-auto';
-            nextBtn.onclick = () => {
-                currentStep++;
-                showStep(currentStep);
-            };
-            nav.appendChild(nextBtn);
-        } else {
-            const submit = document.querySelector('#json-form input[type=submit]');
-            if (submit) {
-                submit.style.display = 'inline-block';
-            }
-        }
-
-        // Добавляем навигацию к последнему шагу
-        groups[index].appendChild(nav);
+        renderNavigation(index);
     }
 
-    if (groups.length > 0) {
-        // Прячем кнопку отправки
-        const submit = document.querySelector('#json-form input[type=submit]');
-        if (submit) {
-            submit.style.display = 'none';
-        }
-
-        // Скрыть все группы кроме первой
-        showStep(currentStep);
-    }
+    // Инициализация
+    showStep(0);
 });
 </script>
 

@@ -2,8 +2,11 @@
 /**
  * Template Name: ACF Dynamic Form
  */
-acf_form_head();
+acf_form_head(); // 👈 ЭТО ДОЛЖНО БЫТЬ ПЕРВЫМ!
 get_header();
+
+// переменная для вывода
+$doc_id = get_the_ID();
 
 // Определим авторизацию
 $is_logged_in = is_user_logged_in();
@@ -61,8 +64,6 @@ if (!acf_get_field_group($form_group_key)) {
 
                             <!--begin::Content-->
                               <!-- 🔥 Контентная часть -->
-
-
                                 <!-- 🔵 BEGIN: прогресс бар FU -->
                                 <!-- 🔵 BEGIN: FULL-WIDTH PROGRESS HEADER -->
                                 <div id="acf-progress-wrapper" style="background-color: #044583;margin-top: -40px;" class=" py-10 mb-5">
@@ -82,7 +83,6 @@ if (!acf_get_field_group($form_group_key)) {
                                     </div>
                                 </div>
                                 <!-- 🔵 END -->
-
                                 <!-- 🔵 END: прогресс бар-->           
 
 
@@ -99,26 +99,72 @@ if (!acf_get_field_group($form_group_key)) {
         <div class="d-flex flex-column flex-lg-row gap-5">
 
             <!-- 🔵 Форма слева -->
+
             <div class="flex-grow-1 col-12 col-lg-6" style="min-width: 0;">
-                <?php
-                acf_form([
-                    'post_id'       => 'new_post',
-                    'new_post'      => [
-                        'post_type'   => 'document',
-                        'post_status' => 'publish'
-                    ],
-                    'field_groups'  => [$form_group_key],
-                    'submit_value'  => 'Сохранить',
-                    'return'        => home_url('/kabinet/'),
-                    'honeypot'      => false,
-                    'form_attributes' => ['id' => 'json-form']
-                ]);
+                 <div id="acf-form-wrapper">
+                    <?php
+acf_form([
+    'post_id'       => 'new_post',
+    'new_post'      => [
+        'post_type'   => 'document',
+        'post_status' => 'publish'
+    ],
+    'field_groups'  => ['group_business_plan_form'],
+    'submit_value'  => 'Сохранить документ',
+    'return' => add_query_arg('post_id', '%post_id%', home_url('/document-saved')),
+    'form_attributes' => [
+        'id' => 'json-form'
+    ]
+]);
+                                       
+
+
                 ?>
+
+
+
+
+
+         </div>
+
+                <div id="payment-wrapper" class="d-none">
+                    <?php if (!empty($_GET['post_id'])): ?>
+                        <input type="hidden" id="acf-saved-post-id" value="<?php echo esc_attr($_GET['post_id']); ?>">
+                    <?php endif; ?>
+                    <!-- 💳 Оплата -->
+                    <div class="bg-light p-5 rounded shadow-sm">
+                        <h3 class="fw-bold mb-4">Your document is ready to download!</h3>
+                        <div class="fs-1 fw-bold text-success mb-3">$1.95 USD</div>
+
+                        
+                        <!-- 👇 Кнопка скачать (оплатить) -->
+                        <button type="submit" class="btn btn-success w-100 mb-3" id="save-project">
+                            Сохранить и скачать PDF
+                        </button>
+
+
+
+
+                        <div class="bg-white border rounded p-4">
+                            <p class="mb-2"><strong>All your benefits:</strong></p>
+                            <ul class="mb-0">
+                                <li>✔ Instant access to legal library</li>
+                                <li>✔ Edit & download unlimited documents</li>
+                                <li>✔ Cancel any time</li>
+                                <li>✔ Contact: +1 XXX XXX XXXX</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+
+
+
             </div>
 
             <!-- 🟢 Превью справа -->
-            <div class=" col-12 col-lg-6">
-                <div class=" dynamic-scale mx-auto">
+            <div class=" col-12 col-lg-6" id="doc-preview-wrapper">
+                <div class=" dynamic-scale mx-auto" id="doc-print-content">
                     <?php get_template_part('template-parts/doc-preview'); ?>
                 </div>
             </div>
@@ -128,67 +174,42 @@ if (!acf_get_field_group($form_group_key)) {
 
 
 
-        <div class="row">
-            <!-- 🔹 Левая колонка — форма -->
-            <div class="col-lg-12">
-                <div class="card card-custom gutter-b">
-                    <div class="card-body">
 
-                                <div class="container my-5">
-                                    <?php
-                                    acf_form([
-                                        'post_id'       => 'new_post',
-                                        'new_post'      => [
-                                            'post_type'   => 'document',
-                                            'post_status' => 'publish'
-                                        ],
-                                        'field_groups'  => [$form_group_key], // <--- теперь динамический ключ!
-                                        'submit_value'  => 'Сохранить бизнес-план',
-                                        'return'        => home_url('/kabinet/'), // редирект после сохранения
-                                        'honeypot' => false, // отключает спам-фильтр ACF
-                                        'form_attributes' => ['id' => 'json-form']
-                                    ]);
-                                    ?>
-                                </div>
+
+
+
+        <!-- ✅ Финальный экран: оплата + предпросмотр -->
+        <div id="final-payment-screen" class="d-none d-flex flex-column flex-lg-row gap-5 mt-10">
+            <!-- Левая колонка: блок оплаты -->
+            <div class="col-12 col-lg-6">
+                <div class="bg-light p-5 rounded shadow-sm h-100">
+                    <h3 class="fw-bold mb-4">Your document is ready to download!</h3>
+                    <div class="fs-1 fw-bold text-success mb-3">$1.95 USD</div>
+                    <button class="btn btn-success w-100 mb-3">Download</button>
+                    <div class="small text-muted text-center mb-3">7-Day Access</div>
+                    <div class="bg-white border rounded p-4">
+                        <p class="mb-2"><strong>All your benefits:</strong></p>
+                        <ul class="mb-0">
+                            <li>✔ Instant access to legal library</li>
+                            <li>✔ Edit & download unlimited documents</li>
+                            <li>✔ Cancel any time</li>
+                            <li>✔ Contact: +1 855 997 0206</li>
+                        </ul>
                     </div>
                 </div>
             </div>
-        </div>  
 
-        <!-- 🔵 Предпросмотр на последнем шаге -->
-        <div id="doc-preview-wrapper" class="d-none mt-10">
-          <div class="row">
-            <!-- Левая колонка: предпросмотр -->
-            <div class="col-lg-8">
-
-                <?php get_template_part('template-parts/doc-preview'); ?>
-              <div class="overflow-auto border rounded p-5" style="height: 700px;">
-                
-              </div>
-            </div>
-
-            <!-- Правая колонка: блок с оплатой -->
-            <div class="col-lg-4 ps-lg-10 mt-10 mt-lg-0">
-              <div class="bg-light p-5 rounded shadow-sm">
-                <h3 class="fw-bold mb-4">Your document is ready to download!</h3>
-                <div class="fs-1 fw-bold text-success mb-3">$1.95 USD</div>
-
-                <button class="btn btn-success w-100 mb-3">Download</button>
-                <div class="small text-muted text-center mb-3">7-Day Access</div>
-
-                <div class="bg-white border rounded p-4">
-                  <p class="mb-2"><strong>All your benefits:</strong></p>
-                  <ul class="mb-0">
-                    <li>✔ Instant access to legal library</li>
-                    <li>✔ Edit & download unlimited documents</li>
-                    <li>✔ Cancel any time</li>
-                    <li>✔ Contact: +1 855 997 0206</li>
-                  </ul>
+            <!-- Правая колонка: предпросмотр -->
+            <div class="col-12 col-lg-6">
+                <div class="doc-page scale-preview">
+                    <?php get_template_part('doc-preview'); ?>
                 </div>
-              </div>
             </div>
-          </div>
         </div>
+
+
+
+
 
     </div>
 </div>
@@ -198,29 +219,39 @@ if (!acf_get_field_group($form_group_key)) {
 
 
 
+<script >
+    acf.addAction('submit_success', function($form, response) {
+    const postId = response?.data?.post_id;
+    console.log("🎯 submit_success: postId =", postId);
 
-
-<!-- JavaScript – авто-масштаб под родителя -->
-<script>
-function scalePreviewToFit() {
-    const preview = document.querySelector('.doc-page');
-    const container = document.querySelector('.doc-preview-container');
-    if (!preview || !container) return;
-
-    const originalWidth = 210 * 3.7795; // A4 в пикселях ≈ 794px
-    const containerWidth = container.clientWidth;
-
-    const scale = containerWidth / originalWidth;
-    preview.style.transform = `scale(${scale})`;
-}
-
-// Запуск при загрузке и изменении окна
-window.addEventListener('load', scalePreviewToFit);
-window.addEventListener('resize', scalePreviewToFit);
+    if (postId) {
+        const redirectUrl = `/document-saved/?post_id=${postId}`;
+        window.location.href = redirectUrl;
+    } else {
+        console.error("❌ Post ID не получен");
+    }
+});
 </script>
-
-<!-- Скрипт прогресс бара -->
 <script>
+// ### 1. ✅ Авто-масштаб предпросмотра PDF
+function scalePreviewToFit() {
+        const preview = document.querySelector('.doc-page');
+        const container = document.querySelector('.doc-preview-container');
+        if (!preview || !container) return;
+
+        const originalWidth = 210 * 3.7795; // A4 в пикселях ≈ 794px
+        const containerWidth = container.clientWidth;
+
+        const scale = containerWidth / originalWidth;
+        preview.style.transform = `scale(${scale})`;
+    }
+
+    // Запуск при загрузке и изменении окна
+    window.addEventListener('load', scalePreviewToFit);
+    window.addEventListener('resize', scalePreviewToFit);
+
+
+// ### 2. ✅ Скрипт прогресс-бара + пошаговая навигация
 document.addEventListener('DOMContentLoaded', function () {
     const form = document.querySelector('#json-form') || document.querySelector('.acf-form form');
     if (!form) return;
@@ -266,15 +297,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
     let currentStep = 0;
 
-
-function updateProgress() {
-    const allInputs = steps.flatMap(group =>
-        group.flatMap(field =>
-            [...field.querySelectorAll('input, textarea, select')].filter(el =>
-                el.type !== 'hidden' && !el.disabled && !el.closest('.acf-hidden-by-conditional-logic')
+    // ### 4. ✅ Подсчёт заполненных полей (прогресс%)
+    function updateProgress() {
+        const allInputs = steps.flatMap(group =>
+            group.flatMap(field =>
+                [...field.querySelectorAll('input, textarea, select')].filter(el =>
+                    el.type !== 'hidden' && !el.disabled && !el.closest('.acf-hidden-by-conditional-logic')
+                )
             )
-        )
-    );
+        );
 
     const filledCount = allInputs.filter(input => {
         if (input.type === 'checkbox' || input.type === 'radio') {
@@ -300,6 +331,7 @@ function updateProgress() {
         form.querySelectorAll('.acf-nav').forEach(nav => nav.remove());
     }
 
+    // ### 5. ✅ Навигационные кнопки (назад, далее, сохранить)
     function renderNav(index) {
         const nav = document.createElement('div');
         nav.className = 'acf-nav d-flex justify-content-between mt-5';
@@ -308,7 +340,7 @@ function updateProgress() {
             const backBtn = document.createElement('button');
             backBtn.type = 'button';
             backBtn.className = 'btn btn-secondary';
-            backBtn.textContent = '← Back';
+            backBtn.textContent = '← Назад';
             backBtn.onclick = () => showStep(index - 1);
             nav.appendChild(backBtn);
         }
@@ -317,51 +349,81 @@ function updateProgress() {
             const nextBtn = document.createElement('button');
             nextBtn.type = 'button';
             nextBtn.className = 'btn btn-primary ms-auto';
-            nextBtn.textContent = 'Next →';
+            nextBtn.textContent = 'Далее →';
             nextBtn.onclick = () => showStep(index + 1);
             nav.appendChild(nextBtn);
         }
 
-        if (index === steps.length - 1 && submitBtn) {
-            submitBtn.style.display = 'inline-block';
-            nav.appendChild(submitBtn);
+        if (index === steps.length - 1) {
+            const finishBtn = document.createElement('button');
+            finishBtn.type = 'button';
+            finishBtn.className = 'btn btn-success ms-auto';
+            finishBtn.textContent = 'Continue to Download →';
+            finishBtn.onclick = () => showStep(steps.length); // финальный шаг
+            nav.appendChild(finishBtn);
         }
 
         fieldsWrapper.appendChild(nav);
     }
 
 
+// ### 6. ✅ Скрытие/показ блоков формы и оплаты
+function showStep(index) {
+    currentStep = index;
 
-    function showStep(index) {
-        currentStep = index;
-
-        steps.forEach((group, i) => {
-            group.forEach(el => {
-                el.style.display = i === index ? 'block' : 'none';
-            });
+    // Показываем нужную группу полей
+    steps.forEach((group, i) => {
+        group.forEach(el => {
+            el.style.display = i === index ? 'block' : 'none';
         });
+    });
 
+    // Превью всегда видно
+    const previewWrapper = document.getElementById('doc-preview-wrapper');
+    previewWrapper?.classList.remove('d-none');
+    updatePreviewFields();
 
-        const previewWrapper = document.getElementById('doc-preview-wrapper');
-        if (index === steps.length - 1) {
-            previewWrapper.classList.remove('d-none');
-            updatePreviewFields(); // 👈 обновим предпросмотр
-        } else {
-            previewWrapper.classList.add('d-none');
-        }
+    // Переключаем форму и оплату
+    const formWrapper = document.getElementById('acf-form-wrapper');
+    const paymentWrapper = document.getElementById('payment-wrapper');
 
-
-
-        updateProgress(index);
-        // Привязка live-обновления прогресса на поля
-        form.querySelectorAll('input, textarea, select').forEach(input => {
-            input.addEventListener('input', updateProgress);
-            input.addEventListener('change', updateProgress);
-        });
-
-        clearNav();
-        renderNav(index);
+    if (index === steps.length) {
+        formWrapper?.classList.add('d-none');
+        paymentWrapper?.classList.remove('d-none');
+    } else {
+        formWrapper?.classList.remove('d-none');
+        paymentWrapper?.classList.add('d-none');
     }
+
+    // Обновим прогресс
+    updateProgress(index);
+
+    // Привязка live-обновления
+    // ### 7. ✅ Live-обновление предпросмотра при вводе
+    form.querySelectorAll('input, textarea, select').forEach(input => {
+        input.addEventListener('input', () => {
+            updateProgress();
+            updatePreviewFields();
+        });
+
+        input.addEventListener('change', () => {
+            updateProgress();
+            updatePreviewFields();
+        });
+    });
+
+    // Получаем ID созданного документа из скрытого поля
+    const savedPostId = document.querySelector('#acf-saved-post-id')?.value;
+    console.log('📌 Сохранённый пост:', savedPostId);
+
+    clearNav();
+    renderNav(index);
+}
+
+
+
+
+// ### 3. ✅ Формирование предпросмотра документа (preview)
 
     function updatePreviewFields() {
         document.querySelectorAll('.doc-field').forEach(field => {
@@ -375,6 +437,7 @@ function updateProgress() {
         });
     }
 
+
      // Привязка live-обновлений на поля
     form.querySelectorAll('input, textarea, select').forEach(input => {
         input.addEventListener('input', () => {
@@ -387,6 +450,7 @@ function updateProgress() {
             updatePreviewFields();
         });
     });   
+
 
     // Включаем кликабельность шагов
     document.querySelectorAll('.progress-nav-item').forEach(item => {
@@ -433,10 +497,40 @@ function updateProgress() {
 
 
 
-    // Запускаем первый шаг
+
+
+
+
+
+    // ### 10. ✅ Инициализация шага №0
     showStep(0);
+    updatePreviewFields(); // 👈 вот это добавь
+  
 });
 </script>
+
+
+
+
+
+<script>
+// ### 9. ✅ Ручной submit формы по кнопке
+document.addEventListener('DOMContentLoaded', function () {
+    const saveBtn = document.getElementById('save-project');
+    const form = document.getElementById('json-form');
+
+    if (saveBtn && form) {
+        saveBtn.addEventListener('click', function (e) {
+            e.preventDefault();
+            form.requestSubmit(); // 👉 отправка формы
+        });
+    }
+});
+</script>
+
+<!--  -->
+
+
 
 
 
@@ -476,6 +570,53 @@ function updateProgress() {
             <!--end::Page-->
         </div>
         <!--end::App-->
+<script>
+  console.log("✅ Проверка — JS работает");
+</script>
+<script>
+(function($){
+    console.log("🔍 ACF debug started");
+
+    const form = $('#json-form');
+    if (!form.length) {
+        console.warn("⚠️ Форма #json-form не найдена в DOM");
+    } else {
+        console.log("✅ Форма найдена: #json-form");
+    }
+
+    if (typeof acf === 'undefined') {
+        console.error("❌ ACF не подключен");
+    } else {
+        console.log("✅ ACF доступен:", acf);
+
+        acf.addAction('prepare_for_ajax', function($form){
+            console.log("📤 prepare_for_ajax: отправка формы через ACF", $form);
+        });
+
+        acf.addAction('submit_success', function($form, response){
+            console.log("🎯 submit_success: отправка прошла УСПЕШНО!");
+            console.log("📦 Весь ответ:", response);
+
+            const postId = response?.data?.post_id;
+            console.log("📌 Получен post ID:", postId);
+
+            if (postId) {
+                document.getElementById('acf-saved-post-id').value = postId;
+
+                const downloadUrl = `/wp-admin/admin-ajax.php?action=generate_pdf&doc_id=${postId}`;
+                console.log("📥 Переход к PDF:", downloadUrl);
+                window.location.href = downloadUrl;
+            } else {
+                console.error("🚫 postId пустой или не получен");
+            }
+        });
+
+        acf.addAction('submit_fail', function($form, e){
+            console.error("❌ submit_fail: ошибка при сохранении", e);
+        });
+    }
+})(jQuery);
+</script>
 
 
 <?php get_footer(); ?>

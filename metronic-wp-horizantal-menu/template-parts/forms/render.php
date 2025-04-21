@@ -55,6 +55,8 @@ $debug[] = "✅ JSON успешно декодирован, секций: " . co
 
         <div id="form_wrapper" style="display: none;">
             <div class="row">
+
+
                 <!-- 🔹 Левая колонка — форма -->
                 <div class="col-lg-8">
                     <div class="card card-custom gutter-b">
@@ -185,6 +187,9 @@ $debug[] = "✅ JSON успешно декодирован, секций: " . co
                         </div>
                         <div class="card-body" id="faq-body">
                             <p class="text-muted">Здесь будут подсказки по шагам формы.</p>
+                        </div>
+                        <div class="form-hints sticky-top bg-light rounded p-5 mb-5" id="acf-hint-box" style="min-height: 120px;">
+                            <p class="text-muted" id="acf-hint-text">Выберите поле, чтобы увидеть подсказку</p>
                         </div>
                     </div>
                 </div>

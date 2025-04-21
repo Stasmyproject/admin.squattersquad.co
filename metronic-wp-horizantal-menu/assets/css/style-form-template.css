@@ -1,0 +1,30 @@
+
+
+.doc-title-h2 {
+    font-family: Georgia, serif;
+    text-transform: uppercase;
+    text-align: center;
+    font-weight: 700;         /* эквивалент fw-bold */
+    margin-bottom: 80px;      /* эквивалент mb-20 */
+    font-size: 26px;
+    font-weight: bold;
+}
+
+
+.doc-title-h3 {
+    font-family: Georgia, serif;
+    text-transform: uppercase;
+    margin-top: 55px;   /* mt-10 → 10 * 4px */
+    margin-bottom: 5px; /* mb-3 → 3 * 4px */
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.field-label {
+    font-weight: 400;
+    font-size: 11pt;
+    margin-top: 5px;
+    margin-bottom: 8px!important;
+    color: #222;
+}
+

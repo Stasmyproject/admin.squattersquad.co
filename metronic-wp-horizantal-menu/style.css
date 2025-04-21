@@ -228,4 +228,13 @@ Version: 1.0
     font-family: Georgia, serif;
 }
 
-
+/*стили для привью контейнера*/
+.doc-preview-container {
+    max-width: 100%;
+    overflow-x: auto;
+    position: relative;
+}
+.doc-page {
+    transform-origin: top left;
+    display: inline-block;
+}

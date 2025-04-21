@@ -1,0 +1,12 @@
+{
+    "name": "u2829-2makiqbtqidz/mpdf",
+    "authors": [
+        {
+            "name": "John Doe",
+            "email": "john@example.com"
+        }
+    ],
+    "require": {
+        "mpdf/mpdf": "^8.2"
+    }
+}
