@@ -1388,6 +1388,7 @@ add_action('wp_enqueue_scripts', function () {
 
 
 
+<<<<<<< Updated upstream
 
 
 
@@ -1457,7 +1458,77 @@ function generate_pdf_callback() {
     $mpdf->WriteHTML($html);
     $mpdf->Output("document-{$doc_id}.pdf", 'D');
     exit;
-}
+=======
+
+
+
+
+
+// что серверный обработчик  Функция сохранения документа и генерации PDF
+// Обработчик генерации PDF
+// 👇 Подключаем PDF-генерацию через mPDF
+// 📥 Хук генерации PDF при клике на "Скачать"
+// 📥 Хук генерации PDF при клике на "Скачать"
+// add_action('wp_ajax_generate_pdf', 'generate_pdf_callback');
+// add_action('wp_ajax_nopriv_generate_pdf', 'generate_pdf_callback');
+
+// function generate_pdf_callback() {
+//     $doc_id = isset($_GET['doc_id']) ? intval($_GET['doc_id']) : 0;
+//     if (!$doc_id) {
+//         wp_die('❌ Ошибка: Не передан ID документа');
+//     }
+
+//     // Подключаем библиотеку mPDF
+//     require_once get_template_directory() . '/vendor/autoload.php';
+
+//     // ✅ Создаём экземпляр с отступом снизу
+//     $mpdf = new \Mpdf\Mpdf([
+//         'margin_bottom' => 30,
+//     ]);
+
+//     // 🔽 Добавляем логотип в футер
+//     $logo_url = get_template_directory_uri() . '/assets/img/logo-footer.png';
+//     $footerHTML = '
+//         <div style="width: 100%; height: 30px; position: relative;">
+//             <div style="position: absolute; bottom: 0; left: 0;">
+//                 <img src="' . $logo_url . '" style="height: 30px;" />
+//             </div>
+//         </div>
+//     ';
+//     $mpdf->SetHTMLFooter($footerHTML);
+
+//     // Получаем все поля формы
+//     $fields = get_fields($doc_id);
+//     if (!$fields) {
+//         wp_die('❌ Ошибка: Нет данных для документа.');
+//     }
+
+//     // Получаем slug шаблона из мета-поля
+//     $template_slug = get_post_meta($doc_id, 'acf_template_slug', true);
+//     if (!$template_slug) {
+//         wp_die('⚠️ Шаблон не определён — не найдено мета-поле acf_template_slug.');
+//     }
+
+//     // 👉 Единственный шаблон
+//     $template_file = get_template_directory() . '/acf-templates/base-template.php';
+
+//     // 👇 Передаём переменные внутрь шаблона
+//     $post_id = $doc_id;
+//     $field_group_key = $template_slug;
+
+//     ob_start();
+//     if (file_exists($template_file)) {
+//         include $template_file;
+//     } else {
+//         echo "<p>⚠️ Шаблон <code>{$template_slug}.php</code> не найден в /acf-templates/</p>";
+//     }
+//     $html = ob_get_clean();
+
+//     // Генерация и отправка PDF
+//     $mpdf->WriteHTML($html);
+//     $mpdf->Output("document-{$doc_id}.pdf", 'D');
+//     exit;
+// }
 
 
 
@@ -1517,7 +1588,186 @@ function enqueue_better_jquery_ui_style() {
 add_action('wp_enqueue_scripts', 'enqueue_better_jquery_ui_style');
 
 
+function enqueue_acf_datepicker_dependencies() {
+    // Явно подключаем JQUERY (если вдруг отключен)
+    wp_enqueue_script('jquery');
+
+    // Подключаем jQuery UI Datepicker
+    wp_enqueue_script('jquery-ui-datepicker');
+
+    // Подключаем стандартный стиль jQuery UI
+    wp_enqueue_style(
+        'jquery-ui-datepicker-style',
+        'https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css',
+        [],
+        null
+    );
+}
+add_action('wp_enqueue_scripts', 'enqueue_acf_datepicker_dependencies');
 
 
 
+
+// что серверный обработчик  Функция сохранения документа и генерации PDF
+// Обработчик генерации PDF
+// 👇 Подключаем PDF-генерацию через mPDF
+// 📥 Хук генерации PDF при клике на "Скачать"
+// 📥 Хук генерации PDF при клике на "Скачать"
+add_action('wp_ajax_generate_pdf', 'handle_generate_pdf');
+add_action('wp_ajax_nopriv_generate_pdf', 'handle_generate_pdf');
+
+function handle_generate_pdf() {
+    if (!isset($_GET['doc_id'])) {
+        wp_die('❌ No document ID provided');
+    }
+
+    $post_id = intval($_GET['doc_id']);
+    if (!$post_id || get_post_type($post_id) !== 'document') {
+        wp_die('❌ Invalid document');
+    }
+
+    // Подключаем autoload, если не загружен
+    if (!class_exists('\Mpdf\Mpdf')) {
+        require_once get_template_directory() . '/vendor/autoload.php'; // путь к vendor/autoload.php
+    }
+
+    // Буферизация шаблона
+    ob_start();
+
+    // Шаблон по умолчанию
+    $slug = 'copyright-infringement';
+
+    // Определим путь к шаблону
+    $template_path = locate_template("acf-templates/{$slug}.php");
+
+    if (!$template_path) {
+        wp_die("❌ Preview template not found: acf-templates/{$slug}.php");
+    }
+
+    // Передаём флаг для режима PDF и ID поста
+    $is_pdf = true;
+    include($template_path);
+
+    $html = ob_get_clean();
+
+    try {
+        // Настройка mPDF
+        $mpdf = new \Mpdf\Mpdf([
+            'format' => 'A4',
+            'orientation' => 'P',
+            'margin_left' => 15,
+            'margin_right' => 15,
+            'margin_top' => 20,
+            'margin_bottom' => 20,
+        ]);
+
+        $mpdf->WriteHTML($html);
+
+        $filename = 'copyright-infringement-' . $post_id . '.pdf';
+
+        // Отдача файла
+        header('Content-Type: application/pdf');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+
+        $mpdf->Output($filename, \Mpdf\Output\Destination::INLINE); // Можно заменить на DOWNLOAD
+        exit;
+
+    } catch (\Mpdf\MpdfException $e) {
+        wp_die("❌ PDF generation error: " . $e->getMessage());
+    }
+>>>>>>> Stashed changes
+}
+
+
+
+<<<<<<< Updated upstream
+
+// 📝 Сохраняем ключ шаблона на основе URL страницы (slug)
+add_action('acf/save_post', function($post_id) {
+    // Только для новых записей типа 'document'
+    if (get_post_type($post_id) !== 'document') {
+        return;
+    }
+
+    // Проверим, что форма действительно создаёт новый пост
+    if (!empty($_POST['_acf_post_id']) && $_POST['_acf_post_id'] === 'new_post') {
+        // Парсим slug из URL формы (referer)
+        $referer = $_SERVER['HTTP_REFERER'] ?? '';
+        $slug = basename(parse_url($referer, PHP_URL_PATH));
+        $form_group_key = 'group_' . str_replace('-', '_', $slug);
+
+        update_post_meta($post_id, 'acf_template_slug', $form_group_key);
+
+        // Лог для отладки
+        error_log("✅ ACF шаблон сохранён: {$form_group_key} → post {$post_id}");
+    }
+}, 20);
+
+
+// РЕШЕНИЕ: подключение стилей по-человечески
+add_action('wp_enqueue_scripts', function () {
+    if (is_page_template('page-universal-form.php')) {
+
+        // ACF скрипты
+        acf_enqueue_scripts();
+
+        // jQuery UI Datepicker
+        wp_enqueue_script('jquery-ui-datepicker');
+
+        // 💡 Принудительное подключение стилей jQuery UI
+        wp_register_style(
+            'jquery-ui-style',
+            'https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/themes/smoothness/jquery-ui.min.css'
+        );
+        wp_enqueue_style('jquery-ui-style');
+    }
+});
+
+// РЕШЕНИЕ: локальное подключение jquery-ui.min.css календаря подключение стилей по-человечески
+wp_enqueue_style(
+    'jquery-ui-style',
+    get_template_directory_uri() . '/assets/css/jquery-ui.min.css'
+);
+
+// меняем тему календаря
+function enqueue_better_jquery_ui_style() {
+    // Например: Cupertino
+    wp_enqueue_style('jquery-ui-theme', 'https://code.jquery.com/ui/1.13.2/themes/cupertino/jquery-ui.css');
+}
+add_action('wp_enqueue_scripts', 'enqueue_better_jquery_ui_style');
+
+
+
+=======
+>>>>>>> Stashed changes
+
+
+
+
+// Отключам спам фильтры для ACF временно !!!!!!!!!!!!!!!!!!!
+add_filter('acf/validate_form', function($validate) {
+    $validate['honeypot'] = false; // отключаем honeypot
+    $validate['spam'] = false;     // отключаем антиспам
+    return $validate;
+});
+
+// 📌 Шаг 1: Добавляем acf_template_slug при сохранении документа
+add_action('acf/save_post', function($post_id) {
+    // Только для постов типа document
+    if (get_post_type($post_id) !== 'document') return;
+
+    // Если уже есть мета — не перезаписываем
+    if (get_post_meta($post_id, 'acf_template_slug', true)) return;
+
+    // Получаем страницу, с которой отправлена форма (через referer)
+    $ref = wp_get_referer();
+    if (!$ref) return;
+
+    // Получаем slug страницы из URL
+    $page = get_page_by_path(trim(parse_url($ref, PHP_URL_PATH), '/'));
+    if (!$page) return;
+
+    $slug = $page->post_name;
+    update_post_meta($post_id, 'acf_template_slug', $slug);
+}, 20);
 

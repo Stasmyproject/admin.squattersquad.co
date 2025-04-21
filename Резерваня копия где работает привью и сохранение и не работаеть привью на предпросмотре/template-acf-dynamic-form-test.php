@@ -117,24 +117,6 @@ acf.addAction('ready_field', function(field){
 
             <div class="flex-grow-1 col-12 col-lg-6" style="min-width: 0;">
                  <div id="acf-form-wrapper">
-<<<<<<< Updated upstream
-                    <?php
-acf_form([
-    'post_id'       => 'new_post',
-    'new_post'      => [
-        'post_type'   => 'document',
-        'post_status' => 'publish'
-    ],
-    'field_groups'  => ['group_business_plan_form'],
-    'submit_value'  => 'Сохранить документ',
-    'return' => add_query_arg('post_id', '%post_id%', home_url('/document-saved')),
-    'form_attributes' => [
-        'id' => 'json-form'
-    ]
-]);
-                                       
-
-=======
 <?php
 $acf_group = acf_get_field_group($form_group_key);
 echo '<div style="padding:10px;background:#d9edf7;border:1px solid #31708f;">';
@@ -163,8 +145,8 @@ acf_form([
     'field_groups' => [$form_group_key], // Замени на свой ACF ключ
 
     'submit_value'  => 'Сохранить документ',
-    'return'        => false, // ⛔ Отключаем редирект!
-    // 'return' => add_query_arg('post_id', '%post_id%', home_url('/document-saved')),
+
+    'return' => add_query_arg('post_id', '%post_id%', home_url('/document-saved')),
     'form_attributes' => ['id' => 'acf-form']
 ]);
 
@@ -177,7 +159,6 @@ acf_form([
 // }  
                                        
 
->>>>>>> Stashed changes
 
                 ?>
 
@@ -241,56 +222,14 @@ acf_form([
                 </div>
             </div>
 
-
-            <div id="download-wrapper" class="d-none">
-                <div class="bg-success text-white p-5 rounded shadow-sm">
-                    <h3 class="fw-bold mb-4">🎉 Your document has been created!</h3>
-                    <p class="mb-4">Click the button below to download your finalized PDF.</p>
-
-                    <a id="download-final-btn" class="btn btn-light btn-lg fw-bold" href="#" download>
-                        ⬇️ Download Your PDF
-                    </a>
-
-                    <div class="mt-4 text-white-50 small">
-                        Didn’t work? You can also <a href="#" id="manual-download-link" class="text-white fw-bold">open the PDF in a new tab</a>.
-                    </div>
-                </div>
-            </div>
-
-
-
-
-
         </div>
 
     </div>
 </div>
 
 
-<<<<<<< Updated upstream
-
-
-
-
-<script >
-    acf.addAction('submit_success', function($form, response) {
-    const postId = response?.data?.post_id;
-    console.log("🎯 submit_success: postId =", postId);
-
-    if (postId) {
-        const redirectUrl = `/document-saved/?post_id=${postId}`;
-        window.location.href = redirectUrl;
-    } else {
-        console.error("❌ Post ID не получен");
-    }
-});
-</script>
-<script>
-// ### 1. ✅ Авто-масштаб предпросмотра PDF
-=======
 <!-- ✅ 1. Масштабирование превью при загрузке/resize -->
 <script>
->>>>>>> Stashed changes
 function scalePreviewToFit() {
     const preview = document.querySelector('.doc-page');
     const container = document.querySelector('.doc-preview-container');
@@ -313,30 +252,17 @@ acf.addAction('submit_success', function($form, response) {
     const postId = response?.data?.post_id;
 
     if (!postId) {
-        console.error("❌ Post ID не получен, не можем перейти к загрузке PDF.");
+        console.error("❌ Post ID not received — cannot redirect to download page.");
         return;
     }
 
-    // Ссылки на PDF
-    const downloadUrl = `/wp-admin/admin-ajax.php?action=generate_pdf&doc_id=${postId}`;
-    console.log("✅ Документ создан, ссылка на PDF:", downloadUrl);
+    const redirectUrl = `${window.location.origin}/document-saved/?post_id=${postId}`;
+    console.log("🔁 Redirecting to:", redirectUrl);
 
-    // Прячем форму и payment
-    document.getElementById('acf-form-wrapper')?.classList.add('d-none');
-    document.getElementById('payment-wrapper')?.classList.add('d-none');
-
-    // Показываем download-шаг
-    const downloadWrapper = document.getElementById('download-wrapper');
-    downloadWrapper?.classList.remove('d-none');
-
-    // Устанавливаем ссылку на PDF
-    document.getElementById('download-final-btn').href = downloadUrl;
-    document.getElementById('manual-download-link').href = downloadUrl;
-
-    // Скроллим к кнопке
-    downloadWrapper?.scrollIntoView({ behavior: 'smooth' });
+    window.location.href = redirectUrl;
 });
 </script>
+
 
 
 
@@ -539,17 +465,8 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 </script>
 
-<<<<<<< Updated upstream
-
-
-
-
-<script>
-// ### 9. ✅ Ручной submit формы по кнопке
-=======
 <!-- ✅ 4. Ручная отправка формы с кнопки -->
 <script>
->>>>>>> Stashed changes
 document.addEventListener('DOMContentLoaded', function () {
     const saveBtn = document.getElementById('save-project');
     const form = document.getElementById('acf-form');
@@ -583,10 +500,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 </script>
-
-
-
-<!--  -->
 
 
 
@@ -628,58 +541,6 @@ document.addEventListener('DOMContentLoaded', function () {
             <!--end::Page-->
         </div>
         <!--end::App-->
-<<<<<<< Updated upstream
-<script>
-  console.log("✅ Проверка — JS работает");
-</script>
-<script>
-(function($){
-    console.log("🔍 ACF debug started");
-
-    const form = $('#json-form');
-    if (!form.length) {
-        console.warn("⚠️ Форма #json-form не найдена в DOM");
-    } else {
-        console.log("✅ Форма найдена: #json-form");
-    }
-
-    if (typeof acf === 'undefined') {
-        console.error("❌ ACF не подключен");
-    } else {
-        console.log("✅ ACF доступен:", acf);
-
-        acf.addAction('prepare_for_ajax', function($form){
-            console.log("📤 prepare_for_ajax: отправка формы через ACF", $form);
-        });
-
-        acf.addAction('submit_success', function($form, response){
-            console.log("🎯 submit_success: отправка прошла УСПЕШНО!");
-            console.log("📦 Весь ответ:", response);
-
-            const postId = response?.data?.post_id;
-            console.log("📌 Получен post ID:", postId);
-
-            if (postId) {
-                document.getElementById('acf-saved-post-id').value = postId;
-
-                const downloadUrl = `/wp-admin/admin-ajax.php?action=generate_pdf&doc_id=${postId}`;
-                console.log("📥 Переход к PDF:", downloadUrl);
-                window.location.href = downloadUrl;
-            } else {
-                console.error("🚫 postId пустой или не получен");
-            }
-        });
-
-        acf.addAction('submit_fail', function($form, e){
-            console.error("❌ submit_fail: ошибка при сохранении", e);
-        });
-    }
-})(jQuery);
-</script>
-
-
-<?php get_footer(); ?>
-=======
 
 
 
@@ -688,7 +549,6 @@ document.addEventListener('DOMContentLoaded', function () {
 <?php get_footer(); ?>
 
 
->>>>>>> Stashed changes
 <?php
 // Проверим — загружены ли нужные скрипты и стили
 echo '<div style="padding:15px;background:#eef;border:1px solid #99f;margin-top:40px;">';
@@ -719,10 +579,4 @@ if (wp_style_is('acf-input', 'enqueued')) {
 }
 
 echo '</div>';
-<<<<<<< Updated upstream
 ?>
-
-<?php get_footer(); ?>
-=======
-?>
->>>>>>> Stashed changes
