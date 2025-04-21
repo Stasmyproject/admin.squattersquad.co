@@ -118,6 +118,7 @@ acf.addAction('ready_field', function(field){
             <div class="flex-grow-1 col-12 col-lg-6" style="min-width: 0;">
                  <div id="acf-form-wrapper">
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
                     <?php
 acf_form([
     'post_id'       => 'new_post',
@@ -143,6 +144,16 @@ echo 'Группа: <code>' . $form_group_key . '</code><br>';
 echo '</div>';
 echo "<div style='background: #efe; padding: 10px;'>🧪 Используем группу: <code>$form_group_key</code></div>";
 
+=======
+<?php
+$acf_group = acf_get_field_group($form_group_key);
+echo '<div style="padding:10px;background:#d9edf7;border:1px solid #31708f;">';
+echo '<strong>📋 Используем ACF форму:</strong><br>';
+echo 'Группа: <code>' . $form_group_key . '</code><br>';
+echo '</div>';
+echo "<div style='background: #efe; padding: 10px;'>🧪 Используем группу: <code>$form_group_key</code></div>";
+
+>>>>>>> Stashed changes
 echo "<div style='background:#eef;padding:10px;margin:10px 0;'>🛠️ DEBUG:<br>";
 echo "🔑 Slug: <code>$slug</code><br>";
 echo "🧩 Group Key: <code>$form_group_key</code><br>";
@@ -177,6 +188,9 @@ acf_form([
 // }  
                                        
 
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 
                 ?>
@@ -268,6 +282,7 @@ acf_form([
 
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 
 
 
@@ -287,6 +302,10 @@ acf_form([
 </script>
 <script>
 // ### 1. ✅ Авто-масштаб предпросмотра PDF
+=======
+<!-- ✅ 1. Масштабирование превью при загрузке/resize -->
+<script>
+>>>>>>> Stashed changes
 =======
 <!-- ✅ 1. Масштабирование превью при загрузке/resize -->
 <script>
@@ -540,12 +559,17 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 
 
 
 
 <script>
 // ### 9. ✅ Ручной submit формы по кнопке
+=======
+<!-- ✅ 4. Ручная отправка формы с кнопки -->
+<script>
+>>>>>>> Stashed changes
 =======
 <!-- ✅ 4. Ручная отправка формы с кнопки -->
 <script>
@@ -585,10 +609,13 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 
 
+<<<<<<< Updated upstream
 
 <!--  -->
 
 
+=======
+>>>>>>> Stashed changes
 
 
 
@@ -628,6 +655,7 @@ document.addEventListener('DOMContentLoaded', function () {
             <!--end::Page-->
         </div>
         <!--end::App-->
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <script>
   console.log("✅ Проверка — JS работает");
@@ -689,6 +717,16 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 >>>>>>> Stashed changes
+=======
+
+
+
+
+
+<?php get_footer(); ?>
+
+
+>>>>>>> Stashed changes
 <?php
 // Проверим — загружены ли нужные скрипты и стили
 echo '<div style="padding:15px;background:#eef;border:1px solid #99f;margin-top:40px;">';
@@ -720,9 +758,13 @@ if (wp_style_is('acf-input', 'enqueued')) {
 
 echo '</div>';
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 ?>
 
 <?php get_footer(); ?>
+=======
+?>
+>>>>>>> Stashed changes
 =======
 ?>
 >>>>>>> Stashed changes
