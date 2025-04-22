@@ -1649,3 +1649,46 @@ add_action('acf/save_post', function($post_id) {
 }, 20);
 
 
+/**
+ * Автозаполняем ACF‑поле «creation_date» текущей датой,
+ * если оно ещё пустое при выводе формы.
+ */
+add_filter('acf/load_value/name=letter_date', 'my_acf_load_creation_date', 10, 3);
+function my_acf_load_creation_date( $value, $post_id, $field ) {
+    // Если у поля уже есть значение — ничего не трогаем.
+    if ( ! empty($value) ) {
+        return $value;
+    }
+
+    // Формат даты берём из настроек поля ACF (Y-m-d для date_picker)
+    $today = date('Y-m-d'); 
+    return $today;
+}
+
+
+// 💡 Добавление Банеров
+// Если вы уже используете ACF, можно завести Options Page и в нём задавать баннер.
+// Создать страницу опций (в functions.php):
+if ( function_exists('acf_add_options_page') ) {
+  acf_add_options_page(array(
+    'page_title' => 'Site Baner settings',
+    'menu_slug'  => 'site-settings',
+    'capability' => 'edit_posts',
+  ));
+}
+
+
+// 💡 Включаем поддержку виджетов
+add_action( 'widgets_init', function(){
+    register_sidebar([
+        'name'          => 'Banner Area',
+        'id'            => 'banner-area',
+        'description'   => 'Зона для рекламных баннеров',
+        // Обёртка каждого виджета: колонка + карточка Metronic
+        'before_widget' => '<div class="col-12 mb-5"><div class="">',
+        'after_widget'  => '</div></div>',
+        // Если у вас во виджете есть заголовок — так оно отобразится
+        'before_title'  => '<h3 class="">',
+        'after_title'   => '</h3><div class="">',
+    ]);
+});

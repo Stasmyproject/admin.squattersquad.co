@@ -46,21 +46,16 @@ acf.addAction('ready_field', function(field){
 });
 </script>
 
-        <!--begin::Theme mode setup on page load-->
-        <script>var defaultThemeMode = "light"; var themeMode; if ( document.documentElement ) { if ( document.documentElement.hasAttribute("data-bs-theme-mode")) { themeMode = document.documentElement.getAttribute("data-bs-theme-mode"); } else { if ( localStorage.getItem("data-bs-theme") !== null ) { themeMode = localStorage.getItem("data-bs-theme"); } else { themeMode = defaultThemeMode; } } if (themeMode === "system") { themeMode = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"; } document.documentElement.setAttribute("data-bs-theme", themeMode); }</script>
-        <!--end::Theme mode setup on page load-->
+<!--begin::Theme mode setup on page load-->
+<script>var defaultThemeMode = "light"; var themeMode; if ( document.documentElement ) { if ( document.documentElement.hasAttribute("data-bs-theme-mode")) { themeMode = document.documentElement.getAttribute("data-bs-theme-mode"); } else { if ( localStorage.getItem("data-bs-theme") !== null ) { themeMode = localStorage.getItem("data-bs-theme"); } else { themeMode = defaultThemeMode; } } if (themeMode === "system") { themeMode = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"; } document.documentElement.setAttribute("data-bs-theme", themeMode); }
+</script>
+<!--end::Theme mode setup on page load-->
 
         <!--begin::App-->
         <div class="d-flex flex-column flex-root app-root" id="kt_app_root">
             <!--begin::Page-->
             <div class="app-page flex-column flex-column-fluid" id="kt_app_page">
 
-
-            <?php //if ( is_user_logged_in() ) : ?>
-                <!--begin::Header-->
-                <?php get_template_part('partials/header-dashdoards-horizontal'); ?>
-                <!--end::Header-->
-            <?php //endif; ?>
 
 
             <!--begin::Wrapper-->
@@ -135,6 +130,7 @@ acf.addAction('ready_field', function(field){
                                             ]);
                                             ?>
                                          </div>
+
                                         <div id="payment-wrapper" class="d-none">
                                             <?php if (!empty($_GET['post_id'])): ?>
                                                 <input type="hidden" id="acf-saved-post-id" value="<?php echo esc_attr($_GET['post_id']); ?>">
@@ -160,11 +156,33 @@ acf.addAction('ready_field', function(field){
                                                 </div>
                                             </div>
                                         </div>
+
+                                        
                                     </div>
 
                                     <!-- 🟢 Превью справа -->
-                                    <div class=" col-12 col-lg-8" id="doc-preview-wrapper">
-                                        <div class=" dynamic-scale mx-auto" id="doc-print-content">
+                                    <div class=" col-12 col-lg-8 " id="doc-preview-wrapper">
+
+
+
+
+                                        <div class=" dynamic-scale mx-auto position-relative" id="doc-print-content">
+
+                                          <!-- Watermark -->
+                                          <div 
+                                            class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center"
+                                            style="
+                                              pointer-events: none;
+                                              z-index: 10;
+                                              opacity: 0.1;
+                                              font-size: 8rem;
+                                              font-weight: bold;
+                                              color: #000;
+                                              text-transform: uppercase;
+                                            "
+                                          >
+                                            Preview
+                                          </div>   
                                             <?php //get_template_part('acf-templates/base-template'); ?>
 
                                             <?php 
@@ -192,6 +210,8 @@ acf.addAction('ready_field', function(field){
                     <!--end:::Main-->
                 </div>
                 <!--end::Wrapper-->
+
+                
             </div>
             <!--end::Page-->
         </div>

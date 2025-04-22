@@ -28,12 +28,31 @@ function doc_output($field_name, $is_pdf = false, $post_id = null, $is_preview =
 <div class="doc-preview-container">
     <div class="doc-page">
         <div>
-            <h2 class="text-center fw-bold mb-5 text-uppercase" style="font-size: 26px;">
+            <h2 style="text-align: center; font-weight: bold; margin-bottom: 3rem; text-transform: uppercase; font-size: 26px;">
                 Copyright Infringement Letter
             </h2>
 
             <div class="fs-6 lh-lg">
-                <p><strong>Date of Letter:</strong> <?php doc_output('letter_date', $is_pdf, $post_id, $is_preview ?? false); ?></p>
+                <!-- <p><strong>Date of Letter:</strong> <?php //doc_output('letter_date', $is_pdf, $post_id, $is_preview ?? false); ?></p> -->
+
+<?php
+  // получаем «сырое» значение из ACF
+  $raw = get_field('letter_date', $post_id);
+
+  // пробуем превратить в UNIX‑timestamp
+  $ts = strtotime( $raw );
+
+  if ( $ts ) {
+    // если всё ок — форматируем в 04/21/2025
+    $pretty = date_i18n( 'm/d/Y', $ts );
+  } else {
+    // иначе показываем как есть
+    $pretty = $raw;
+  }
+?>
+<p><strong>Date of Letter:</strong> <?php echo esc_html( $pretty ); ?></p>
+
+
 
                 <p><strong>Recipient Name:</strong> <?php doc_output('recipient_name', $is_pdf, $post_id, $is_preview ?? false); ?></p>
 
@@ -79,8 +98,5 @@ function doc_output($field_name, $is_pdf = false, $post_id = null, $is_preview =
             </div>
         </div>
 
-        <div class="text-center text-muted mt-auto pt-5" style="font-size: 12px;">
-            Page 1 of 1
-        </div>
     </div>
 </div>

@@ -238,3 +238,14 @@ Version: 1.0
     transform-origin: top left;
     display: inline-block;
 }
+
+/*.site-banner-area {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.banner-widget img {
+  max-width: 100%;
+  height: auto;
+}
+*/

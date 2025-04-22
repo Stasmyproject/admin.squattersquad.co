@@ -1,4 +1,9 @@
 				
+        <!--begin::App-->
+        <div class="d-flex flex-column flex-root app-root" id="kt_app_root">
+            <!--begin::Page-->
+            <div class="app-page flex-column flex-column-fluid" id="kt_app_page">				
+
 				<!--begin::Header-->
 				<div id="kt_app_header" 
 					 class="app-header <?php echo current_user_can('administrator') ? 'drop-admin-bar' : ''; ?>"
@@ -765,7 +770,7 @@
 									<div class="menu menu-sub menu-sub-dropdown menu-column w-350px w-lg-375px" data-kt-menu="true" id="kt_menu_notifications">
 										<!--begin::Heading-->
 										<div class="d-flex flex-column bgi-no-repeat rounded-top"
-     style="background-image: url('<?php echo esc_url( get_template_directory_uri() . '/metronic/assets/media/misc/menu-header-bg.jpg' ); ?>')">
+     										style="background-image: url('<?php echo esc_url( get_template_directory_uri() . '/metronic/assets/media/misc/menu-header-bg.jpg' ); ?>')">
 											<!--begin::Title-->
 											<h3 class="text-white fw-semibold px-9 mt-10 mb-6">Notifications 
 											<span class="fs-8 opacity-75 ps-3">24 reports</span></h3>
@@ -1964,3 +1969,8 @@
 					<!--end::Header container-->
 				</div>
 				<!--end::Header-->
+
+            </div>
+            <!--end::Page-->
+        </div>
+        <!--end::App-->
