@@ -10,19 +10,7 @@ $bg_light = get_template_directory_uri() . '/metronic/assets/media/auth/bg4.jpg'
 $bg_dark  = get_template_directory_uri() . '/metronic/assets/media/auth/bg4-dark.jpg';
 ?>
 
-<!DOCTYPE html>
-<!--
-Theme: Metronic by Keenthemes
-License: Commercial use under Envato license — https://1.envato.market/EA4JP
--->
 
-    <!--begin::Body-->
-    <body id="kt_body" class="app-blank bgi-size-cover bgi-attachment-fixed bgi-position-center bgi-no-repeat">
-        <!--begin::Theme mode setup on page load-->
-        <script>var defaultThemeMode = "light"; var themeMode; if ( document.documentElement ) { if ( document.documentElement.hasAttribute("data-bs-theme-mode")) { themeMode = document.documentElement.getAttribute("data-bs-theme-mode"); } else { if ( localStorage.getItem("data-bs-theme") !== null ) { themeMode = localStorage.getItem("data-bs-theme"); } else { themeMode = defaultThemeMode; } } if (themeMode === "system") { themeMode = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"; } document.documentElement.setAttribute("data-bs-theme", themeMode); }</script>
-        <!--end::Theme mode setup on page load-->
-        <!--begin::Root-->
-        <div class="d-flex flex-column flex-root" id="kt_app_root">
             <!--begin::Page bg image-->
               <style>
                 body {
@@ -52,7 +40,7 @@ License: Commercial use under Envato license — https://1.envato.market/EA4JP
                 </div>
                 <!--begin::Aside-->
                 <!--begin::Body-->
-                <div class="d-flex flex-column-fluid flex-lg-row-auto justify-content-center justify-content-lg-end p-12 p-lg-20">
+                <div class="d-flex flex-column-fluid flex-lg-row-auto justify-content-center justify-content-lg-end p-12 p-lg-20 mt-lg-15">
                     <!--begin::Card-->
                     <div class="bg-body d-flex flex-column align-items-stretch flex-center rounded-4 w-md-600px p-20">
                         <!--begin::Wrapper-->

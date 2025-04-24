@@ -88,9 +88,9 @@
                                                 <div    class="card mb-xl-3"
                                                         data-kt-sticky="true" 
                                                         data-kt-sticky-name="invoice" 
-                                                        data-kt-sticky-offset="{default: false, lg: '200px'}" data-kt-sticky-width="{lg: '250px', lg: '300px'}" 
+                                                        data-kt-sticky-offset="{default: false, lg: '420px'}" data-kt-sticky-width="{lg: '250px', lg: '300px'}" 
                                                         data-kt-sticky-left="auto" 
-                                                        data-kt-sticky-top="190px" 
+                                                        data-kt-sticky-top="120px" 
                                                         data-kt-sticky-animation="false" 
                                                         data-kt-sticky-zindex="95">
 
@@ -101,58 +101,40 @@
                                                             <span class="text-muted fw-semibold fs-7">Latest trends</span>
                                                         </h3>
 
+    
+
                                                         <!--begin::Sidebar-->
                                                         <div class="flex-column flex-lg-row-auto w-100 w-lg-275px mb-10 me-lg-20">
-                                                            <!--begin::Catigories-->
-                                                            <div class="mb-15">
-                                                                <!--begin::Menu-->
-                                                                <div class="menu menu-rounded menu-column menu-title-gray-700 menu-state-title-primary menu-active-bg-light-primary fw-semibold " id="sidebar_menu">
+                                                          <!--begin::Categories-->
+                                                          <div class="mb-15">
+                                                            <!--begin::Menu-->
+                                                            <div class="menu menu-rounded menu-column menu-title-gray-700 menu-state-title-primary menu-active-bg-light-primary fw-semibold"
+                                                                 id="sidebar_menu">
+                                                              
+                                                              <div class="menu-item mb-1">
+                                                                <a href="#business" class="menu-link py-3 activ">Business</a>
+                                                              </div>
+                                                              <div class="menu-item mb-1">
+                                                                <a href="#contracts" class="menu-link py-3">Contracts</a>
+                                                              </div>
+                                                              <div class="menu-item mb-1">
+                                                                <a href="#finance" class="menu-link py-3">Finance</a>
+                                                              </div>
+                                                              <div class="menu-item mb-1">
+                                                                <a href="#property" class="menu-link py-3">Property</a>
+                                                              </div>
+                                                              <div class="menu-item">
+                                                                <a href="#personal_and_family" class="menu-link py-3">Personal & Family</a>
+                                                              </div>
 
-                                                                   
-
-                                                                        <!--begin::Item-->
-                                                                        <div class="menu-item mb-1" >
-                                                                            <!--begin::Link-->
-                                                                            <a href="#business" class="menu-link py-3 active" data-scrollspy-anchor="true">Business</a>
-                                                                            <!--end::Link-->
-                                                                        </div>
-                                                                        <!--end::Item-->
-                                                                        <!--begin::Item-->
-                                                                        <div class="menu-item mb-1">
-                                                                            <!--begin::Link-->
-                                                                            <a href="#сontracts" class="menu-link py-3" data-scrollspy-anchor="true">Contracts</a>
-                                                                            <!--end::Link-->
-                                                                        </div>
-                                                                        <!--end::Item-->
-                                                                        <!--begin::Item-->
-                                                                        <div class="menu-item mb-1" >
-                                                                            <!--begin::Link-->
-                                                                            <a href="#finance" class="menu-link py-3" data-scrollspy-anchor="true">Finance</a>
-                                                                            <!--end::Link-->
-                                                                        </div>
-                                                                        <!--end::Item-->
-                                                                        <!--begin::Item-->
-                                                                        <div class="menu-item mb-1" >
-                                                                            <!--begin::Link-->
-                                                                            <a href="#property" class="menu-link py-3" data-scrollspy-anchor="true">Property</a>
-                                                                            <!--end::Link-->
-                                                                        </div>
-                                                                        <!--end::Item-->
-                                                                        <!--begin::Item-->
-                                                                        <div class="menu-item mb-1" >
-                                                                            <!--begin::Link-->
-                                                                            <a href="#personal_and_family" class="menu-link py-3" data-scrollspy-anchor="true">Personal and Family</a>
-                                                                            <!--end::Link-->
-                                                                        </div>
-                                                                        <!--end::Item-->
-
-                                                                </div>
-                                                                <!--end::Menu-->
                                                             </div>
-                                                            <!--end::Catigories-->
-
+                                                            <!--end::Menu-->
+                                                          </div>
+                                                          <!--end::Categories-->
                                                         </div>
                                                         <!--end::Sidebar-->
+
+
 
                                                     </div>
                                                     <!--end::Header-->
@@ -165,6 +147,7 @@
 
                                             <!--begin::Col-->
                                             <div class="col-xl-9">
+
                                             <div 
                                                 class="position-relative"
                                               id="kt_scroll_container"
@@ -174,7 +157,238 @@
                                             > 
 
 
+
+
+
+                                                <!--begin::Row-->
+                                                <div class="row gx-5 gx-xl-8 mb-5 mb-xl-8">
+
+                                                    <!--begin::Col-->
+                                                    <div class="col-xl-6">
+                                                      <!--begin::Tiles Widget 2-->
+                                                        <div class="card min-h-195px bgi-no-repeat bgi-size-contain card-xl-stretch mb-5 mb-xl-8"
+                                                             style="
+                                                                background-image: linear-gradient(135deg, #663259, #ff6b6b), url('assets/media/svg/misc/taieri.svg');
+                                                                background-position: right;
+                                                                background-repeat: no-repeat;
+                                                                background-size: contain;
+                                                            ">
+                                                        <!--begin::Body-->
+                                                        <div class="card-body d-flex flex-column justify-content-between">
+                                                          <!--begin::Title-->
+                                                          <h2 class="text-white fw-bold mb-5">Cease & Desist Order Template</h2>
+                                                          <p class="text-white">
+                                                            Safeguard your rights with our free Cease and Desist Letter template. This document allows you to formally request the termination of any harmful or illegal actions.
+                                                          </p>
+                                                          <!--end::Title-->
+                                                        </div>
+                                                        <!--end::Body-->
+                                                      </div>
+                                                      <!--end::Tiles Widget 2-->
+
+
+                                                        <div class="row gx-5 gx-xl-8">
+
+
+                                                            <!--begin::Col-->
+                                                            <div class="col-xxl-6 mb-5 mb-xl-8">
+                                                                <!--begin::Tiles Widget 5-->
+                                                                <a href="#" class="card card-xxl-stretch bg-primary">
+
+<!--begin::Body-->
+<div class="card-body px-4 py-3">
+    <div class="d-flex align-items-center gap-3">
+        <!--begin::Icon-->
+        <i class="ki-duotone ki-message-text text-white fs-2hx">
+            <span class="path1"></span>
+            <span class="path2"></span>
+            <span class="path3"></span>
+            <span class="path4"></span>
+        </i>
+        <!--end::Icon-->
+
+        <!--begin::Text-->
+        <div class="text-white fw-semibold fs-6 lh-sm mb-0">
+            General Letter
+        </div>
+        <!--end::Text-->
+    </div>
+</div>
+<!--end::Body-->
+
+                                                                </a>
+                                                                <!--end::Tiles Widget 5-->
+                                                            </div>
+                                                            <!--end::Col-->
+
+
+                                                            <!--begin::Col-->
+                                                            <div class="col-xxl-6 mb-5 mb-xl-8">
+                                                                <!--begin::Tiles Widget 5-->
+                                                                <a href="#" class="card card-xxl-stretch bg-primary">
+
+<!--begin::Body-->
+<div class="card-body px-5 py-3">
+    <div class="d-flex align-items-center gap-3">
+        <!--begin::Icon-->
+        <i class="ki-duotone ki-message-text text-white fs-2hx">
+            <span class="path1"></span>
+            <span class="path2"></span>
+            <span class="path3"></span>
+            <span class="path4"></span>
+        </i>
+        <!--end::Icon-->
+
+        <!--begin::Text-->
+        <div class="text-white fw-semibold fs-6 lh-sm mb-0">
+            General Letter
+        </div>
+        <!--end::Text-->
+    </div>
+</div>
+<!--end::Body-->
+
+                                                                </a>
+                                                                <!--end::Tiles Widget 5-->
+                                                            </div>
+                                                            <!--end::Col-->
+
+
+                                                            <!--begin::Col-->
+                                                            <div class="col-xxl-6 mb-5 mb-xl-8">
+                                                                <!--begin::Tiles Widget 5-->
+                                                                <a href="<?php echo esc_url( get_permalink(719) ); ?>" class="card card-xxl-stretch bg-primary">
+
+                                                                    <!--begin::Body-->
+                                                                    <div class="card-body">
+                                                                        <div class="d-flex align-items-start">
+                                                                            <!--begin::Icon 30%-->
+                                                                            <div class="flex-shrink-0" style="width: 30%;">
+                                                                                <i class="ki-duotone ki-element-2 text-white fs-2hx">
+                                                                                    <span class="path1"></span>
+                                                                                    <span class="path2"></span>
+                                                                                    <span class="path3"></span>
+                                                                                    <span class="path4"></span>
+                                                                                </i>
+                                                                            </div>
+                                                                            <!--end::Icon-->
+
+                                                                            <!--begin::Text 70%-->
+                                                                            <div class="flex-grow-1 ps-4" style="width: 70%;">
+                                                                                <div class="text-white fw-semibold fs-6 lh-sm">
+                                                                                    Copyright Infringement
+                                                                                </div>
+                                                                            </div>
+                                                                            <!--end::Text-->
+                                                                        </div>
+                                                                    </div>
+                                                                    <!--end::Body-->
+
+                                                                </a>
+                                                                <!--end::Tiles Widget 5-->
+                                                            </div>
+                                                            <!--end::Col-->
+
+                                                            <!--begin::Col-->
+                                                            <div class="col-xxl-6 mb-5 mb-xl-8">
+                                                                <!--begin::Tiles Widget 5-->
+                                                                <a href="#" class="card card-xxl-stretch bg-primary">
+
+                                                                    <!--begin::Body-->
+                                                                    <div class="card-body">
+                                                                        <div class="d-flex align-items-start">
+                                                                            <!--begin::Icon 30%-->
+                                                                            <div class="flex-shrink-0" style="width: 30%;">
+                                                                                <i class="ki-duotone ki-rocket text-white fs-2hx">
+                                                                                    <span class="path1"></span>
+                                                                                    <span class="path2"></span>
+                                                                                    <span class="path3"></span>
+                                                                                    <span class="path4"></span>
+                                                                                </i>
+                                                                            </div>
+                                                                            <!--end::Icon-->
+
+                                                                            <!--begin::Text 70%-->
+                                                                            <div class="flex-grow-1 ps-4" style="width: 70%;">
+                                                                                <div class="text-white fw-semibold fs-6 lh-sm">
+                                                                                    Trademark Infringement
+                                                                                </div>
+                                                                            </div>
+                                                                            <!--end::Text-->
+                                                                        </div>
+                                                                    </div>
+                                                                    <!--end::Body-->
+
+                                                                </a>
+                                                                <!--end::Tiles Widget 5-->
+                                                            </div>
+                                                            <!--end::Col-->
+
+                                                            <!--begin::Col-->
+                                                            <div class="col-xxl-6 mb-5 mb-xl-8">
+                                                                <!--begin::Tiles Widget 5-->
+                                                                <a href="#" class="card card-xxl-stretch bg-primary">
+
+                                                                    <!--begin::Body-->
+                                                                    <div class="card-body">
+                                                                        <div class="d-flex align-items-start">
+                                                                            <!--begin::Icon 30%-->
+                                                                            <div class="flex-shrink-0" style="width: 30%;">
+                                                                                <i class="ki-duotone ki-tree text-white fs-2hx">
+                                                                                    <span class="path1"></span>
+                                                                                    <span class="path2"></span>
+                                                                                    <span class="path3"></span>
+                                                                                    <span class="path4"></span>
+                                                                                </i>
+                                                                            </div>
+                                                                            <!--end::Icon-->
+
+                                                                            <!--begin::Text 70%-->
+                                                                            <div class="flex-grow-1 ps-4" style="width: 70%;">
+                                                                                <div class="text-white fw-semibold fs-6 lh-sm">
+                                                                                    Debt Collection
+                                                                                </div>
+                                                                            </div>
+                                                                            <!--end::Text-->
+                                                                        </div>
+                                                                    </div>
+                                                                    <!--end::Body-->
+
+                                                                </a>
+                                                                <!--end::Tiles Widget 5-->
+                                                            </div>
+                                                            <!--end::Col-->
+
+
+                                                        </div>
+
+                                                    </div>
+                                                    <!--end::Col-->
+
+                                                    <!--begin::Col-->
+                                                    <div class="col-xl-6">
+                                                      <!--begin::Tiles Widget 2-->
+                                                      <div class="card min-h-195px bgi-no-repeat bgi-size-contain card-xl-stretch mb-5 mb-xl-8"
+                                                           style="background-color: #1C325E; background-position: right; background-image:url('assets/media/svg/misc/stop.svg')">
+                                                        <div class="card-body d-flex flex-column justify-content-between">
+                                                          <h2 class="text-white fw-bold mb-5">Cease and Desist Letter</h2>
+                                                          <p class="text-white">
+                                                            Compose a Cease and Desist Letter to formally demand an end to damaging behavior and safeguard your rights.
+                                                          </p>
+                                                          <div class="m-0 mt-5">
+                                                            <a href="#" class="btn btn-danger fw-semibold px-6 py-3">Create</a>
+                                                          </div>
+                                                        </div>
+                                                      </div>
+                                                    </div>
+                                                    <!--end::Col-->
+
+
+
                                                                     
+                                                </div>
+                                                <!--end::Row-->
+
 
                                                 <!--begin::Row-->
                                                 <div class="row gx-5 gx-xl-8 mb-5 mb-xl-8" id="business">
@@ -662,7 +876,7 @@
                                                             Provide a professional Landlord Reference Letter to attest to a tenant’s reliability and history.
                                                           </p>
                                                           <div class="m-0 mt-5">
-                                                            <a href="#" class="btn btn-danger_fw-semibold px-6 py-3">Create</a>
+                                                            <a href="#" class="btn btn-danger fw-semibold px-6 py-3">Create</a>
                                                           </div>
                                                         </div>
                                                       </div>
@@ -847,8 +1061,7 @@
                             <!--end::Content-->
 
 
-
-
+<script src="<?php echo get_template_directory_uri(); ?>/metronic/assets/js/components/_scrollspy.js"></script>
 
 
 

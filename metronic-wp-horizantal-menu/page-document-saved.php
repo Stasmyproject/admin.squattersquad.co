@@ -27,6 +27,27 @@ if (!$acf_template_slug) {
     exit;
 }
 
+// ограничиваем просмотр жучих документов
+$current_user_id = get_current_user_id();
+$post_author_id = get_post_field('post_author', $post_id);
+
+if ($current_user_id !== intval($post_author_id)) {
+    wp_die('⛔️ У вас нет доступа к этому документу.');
+}
+
+// 💡 Важно: при создании документа неавторизованным пользователем, тебе нужно будет сохранять post_id в куку:
+if ( !$is_logged_in ) {
+    $allowed_doc_id = isset($_COOKIE['guest_doc_id']) ? intval($_COOKIE['guest_doc_id']) : 0;
+
+    if ( $post_id !== $allowed_doc_id ) {
+        echo '<div class="container py-5"><div class="alert alert-danger">⛔️ У вас нет доступа к этому документу.</div></div>';
+        get_footer();
+        exit;
+    }
+}
+
+
+
 // Очистка
 $slug = str_replace('group_', '', sanitize_title($acf_template_slug));
 $template_file = "acf-templates/group_{$slug}.php";
@@ -44,54 +65,31 @@ $template_exists = file_exists($preview_template);
                         <div class="d-flex flex-column flex-column-fluid">
 
                             <!--begin::Toolbar-->
-                                <!--begin::Toolbar-->
-                                    <!--begin::Toolbar-->
-                                    <?php
-                                    $is_product_page          = is_singular('product');
-                                    $is_signs_page            = is_page('signs-and-notices');
-                                    $is_create_doc_page       = is_page('create-document');
-                                    $is_choose_doc_page       = is_page('choose-document');
+                            <div id="kt_app_toolbar" class="app-toolbar py-3 py-lg-6">
+                                <!--begin::Toolbar container-->
+                                <div id="kt_app_toolbar_container" class="app-container container-xxl d-flex flex-stack">
+                                    <!--begin::Page title-->
+                                    <div class="page-title d-flex flex-column justify-content-center flex-wrap me-3">
+                                        <!--begin::Title-->
+                                        <h1 class="page-heading d-flex text-gray-900 fw-bold fs-3 flex-column justify-content-center my-0">
+                                            <?php echo get_the_title(); ?>
+                                        </h1>
+                                        <!--end::Title-->
+                                        <!--begin::Breadcrumb-->
+                                        <?php metronic_breadcrumbs(); ?>
+                                        <!--end::Breadcrumb-->
 
-                                    $is_document_page         = is_singular('document') 
-                                        || is_post_type_archive('document') 
-                                        || is_page('my-documents') 
-                                        || is_page('documents') 
-                                        || $is_create_doc_page 
-                                        || $is_choose_doc_page;
+                                    </div>
+                                    <!--end::Page title-->
 
+                                    <!--begin::Actions-->
+                                        <?php get_template_part('partials/toolbar'); ?>
+                                    <!--end::Actions-->
 
-                                    // 💡 Новый блок для saved / details download
-                                    $is_document_download_page = is_page_template('page-document-saved.php') 
-                                        || is_page_template('page-document-details-download.php');
-
-
-                                    $is_wc_page = function_exists('is_woocommerce') && (
-                                        is_cart() ||
-                                        is_checkout() ||
-                                        is_account_page() ||
-                                        is_shop()
-                                    );
-
-                                    // 🔹 Новый флаг: является ли это страницей с JSON-формой
-                                    $is_json_form_page         = !empty(get_post_meta(get_the_ID(), 'json_form_slug', true));
-
-                                    // 🔒 Проверка авторизации и вывод нужного toolbar'а
-                                    if ( $is_logged_in && !$is_json_form_page ) {
-                                        if ( $is_product_page || $is_signs_page || $is_wc_page ) {
-                                            get_template_part('partials/toolbar-woocommerce');
-                                        } elseif ( $is_document_download_page ) {
-                                            get_template_part('partials/toolbar-documents-details-download');
-                                        } elseif ( $is_document_page ) {
-                                            get_template_part('partials/toolbar-documents');
-
-                                        } else {
-                                            get_template_part('partials/toolbar');
-                                        }
-                                    }
-                                    ?>
-                                    <!--end::Toolbar-->
-
-                                <!--end::Toolbar-->
+                                    
+                                </div>
+                                <!--end::Toolbar container-->
+                            </div>
                             <!--end::Toolbar-->
 
 

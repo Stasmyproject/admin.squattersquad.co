@@ -119,7 +119,7 @@ acf.addAction('ready_field', function(field){
                                                 'post_id'       => 'new_post',
                                                 'new_post'      => [
                                                     'post_type'   => 'document',
-                                                    'post_status' => 'publish'
+                                                    'post_status' => 'draft'
                                                 ],
                                                 'field_groups' => [$form_group_key], // Замени на свой ACF ключ
 

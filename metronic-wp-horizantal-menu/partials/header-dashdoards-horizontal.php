@@ -57,6 +57,7 @@
 							        ?>
 							    </div>
 							</div>
+							<h1 class="text-white">Проверка горизонтальное меню</h1>
 							<!--end::Menu-->
 
 
@@ -1963,6 +1964,10 @@
 								<!--end::Header menu toggle-->
 							</div>
 							<!--end::Navbar-->
+
+
+
+
 						</div>
 						<!--end::Header wrapper-->
 					</div>
