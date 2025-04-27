@@ -684,16 +684,21 @@
                       </div>
                       <!--end::Search-->
 
-                      <!--begin::Toolbar-->
-
-
-
+                      <!--begin::Sign In-->
                       <div class="app-navbar-item align-items-stretch ms-1 ms-md-4">
                         <div class="d-flex align-items-center text-end ms-3">
-                          <a href="https://admin.squattersquad.co/login/" class="btn btn-sm btn-success">Sign In</a>
+                          <a href="https://admin.squattersquad.co/login/" class="btn btn-sm btn-dark">Sign In</a>
                         </div>
                       </div>
-                      <!--end::Toolbar-->
+                      <!--end::Create Free Account-->
+
+                      <!--begin::Sign In-->
+                      <div class="app-navbar-item align-items-stretch ms-1 ms-md-4">
+                        <div class="d-flex align-items-center text-end ms-3">
+                          <a href="https://admin.squattersquad.co/register/" class="btn btn-sm btn-dark">Sign Up</a>
+                        </div>
+                      </div>
+                      <!--end::Create Free Account-->
 
                       <!--begin::Header menu toggle-->
                       <div class="app-navbar-item d-lg-none ms-2 me-n2" title="Show header menu">

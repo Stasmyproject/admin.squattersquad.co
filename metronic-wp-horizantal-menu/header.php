@@ -30,6 +30,7 @@ Version: 8.2.1
         }
       ?>
 
+
 <!-- Begin::Metronic Wrapper -->
 <!--begin::Body-->
 <body 
@@ -71,7 +72,7 @@ Version: 8.2.1
                 <div class="app-container container-xxl d-flex align-items-stretch justify-content-between" id="kt_app_header_container">
                   <!--begin::Logo-->
                   <div class="d-flex align-items-center flex-grow-1 flex-lg-grow-0 me-lg-15">
-                    <a href="index.html">
+                    <a href="https://squattersquad.co/">
                       <!-- <img alt="Logo" src="<?php //echo get_template_directory_uri(); ?>/metronic/assets/media/logos/custom-3.svg" class="h-20px h-lg-30px app-sidebar-logo-default" /> -->
                       <img alt="Logo" src="<?php echo get_template_directory_uri(); ?>/metronic/assets/media/logos/custom-3.svg" class="h-30px" />
                     </a>

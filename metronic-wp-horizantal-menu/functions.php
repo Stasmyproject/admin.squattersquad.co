@@ -190,29 +190,31 @@ function metronic_enqueue_scripts() {
     }
 
 
-    // 🔄 Только на странице товара
-    if ( is_singular('product') ) {
-        
+    // 🔄 Только на странице товара или странице "business"
+    if ( is_singular('product') || is_page('business') ) {
+
         wp_enqueue_script(
             'metronic-fslightbox',
-            get_template_directory_uri() . '/metronic//assets/plugins/custom/fslightbox/fslightbox.bundle.js',
-            array('jquery'), // или 'metronic-scripts', если он уже зарегистрирован
+            get_template_directory_uri() . '/metronic/assets/plugins/custom/fslightbox/fslightbox.bundle.js',
+            array('jquery'), // или другие зависимости
             null,
             true
         );
-        
+
     }
 
-    // 🔄 Подключаем fslightbox только на нужных страницах
-        if ( is_page('documents') || is_page('home-listing') ) {
-            wp_enqueue_script(
-                'metronic-fslightbox',
-                get_template_directory_uri() . '/metronic/assets/plugins/custom/fslightbox/fslightbox.bundle.js',
-                array('jquery'),
-                null,
-                true
-            );
-        }
+
+        // 🔄 Подключаем fslightbox на всех страницах
+        wp_enqueue_script(
+            'metronic-fslightbox',
+            get_template_directory_uri() . '/metronic/assets/plugins/custom/fslightbox/fslightbox.bundle.js',
+            array('jquery'),
+            null,
+            true
+        );
+
+
+
 
         // 🔄 подключение библиотеки PDF
         if (is_page_template('template-acf-dynamic-form.php')) {
@@ -1692,3 +1694,70 @@ add_action( 'widgets_init', function(){
         'after_title'   => '</h3><div class="">',
     ]);
 });
+
+
+
+// 💡 Register a new Custom Post Type: "Document Pages"
+function register_document_pages_cpt() {
+    $labels = array(
+        'name' => 'Document Pages',
+        'singular_name' => 'Document Page',
+        'menu_name' => 'Document Pages',
+        'name_admin_bar' => 'Document Page',
+        'add_new' => 'Add New',
+        'add_new_item' => 'Add New Document Page',
+        'new_item' => 'New Document Page',
+        'edit_item' => 'Edit Document Page',
+        'view_item' => 'View Document Page',
+        'all_items' => 'All Document Pages',
+        'search_items' => 'Search Document Pages',
+        'parent_item_colon' => 'Parent Document Page:',
+        'not_found' => 'No Document Pages found.',
+        'not_found_in_trash' => 'No Document Pages found in Trash.',
+    );
+
+    $args = array(
+        'labels' => $labels,
+        'public' => true,
+        'has_archive' => true,
+        'rewrite' => array('slug' => 'document-pages'),
+        'supports' => array('title', 'editor', 'excerpt', 'thumbnail', 'page-attributes', 'custom-fields'),
+        'hierarchical' => false,
+        'menu_icon' => 'dashicons-media-document',
+        'show_in_rest' => true,
+
+    );
+
+    register_post_type('document_pages', $args);
+}
+add_action('init', 'register_document_pages_cpt');
+
+// 💡 Register a custom taxonomy: "Document Page Categories"
+function register_document_page_category_taxonomy() {
+    $labels = array(
+        'name'              => 'Document Page Categories',
+        'singular_name'     => 'Document Page Category',
+        'search_items'      => 'Search Categories',
+        'all_items'         => 'All Categories',
+        'parent_item'       => 'Parent Category',
+        'parent_item_colon' => 'Parent Category:',
+        'edit_item'         => 'Edit Category',
+        'update_item'       => 'Update Category',
+        'add_new_item'      => 'Add New Category',
+        'new_item_name'     => 'New Category Name',
+        'menu_name'         => 'Categories',
+    );
+
+    $args = array(
+        'hierarchical'      => true,
+        'labels'            => $labels,
+        'show_ui'           => true,
+        'show_admin_column' => true,
+        'rewrite'           => array('slug' => 'document-page-category'),
+        'show_in_rest'      => true,
+    );
+
+    register_taxonomy('document_page_category', array('document_pages'), $args);
+}
+add_action('init', 'register_document_page_category_taxonomy');
+

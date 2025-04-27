@@ -83,64 +83,71 @@
                                             <!--begin::Col-->
                                             <div class="col-xl-3">
 
+                                            <!--begin::Sticky Sidebar Menu-->
+                                            <div class="card mb-xl-3"
+                                                data-kt-sticky="true" 
+                                                data-kt-sticky-name="invoice" 
+                                                data-kt-sticky-offset="{default: false, lg: '420px'}"
+                                                data-kt-sticky-width="{lg: '250px', lg: '300px'}"
+                                                data-kt-sticky-left="auto"
+                                                data-kt-sticky-top="120px"
+                                                data-kt-sticky-animation="false"
+                                                data-kt-sticky-zindex="95">
 
-                                                <!--begin::Mixed Widget 5-->
-                                                <div    class="card mb-xl-3"
-                                                        data-kt-sticky="true" 
-                                                        data-kt-sticky-name="invoice" 
-                                                        data-kt-sticky-offset="{default: false, lg: '420px'}" data-kt-sticky-width="{lg: '250px', lg: '300px'}" 
-                                                        data-kt-sticky-left="auto" 
-                                                        data-kt-sticky-top="120px" 
-                                                        data-kt-sticky-animation="false" 
-                                                        data-kt-sticky-zindex="95">
+                                                <!--begin::Card Header-->
+                                                <div class="card-header border-0 py-5">
+                                                    <h3 class="card-title align-items-start flex-column">
+                                                        <span class="card-label fw-bold fs-3 mb-1">Document categories:</span>
+                                                    </h3>
+                                                </div>
+                                                <!--end::Card Header-->
 
-                                                    <!--begin::Beader-->
-                                                    <div class="card-header border-0 py-5">
-                                                        <h3 class="card-title align-items-start flex-column">
-                                                            <span class="card-label fw-bold fs-3 mb-1">Document categories:</span>
-                                                            <span class="text-muted fw-semibold fs-7">Latest trends</span>
-                                                        </h3>
+                                                <!--begin::Card Body-->
+                                                <div class="card-body pt-0">
 
-    
+                                                    <!--begin::Menu-->
+                                                    <div class="menu menu-rounded menu-column menu-active-bg menu-hover-bg menu-title-gray-700 fs-5 fw-semibold w-250px" id="sidebar_menu" data-kt-menu="true">
 
-                                                        <!--begin::Sidebar-->
-                                                        <div class="flex-column flex-lg-row-auto w-100 w-lg-275px mb-10 me-lg-20">
-                                                          <!--begin::Categories-->
-                                                          <div class="mb-15">
-                                                            <!--begin::Menu-->
-                                                            <div class="menu menu-rounded menu-column menu-title-gray-700 menu-state-title-primary menu-active-bg-light-primary fw-semibold"
-                                                                 id="sidebar_menu">
-                                                              
-                                                              <div class="menu-item mb-1">
-                                                                <a href="#business" class="menu-link py-3 activ">Business</a>
-                                                              </div>
-                                                              <div class="menu-item mb-1">
-                                                                <a href="#contracts" class="menu-link py-3">Contracts</a>
-                                                              </div>
-                                                              <div class="menu-item mb-1">
-                                                                <a href="#finance" class="menu-link py-3">Finance</a>
-                                                              </div>
-                                                              <div class="menu-item mb-1">
-                                                                <a href="#property" class="menu-link py-3">Property</a>
-                                                              </div>
-                                                              <div class="menu-item">
-                                                                <a href="#personal_and_family" class="menu-link py-3">Personal & Family</a>
-                                                              </div>
-
-                                                            </div>
-                                                            <!--end::Menu-->
-                                                          </div>
-                                                          <!--end::Categories-->
+                                                        <div class="menu-item">
+                                                            <a href="#business" class="menu-link border-3 border-start border-primary active">
+                                                                <span class="menu-title">Business</span>
+                                                                <span class="menu-badge fs-7 fw-normal text-muted">675</span>
+                                                            </a>
                                                         </div>
-                                                        <!--end::Sidebar-->
 
+                                                        <div class="menu-item">
+                                                            <a href="#contracts" class="menu-link border-3 border-start border-transparent">
+                                                                <span class="menu-title">Contracts</span>
+                                                            </a>
+                                                        </div>
 
+                                                        <div class="menu-item">
+                                                            <a href="#finance" class="menu-link border-3 border-start border-transparent">
+                                                                <span class="menu-title">Finance</span>
+                                                            </a>
+                                                        </div>
+
+                                                        <div class="menu-item">
+                                                            <a href="#property" class="menu-link border-3 border-start border-transparent">
+                                                                <span class="menu-title">Property</span>
+                                                            </a>
+                                                        </div>
+
+                                                        <div class="menu-item">
+                                                            <a href="#personal_and_family" class="menu-link border-3 border-start border-transparent">
+                                                                <span class="menu-title">Personal & Family</span>
+                                                            </a>
+                                                        </div>
 
                                                     </div>
-                                                    <!--end::Header-->
+                                                    <!--end::Menu-->
 
                                                 </div>
-                                                <!--end::Mixed Widget 5-->
+                                                <!--end::Card Body-->
+
+                                            </div>
+                                            <!--end::Sticky Sidebar Menu-->
+
 
                                             </div>
                                             <!--end::Col-->
@@ -158,14 +165,14 @@
 
 
 
-
-
                                                 <!--begin::Row-->
                                                 <div class="row gx-5 gx-xl-8 mb-5 mb-xl-8">
 
                                                     <!--begin::Col-->
                                                     <div class="col-xl-6">
-                                                      <!--begin::Tiles Widget 2-->
+
+
+                                                        <!--begin::Tiles Widget 2-->
                                                         <div class="card min-h-195px bgi-no-repeat bgi-size-contain card-xl-stretch mb-5 mb-xl-8"
                                                              style="
                                                                 background-image: linear-gradient(135deg, #663259, #ff6b6b), url('assets/media/svg/misc/taieri.svg');
@@ -173,18 +180,22 @@
                                                                 background-repeat: no-repeat;
                                                                 background-size: contain;
                                                             ">
-                                                        <!--begin::Body-->
-                                                        <div class="card-body d-flex flex-column justify-content-between">
-                                                          <!--begin::Title-->
-                                                          <h2 class="text-white fw-bold mb-5">Cease & Desist Order Template</h2>
-                                                          <p class="text-white">
-                                                            Safeguard your rights with our free Cease and Desist Letter template. This document allows you to formally request the termination of any harmful or illegal actions.
-                                                          </p>
-                                                          <!--end::Title-->
+                                                            <!--begin::Body-->
+                                                            <div class="card-body d-flex flex-column justify-content-between">
+                                                              <!--begin::Title-->
+                                                              <h2 class="text-white fw-bold mb-5">Cease & Desist Order Template</h2>
+                                                              <p class="text-white">
+                                                                Safeguard your rights with our free Cease and Desist Letter template. This document allows you to formally request the termination of any harmful or illegal actions.
+                                                              </p>
+                                                              <div class="m-0 mt-5">
+                                                                <a href="<?php echo esc_url( site_url('/legal-documents/business/') ); ?>" class="btn btn-danger fw-semibold px-6 py-3">Create</a>
+
+                                                              </div>
+                                                              <!--end::Title-->
+                                                            </div>
+                                                            <!--end::Body-->
                                                         </div>
-                                                        <!--end::Body-->
-                                                      </div>
-                                                      <!--end::Tiles Widget 2-->
+                                                        <!--end::Tiles Widget 2-->
 
 
                                                         <div class="row gx-5 gx-xl-8">
@@ -326,6 +337,22 @@
 
                                                             <!--begin::Col-->
                                                             <div class="col-xxl-6 mb-5 mb-xl-8">
+                                                                <div class="card h-150px bgi-no-repeat bgi-size-cover bgi-position-y-center h-150px mb-5 mb-lg-10" style="background-image:url('<?php echo get_template_directory_uri(); ?>/metronic/assets/media/stock/600x600/img-11.jpg')">
+                                                                    <!--begin::Body-->
+                                                                    <div class="card-body p-6">
+                                                                        <!--begin::Title-->
+                                                                        <a href="#" class="text-white text-hover-primary fw-bold fs-2" data-bs-toggle="modal" data-bs-target="#kt_modal_create_app">Roofing</a>
+                                                                        <!--end::Title-->
+                                                                    </div>
+                                                                    <!--end::Body-->
+                                                                </div>
+                                                            </div>
+                                                            <!--end::Col-->
+
+                                                            <!--begin::Col-->
+                                                            <div class="col-xxl-6 mb-5 mb-xl-8">
+
+
                                                                 <!--begin::Tiles Widget 5-->
                                                                 <a href="#" class="card card-xxl-stretch bg-primary">
 
@@ -367,19 +394,49 @@
 
                                                     <!--begin::Col-->
                                                     <div class="col-xl-6">
-                                                      <!--begin::Tiles Widget 2-->
-                                                      <div class="card min-h-195px bgi-no-repeat bgi-size-contain card-xl-stretch mb-5 mb-xl-8"
-                                                           style="background-color: #1C325E; background-position: right; background-image:url('assets/media/svg/misc/stop.svg')">
-                                                        <div class="card-body d-flex flex-column justify-content-between">
-                                                          <h2 class="text-white fw-bold mb-5">Cease and Desist Letter</h2>
-                                                          <p class="text-white">
-                                                            Compose a Cease and Desist Letter to formally demand an end to damaging behavior and safeguard your rights.
-                                                          </p>
-                                                          <div class="m-0 mt-5">
-                                                            <a href="#" class="btn btn-danger fw-semibold px-6 py-3">Create</a>
-                                                          </div>
+
+
+                                                        <!--begin::Tiles Widget 2-->
+                                                        <div class="card min-h-195px bgi-no-repeat bgi-size-contain card-xl-stretch mb-5 mb-xl-8"
+                                                               style="background-color: #1C325E; background-position: right; background-image:url('assets/media/svg/misc/stop.svg')">
+                                                            <div class="card-body d-flex flex-column justify-content-between">
+                                                              <h2 class="text-white fw-bold mb-5">Cease and Desist Letter</h2>
+                                                              <p class="text-white">
+                                                                Compose a Cease and Desist Letter to formally demand an end to damaging behavior and safeguard your rights.
+                                                              </p>
+                                                              <div class="m-0 mt-5">
+                                                                <a href="#" class="btn btn-danger fw-semibold px-6 py-3">Create</a>
+                                                              </div>
+                                                            </div>
                                                         </div>
-                                                      </div>
+
+
+                                                        <div class="card h-150px bgi-no-repeat bgi-size-cover bgi-position-y-center h-150px mb-5 mb-lg-10" style="background-image:url('<?php echo get_template_directory_uri(); ?>/metronic/assets/media/stock/600x600/img-12.jpg')">
+                                                            <!--begin::Body-->
+                                                            <div class="card-body p-6">
+                                                                <!--begin::Title-->
+                                                                <a href="#" class="text-black text-hover-primary fw-bold fs-2" data-bs-toggle="modal" data-bs-target="#kt_modal_create_app">Roofing</a>
+                                                                <!--end::Title-->
+                                                            </div>
+                                                            <!--end::Body-->
+                                                        </div>
+
+                                                            <!--begin::Col-->
+                                                            <div class="col-xxl-6 mb-5 mb-xl-8">
+                                                                <div class="card h-150px bgi-no-repeat bgi-size-cover bgi-position-y-center h-150px mb-5 mb-lg-10" style="background-image:url('<?php echo get_template_directory_uri(); ?>/metronic/assets/media/stock/600x600/img-12.jpg')">
+                                                                    <!--begin::Body-->
+                                                                    <div class="card-body p-6">
+                                                                        <!--begin::Title-->
+                                                                        <a href="#" class="text-black text-hover-primary fw-bold fs-2" data-bs-toggle="modal" data-bs-target="#kt_modal_create_app">Roofing</a>
+                                                                        <!--end::Title-->
+                                                                    </div>
+                                                                    <!--end::Body-->
+                                                                </div>
+                                                            </div>
+                                                            <!--end::Col-->
+
+
+
                                                     </div>
                                                     <!--end::Col-->
 
@@ -408,9 +465,6 @@
                                                     </div>
                                                 </div>
                                                 <!--end::Row-->
-
-
-
 
 
                                                 <!--begin::Row-->
