@@ -66,7 +66,7 @@ echo '<div style="padding: 10px; background: #e0f7fa;">[DEBUG] Старт шаб
 
 
                             <!--begin::Content-->
-                            <div id="kt_app_content" class="app-content flex-column-fluid">
+                            <div id="kt_app_content_top" class="app-content flex-column-fluid">
                                 <!--begin::Content container-->
                                 <div id="kt_app_content_container" class="app-container container-xxl">
                                     <!--begin::Engage widget 4-->
@@ -83,10 +83,10 @@ echo '<div style="padding: 10px; background: #e0f7fa;">[DEBUG] Старт шаб
                                             	<div class="col-md-6 col-lg-6 col-xl-6 col-xxl-9 mb-md-5 mb-xl-10 pt-5">
 	                                                <!--begin::Title-->
 	                                                <div class="position-relative fs-2x z-index-2 fw-bold text-white mb-7">
-	                                                <span class="me-2 display-6"><?php the_field('big_tittle_page'); ?></span></div>
+	                                                <span class="me-2 display-6"><?php the_field('global_tittle'); ?></span></div>
 
 
-	                                                <p class="text-white  fs-4"><?php the_field('big_area_text_page'); ?></p>
+	                                                <p class="text-white  fs-4"><?php the_field('global_text'); ?></p>
 	                                                <br />
 	                                                <!--end::Title-->
                                                 </div>
@@ -136,14 +136,42 @@ echo '<div style="padding: 10px; background: #e0f7fa;">[DEBUG] Старт шаб
 												        <div class="d-flex flex-column align-items-center gap-3 mt-4">
 												            <span class="text-muted">Download our professional examples</span>
 												            <div class="d-flex gap-3">
-												                <a href="#" class="btn btn-outline btn-outline-dashed btn-outline-default btn-active-light-primary fw-bold">
-												                    <i class="ki-duotone ki-cloud-download fs-3 me-2"><span class="path1"></span><span class="path2"></span></i>
-												                    PDF
-												                </a>
-												                <a href="#" class="btn btn-outline btn-outline-dashed btn-outline-default btn-active-light-primary fw-bold">
-												                    <i class="ki-duotone ki-cloud-download fs-3 me-2"><span class="path1"></span><span class="path2"></span></i>
-												                    WORD
-												                </a>
+
+<?php
+$file = get_field('pdf');
+
+if( $file ):
+    $file_url = $file['url']; // Ссылка на файл
+    $file_name = $file['filename']; // Имя файла
+?>
+    <a href="<?php echo esc_url($file_url); ?>"
+       class="btn btn-outline btn-outline-dashed btn-outline-default btn-active-light-primary fw-bold"
+       download="<?php echo esc_attr($file_name); ?>">
+        <i class="ki-duotone ki-cloud-download fs-3 me-2">
+            <span class="path1"></span><span class="path2"></span>
+        </i>
+        PDF
+    </a>
+<?php endif; ?>
+
+<?php
+$file = get_field('word');
+
+if( $file ):
+    $file_url = $file['url']; // Ссылка на файл
+    $file_name = $file['filename']; // Имя файла
+?>
+    <a href="<?php echo esc_url($file_url); ?>"
+       class="btn btn-outline btn-outline-dashed btn-outline-default btn-active-light-primary fw-bold"
+       download="<?php echo esc_attr($file_name); ?>">
+        <i class="ki-duotone ki-cloud-download fs-3 me-2">
+            <span class="path1"></span><span class="path2"></span>
+        </i>
+        WORD
+    </a>
+<?php endif; ?>
+
+
 												            </div>
 												        </div>
 												        <!--end::Buttons-->
@@ -229,7 +257,7 @@ echo '<div style="padding: 10px; background: #e0f7fa;">[DEBUG] Старт шаб
 												<!--begin::Body-->
 												<div id="kt_job_1_1" class="collapse  fs-6 ms-1">
 
-													<!--begin::Item-->
+													<!--begin::Item paragraph_1-->
 													<div class="mb-4">
 														<!--begin::Item-->
 														<div class="d-flex align-items-center ps-10 mb-n1">
@@ -238,15 +266,17 @@ echo '<div style="padding: 10px; background: #e0f7fa;">[DEBUG] Старт шаб
 															<!--end::Bullet-->
 															<!--begin::Label-->
 															<div class="text-gray-600 fw-semibold fs-6">
-																<a href="#h2_tittle_what" class="nav-link p-0 text-hover-primary"><?php the_field('h2_tittle_what'); ?></a></div>
+																<a href="#paragraph_1" class="nav-link p-0 text-hover-primary"><?php the_field('paragraph_1'); ?></a></div>
 															<!--end::Label-->
 														</div>
 														<!--end::Item-->
 													</div>
-													<!--end::Item-->
+													<!--end::Item paragraph_1-->
 
 
-													<!--begin::Item-->
+
+
+													<!--begin::Item paragraph_2-->
 													<div class="mb-4">
 														<!--begin::Item-->
 														<div class="d-flex align-items-center ps-10 mb-n1">
@@ -255,12 +285,65 @@ echo '<div style="padding: 10px; background: #e0f7fa;">[DEBUG] Старт шаб
 															<!--end::Bullet-->
 															<!--begin::Label-->
 															<div class="text-gray-600 fw-semibold fs-6">
-																<a href="#h2_tittle_document_sample" class="nav-link p-0 text-hover-primary"><?php the_field('h2_tittle_document_sample'); ?></a></div>
+																<a href="#paragraph_2" class="nav-link p-0 text-hover-primary"><?php the_field('paragraph_2'); ?></a></div>
 															<!--end::Label-->
 														</div>
 														<!--end::Item-->
 													</div>
-													<!--end::Item-->
+													<!--end::Item paragraph_2-->
+
+
+
+													<!--begin::Item paragraph_4-->
+													<div class="mb-4">
+														<!--begin::Item-->
+														<div class="d-flex align-items-center ps-10 mb-n1">
+															<!--begin::Bullet-->
+															<span class="bullet me-3"></span>
+															<!--end::Bullet-->
+															<!--begin::Label-->
+															<div class="text-gray-600 fw-semibold fs-6">
+																<a href="#paragraph_4" class="nav-link p-0 text-hover-primary"><?php the_field('paragraph_4'); ?></a></div>
+															<!--end::Label-->
+														</div>
+														<!--end::Item-->
+													</div>
+													<!--end::Item paragraph_4-->
+
+
+													<!--begin::Item paragraph_post-->
+													<div class="mb-4">
+														<!--begin::Item-->
+														<div class="d-flex align-items-center ps-10 mb-n1">
+															<!--begin::Bullet-->
+															<span class="bullet me-3"></span>
+															<!--end::Bullet-->
+															<!--begin::Label-->
+															<div class="text-gray-600 fw-semibold fs-6">
+																<a href="#paragraph_post" class="nav-link p-0 text-hover-primary">Related Documents</a></div>
+															<!--end::Label-->
+														</div>
+														<!--end::Item-->
+													</div>
+													<!--end::Item paragraph_post-->
+
+													<!--begin::Item paragraph_5-->
+													<div class="mb-4">
+														<!--begin::Item-->
+														<div class="d-flex align-items-center ps-10 mb-n1">
+															<!--begin::Bullet-->
+															<span class="bullet me-3"></span>
+															<!--end::Bullet-->
+															<!--begin::Label-->
+															<div class="text-gray-600 fw-semibold fs-6">
+																<a href="#paragraph_5" class="nav-link p-0 text-hover-primary"><?php the_field('paragraph_5'); ?></a></div>
+															<!--end::Label-->
+														</div>
+														<!--end::Item-->
+													</div>
+													<!--end::Item paragraph_5-->
+
+
 
 
 												</div>
@@ -274,43 +357,43 @@ echo '<div style="padding: 10px; background: #e0f7fa;">[DEBUG] Старт шаб
 										</div>
 										<!--end::Job-->
 
-										<!--begin::Job-->
-										<div class="mb-10 mb-lg-10 scroll-anchor" id="h2_tittle_document_sample">
+										<!--begin::Job paragraph_1-->
+										<div class="mb-10 mb-lg-10 scroll-anchor" id="paragraph_1">
 											<div class="m-0">
 												<!--begin::Title-->
-												<h4 class="fs-1 text-gray-800 w-bolder mb-6"><?php the_field('h2_tittle_what'); ?></h4>
+												<h4 class="fs-1 text-gray-800 w-bolder mb-6"><?php the_field('paragraph_1'); ?></h4>
 												<!--end::Title-->
 												<!--begin::Text-->
 											    <p class="fw-semibold fs-4 text-gray-600 mb-2">
-											    <?php the_field('h2_area_what'); ?>
+											    <?php the_field('paragraph_1_text'); ?>
 											    </p>
 												<!--end::Text-->
 											</div>
 											<!--end::Description-->
 										</div>
-										<!--end::Job-->
+										<!--end::Job paragraph_1-->
 
-										<!--begin::Job-->
-										<div class="mb-10 mb-lg-10 scroll-anchor" id="h2_tittle_document_sample">
+										<!--begin::Job paragraph_2-->
+										<div class="mb-10 mb-lg-10 scroll-anchor" id="paragraph_2">
 											<!--begin::Description-->
 											<div class="m-0">
 												<!--begin::Title-->
-												<h4 class="fs-1 text-gray-800 w-bolder mb-6"><?php the_field('h2_tittle_document_sample'); ?></h4>
+												<h4 class="fs-1 text-gray-800 w-bolder mb-6"><?php the_field('paragraph_2'); ?></h4>
 												<!--end::Title-->
 												<!--begin::Text-->
-												<p class="fw-semibold fs-4 text-gray-600 mb-2"><?php the_field('h2_area_document_sample'); ?></p>
+												<p class="fw-semibold fs-4 text-gray-600 mb-2"><?php the_field('paragraph_2_text'); ?></p>
 												<!--end::Text-->
 											</div>
 											<!--end::Description-->
 										</div>
-										<!--end::Job-->
+										<!--end::Job paragraph_2-->
 
-
+										<!--begin::Job items_bloc_paragraph_2-->
 										<div class="card card-flush border p-10 mb-10" style="background-color: #fff3df;">
 										    <ul class="list-unstyled mb-0">
-												<?php if( have_rows('items_bloc') ): ?>
-												    <?php while( have_rows('items_bloc') ): the_row(); ?>
-												        <?php if( get_row_layout() == 'items_bloc_punkt' ): ?>
+												<?php if( have_rows('items_bloc_paragraph_2') ): ?>
+												    <?php while( have_rows('items_bloc_paragraph_2') ): the_row(); ?>
+												        <?php if( get_row_layout() == 'items_bloc_paragraph_2' ): ?>
 												        <li class="mb-6">
 												            <span class="fw-bold fs-5 d-block text-gray-800 mb-1"><?php the_sub_field('tittlle_items_bloc'); ?></span>
 												            <span class="fw-semibold fs-6 text-gray-600"><?php the_sub_field('tittlle_items_bloc_text'); ?></span>
@@ -323,10 +406,11 @@ echo '<div style="padding: 10px; background: #e0f7fa;">[DEBUG] Старт шаб
 												<?php endif; ?>
 										    </ul>
 										</div>
+										<!--end::Job items_bloc_paragraph_2-->
 
 
-										<!--begin::Job-->
-										<div class="mb-10 mb-lg-10 scroll-anchor" id="h2_tittle_document_sample">
+										<!--begin::Job paragraph_4-->
+										<div class="mb-10 mb-lg-10 scroll-anchor" id="paragraph_4">
 											
 											<!--begin::Description-->
 											<div class="mb-5">
@@ -359,19 +443,11 @@ echo '<div style="padding: 10px; background: #e0f7fa;">[DEBUG] Старт шаб
 											<?php endif; ?>
 											<!--end::Description-->
 
-
-
-
-
-
-
-
-
 										</div>
-										<!--end::Job-->
+										<!--end::Job paragraph_4-->
 
-										<!--begin::Job-->
-										<div class="mb-10 mb-lg-10 scroll-anchor" id="h2_tittle_document_sample">
+										<!--begin::Job paragraph_post-->
+										<div class="mb-10 mb-lg-10 scroll-anchor" id="paragraph_post">
 
 										<!-- Вывод записей текущей категории -->
 										<?php
@@ -417,11 +493,11 @@ echo '<div style="padding: 10px; background: #e0f7fa;">[DEBUG] Старт шаб
 										<!-- Вывод записей текущей категории -->
 
 										</div>
-										<!--end::Job-->
+										<!--end::Job paragraph_post-->
 
 
-										<!--begin::Job-->
-										<div class="mb-10 mb-lg-10 scroll-anchor" id="h2_tittle_document_sample">
+										<!--begin::Job paragraph_5-->
+										<div class="mb-10 mb-lg-10 scroll-anchor" id="paragraph_5">
 											
 											<!--begin::Description-->
 											<div class="mb-5">
@@ -434,14 +510,12 @@ echo '<div style="padding: 10px; background: #e0f7fa;">[DEBUG] Старт шаб
 											</div>
 											<!--end::Description-->
 
-
 											<!--begin::Accordion-->
 											<div class="accordion" id="kt_accordion_1">
 											    <?php if( have_rows('items_bloc_paragraph_5') ): ?>
 											        <?php $i = 0; // Счётчик для уникальных ID ?>
 											        <?php while( have_rows('items_bloc_paragraph_5') ): the_row(); $i++; ?>
 											            <?php if( get_row_layout() == 'items_bloc_paragraph_5' ): ?>
-											                
 											                <div class="accordion-item">
 											                    <h2 class="accordion-header" id="kt_accordion_1_header_<?php echo $i; ?>">
 											                        <button class="accordion-button fs-4 fw-semibold collapsed" type="button" 
@@ -461,36 +535,15 @@ echo '<div style="padding: 10px; background: #e0f7fa;">[DEBUG] Старт шаб
 											                        </div>
 											                    </div>
 											                </div>
-
 											            <?php elseif( get_row_layout() == 'main_categories' ): ?>
 											                <h1 class="text-white">Информации нет!!!</h1>
 											            <?php endif; ?>
 											        <?php endwhile; ?>
 											    <?php endif; ?>
 											</div>
-
 											<!--end::Accordion-->
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 										</div>
-										<!--end::Job-->
-
-
-
-
+										<!--end::Job paragraph_5-->
 									</div>
 									<!--end::Content-->
 								</div>
@@ -567,14 +620,39 @@ echo '<div style="padding: 10px; background: #e0f7fa;">[DEBUG] Старт шаб
 										        <div class="d-flex flex-column align-items-center gap-3 mt-4">
 										            <span class="text-muted">Download our professional examples</span>
 										            <div class="d-flex gap-3">
-										                <a href="#" class="btn btn-outline btn-outline-dashed btn-outline-default btn-active-light-primary fw-bold">
-										                    <i class="ki-duotone ki-cloud-download fs-3 me-2"><span class="path1"></span><span class="path2"></span></i>
-										                    PDF
-										                </a>
-										                <a href="#" class="btn btn-outline btn-outline-dashed btn-outline-default btn-active-light-primary fw-bold">
-										                    <i class="ki-duotone ki-cloud-download fs-3 me-2"><span class="path1"></span><span class="path2"></span></i>
-										                    WORD
-										                </a>
+<?php
+$file = get_field('pdf');
+
+if( $file ):
+    $file_url = $file['url']; // Ссылка на файл
+    $file_name = $file['filename']; // Имя файла
+?>
+    <a href="<?php echo esc_url($file_url); ?>"
+       class="btn btn-outline btn-outline-dashed btn-outline-default btn-active-light-primary fw-bold"
+       download="<?php echo esc_attr($file_name); ?>">
+        <i class="ki-duotone ki-cloud-download fs-3 me-2">
+            <span class="path1"></span><span class="path2"></span>
+        </i>
+        PDF
+    </a>
+<?php endif; ?>
+
+<?php
+$file = get_field('word');
+
+if( $file ):
+    $file_url = $file['url']; // Ссылка на файл
+    $file_name = $file['filename']; // Имя файла
+?>
+    <a href="<?php echo esc_url($file_url); ?>"
+       class="btn btn-outline btn-outline-dashed btn-outline-default btn-active-light-primary fw-bold"
+       download="<?php echo esc_attr($file_name); ?>">
+        <i class="ki-duotone ki-cloud-download fs-3 me-2">
+            <span class="path1"></span><span class="path2"></span>
+        </i>
+        WORD
+    </a>
+<?php endif; ?>
 										            </div>
 										        </div>
 										        <!--end::Buttons-->

@@ -79,12 +79,11 @@
 
                                          <!--begin::Row-->
                                         <div class="row g-5 g-xl-8">
-
                                             <!--begin::Col-->
                                             <div class="col-xl-3">
-
                                             <!--begin::Sticky Sidebar Menu-->
-                                            <div class="card mb-xl-3"
+                                            <div class="card mb-xl-3">
+<!--                                        <div class="card mb-xl-3"
                                                 data-kt-sticky="true" 
                                                 data-kt-sticky-name="invoice" 
                                                 data-kt-sticky-offset="{default: false, lg: '420px'}"
@@ -92,8 +91,7 @@
                                                 data-kt-sticky-left="auto"
                                                 data-kt-sticky-top="120px"
                                                 data-kt-sticky-animation="false"
-                                                data-kt-sticky-zindex="95">
-
+                                                data-kt-sticky-zindex="95"> -->
                                                 <!--begin::Card Header-->
                                                 <div class="card-header border-0 py-5">
                                                     <h3 class="card-title align-items-start flex-column">
@@ -104,51 +102,52 @@
 
                                                 <!--begin::Card Body-->
                                                 <div class="card-body pt-0">
+                                                    <div class="menu menu-rounded menu-column menu-active-bg menu-hover-bg menu-title-gray-700 fs-5 fw-semibold w-250px"
+                                                         id="sidebar_menu"
+                                                         data-kt-menu="true"
+                                                         data-kt-sticky="true"
+                                                         data-kt-sticky-offset="{default: false, lg: '520px'}"
+                                                         data-kt-sticky-width="{lg: '250px', xl: '300px'}"
+                                                         data-kt-sticky-left="auto"
+                                                         data-kt-sticky-top="120px"
+                                                         data-kt-sticky-animation="false"
+                                                         data-kt-sticky-zindex="95"
+                                                         data-kt-scrollspy="true"
+                                                         data-kt-scrollspy-offset="100">
 
-                                                    <!--begin::Menu-->
-                                                    <div class="menu menu-rounded menu-column menu-active-bg menu-hover-bg menu-title-gray-700 fs-5 fw-semibold w-250px" id="sidebar_menu" data-kt-menu="true">
+                                                        
+                                                        <?php
+                                                        // Получаем все родительские категории
+                                                        $parent_terms = get_terms(array(
+                                                            'taxonomy' => 'document_page_category',
+                                                            'parent' => 0,
+                                                            'hide_empty' => false,
+                                                        ));
 
-                                                        <div class="menu-item">
-                                                            <a href="#business" class="menu-link border-3 border-start border-primary active">
-                                                                <span class="menu-title">Business</span>
-                                                                <span class="menu-badge fs-7 fw-normal text-muted">675</span>
-                                                            </a>
-                                                        </div>
+                                                        if (!empty($parent_terms) && !is_wp_error($parent_terms)) :
+                                                            foreach ($parent_terms as $parent_term) :
 
-                                                        <div class="menu-item">
-                                                            <a href="#contracts" class="menu-link border-3 border-start border-transparent">
-                                                                <span class="menu-title">Contracts</span>
-                                                            </a>
-                                                        </div>
+                                                                // Получаем количество постов в родительской категории
+                                                                $parent_count = $parent_term->count;
+                                                        ?>
+                                                                <div class="menu-item">
+                                                                    <a href="#<?php echo esc_attr($parent_term->slug); ?>" class="menu-link border-3 border-start border-transparent">
+                                                                        <span class="menu-title"><?php echo esc_html($parent_term->name); ?></span>
+                                                                        <span class="menu-badge fs-7 fw-normal text-muted"><?php echo $parent_count; ?></span>
+                                                                    </a>
+                                                                </div>
 
-                                                        <div class="menu-item">
-                                                            <a href="#finance" class="menu-link border-3 border-start border-transparent">
-                                                                <span class="menu-title">Finance</span>
-                                                            </a>
-                                                        </div>
 
-                                                        <div class="menu-item">
-                                                            <a href="#property" class="menu-link border-3 border-start border-transparent">
-                                                                <span class="menu-title">Property</span>
-                                                            </a>
-                                                        </div>
 
-                                                        <div class="menu-item">
-                                                            <a href="#personal_and_family" class="menu-link border-3 border-start border-transparent">
-                                                                <span class="menu-title">Personal & Family</span>
-                                                            </a>
-                                                        </div>
-
+                                                        <?php
+                                                            endforeach;
+                                                        endif;
+                                                        ?>
                                                     </div>
-                                                    <!--end::Menu-->
-
                                                 </div>
                                                 <!--end::Card Body-->
-
                                             </div>
                                             <!--end::Sticky Sidebar Menu-->
-
-
                                             </div>
                                             <!--end::Col-->
 
@@ -165,13 +164,207 @@
 
 
 
+
+
+<!-- /////////////////////////////////////////////// -->
+
+<?php
+$i = 1; // <--- объявляем один раз перед всем кодом!
+
+// Получаем все родительские категории (без родителя)
+$parent_terms = get_terms(array(
+    'taxonomy' => 'document_page_category',
+    'parent' => 0,
+    'hide_empty' => false,
+));
+
+if (!empty($parent_terms) && !is_wp_error($parent_terms)) :
+    foreach ($parent_terms as $parent_term) :
+?>
+    <!--begin::Row для категории-->
+    <div class="row gx-5 gx-xl-8 scroll-anchor" id="<?php echo esc_attr($parent_term->slug); ?>" data-kt-scrollspy-section="true">
+        <div class="col-xl-12 ">
+            <!-- Карточка категории -->
+            <div class="card h-150px card-xl-stretch mb-5 mb-xl-8" >
+                <div class="card-body d-flex align-items-center justify-content-between flex-wrap">
+                    <div class="me-2">
+                        <h2 class="fw-bold text-gray-800 mb-3 " ><?php echo esc_html($parent_term->name); ?></h2>
+                        <?php if (!empty($parent_term->description)) : ?>
+                            <div class="text-muted fw-semibold fs-6"><?php echo esc_html($parent_term->description); ?></div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--end::Row для категории-->
+
+    <?php
+    // Получаем дочерние категории этой родительской
+    $child_terms = get_terms(array(
+        'taxonomy' => 'document_page_category',
+        'parent' => $parent_term->term_id,
+        'hide_empty' => false,
+    ));
+
+    if (!empty($child_terms) && !is_wp_error($child_terms)) :
+    ?>
+
+    <!--begin::Row подкатегорий и документов-->
+    <div class="row gx-5 gx-xl-8 mb-5 mb-xl-8">
+        <?php
+        foreach ($child_terms as $child_term) :
+        ?>
+            <!--begin::Col для подкатегории-->
+            <div class="col-xl-6">
+                <!--begin::Подкатегория карточка-->   
+                <!--begin::Подкатегория карточка-->
+                    <?php
+                    // Массив темных градиентов
+                    $gradients = array(
+
+                            'linear-gradient(135deg, rgba(44,62,80,0.8), rgba(76,161,175,0.8))',
+                            'linear-gradient(135deg, rgba(29,38,113,0.8), rgba(195,55,100,0.8))',
+                            'linear-gradient(135deg, rgba(15,32,39,0.8), rgba(32,58,67,0.8), rgba(44,83,100,0.8))',
+                            'linear-gradient(135deg, rgba(102,50,89,0.8), rgba(255,107,107,0.8))',
+
+                        //'linear-gradient(135deg, #2c3e50, #4ca1af)', // синий
+                        //'linear-gradient(135deg, #1d2671, #c33764)', // фиолетово-розовый
+                        // 'linear-gradient(135deg, #000428, #004e92)', // темно-синий
+                        // 'linear-gradient(135deg, #232526, #414345)', // серо-черный
+                        // 'linear-gradient(135deg, #283048, #859398)', // стальной
+                        // 'linear-gradient(135deg, #1c1c1c, #434343)', // темно-серый
+
+                        // 'linear-gradient(135deg, #0f2027, #203a43, #2c5364)', // Темный морской
+                        // 'linear-gradient(135deg, #663259, #ff6b6b)',          // Мой стандартный
+
+                        // 'linear-gradient(135deg, #141e30, #243b55)',           // Глубокий синий
+                        // 'linear-gradient(135deg, #3a1c71, #d76d77, #ffaf7b)',  // Фиолетово-розовый
+                        // 'linear-gradient(135deg, #16222a, #3a6073)',           // Стальной синий
+                        // 'linear-gradient(135deg, #1e3c72, #2a5298)',           // Ночной океан
+                        // 'linear-gradient(135deg, #000046, #1cb5e0)',           // Космический синий
+                        // 'linear-gradient(135deg, #232526, #414345)',           // Металлический серый
+                        // 'linear-gradient(135deg, #283048, #859398)',           // Холодный стальной
+                        // 'linear-gradient(135deg, #1c1c1c, #434343)',           // Угольный
+                        // 'linear-gradient(135deg, #0f0c29, #302b63, #24243e)',  // Тёмный индиго
+                        // 'linear-gradient(135deg, #2c3e50, #4ca1af)',           // Морской бриз
+                    );
+
+                    // Выбираем градиент на основе term_id
+                    $gradient = $gradients[$child_term->term_id % count($gradients)];
+                    $image_url = get_template_directory_uri() . '/metronic/assets/media/stock/600x600/from_category/img-' . $i . '.jpg';
+                    ?>
+
+                    <div class="card min-h-195px bgi-no-repeat bgi-size-cover card-xl-stretch mb-5 mb-xl-8"
+                         style="background-image: <?php echo $gradient; ?>, url('<?php echo $image_url; ?>');
+                                background-position: center;
+                                background-repeat: no-repeat;
+                                background-size: cover;
+                               ">
+                        <div class="card-body d-flex flex-column justify-content-between">
+                            <div>
+                                <h2 class="text-white fw-bold mb-3"><?php echo esc_html($child_term->name); ?></h2>
+                                <?php if (!empty($child_term->description)) : ?>
+                                    <p class="text-white"><?php echo esc_html($child_term->description); ?></p>
+                                <?php endif; ?>
+                            </div>
+                            <div class="m-0 mt-5">
+                                <a href="<?php echo esc_url(get_term_link($child_term)); ?>" class="btn btn-danger fw-semibold px-6 py-3">
+                                    Create
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <!--end::Подкатегория карточка-->
+                <!--end::Подкатегория карточка-->
+
+                <?php
+                // Вывод документов подкатегории
+                $query = new WP_Query(array(
+                    'post_type' => 'document_pages',
+                    'posts_per_page' => -1,
+                    'tax_query' => array(
+                        array(
+                            'taxonomy' => 'document_page_category',
+                            'field' => 'term_id',
+                            'terms' => $child_term->term_id,
+                        ),
+                    ),
+                ));
+
+                if ($query->have_posts()) :
+                ?>
+                <!--begin::Row документов внутри подкатегории-->
+                <div class="row gx-5 gx-xl-8">
+                    <?php while ($query->have_posts()) : $query->the_post();
+                        $file = get_field('pdf'); // Получаем PDF-файл
+                    ?>
+                        <!--begin::Col для документа-->
+                        <div class="col-xxl-6 mb-5 mb-xl-8">
+                            <a href="<?php the_permalink(); ?>" class="card card-xxl-stretch bg-primary">
+                                <div class="card-body px-4 py-3 d-flex align-items-center gap-3">
+                                    <!--begin::Иконка-->
+                                    <i class="ki-duotone ki-message-text text-white fs-2hx">
+                                        <span class="path1"></span>
+                                        <span class="path2"></span>
+                                        <span class="path3"></span>
+                                        <span class="path4"></span>
+                                    </i>
+                                    <!--end::Иконка-->
+
+                                    <!--begin::Текст-->
+                                    <div class="text-white fw-semibold fs-6 lh-sm mb-0">
+                                        <?php the_title(); ?>
+                                    </div>
+                                    <!--end::Текст-->
+                                </div>
+                            </a>
+
+                            <?php if ($file) : ?>
+                                <!-- <div class="mt-2"> -->
+                                    <!-- <a href="<?php //echo esc_url($file['url']); ?>" download="<?php //echo esc_attr($file['filename']); ?>" -->
+                                       <!-- class="btn btn-sm btn-light-primary fw-bold w-100"> -->
+                                       <!-- Download PDF -->
+                                    <!-- </a> -->
+                                <!-- </div> -->
+                            <?php endif; ?>
+                        </div>
+                        <!--end::Col для документа-->
+                    <?php endwhile; wp_reset_postdata(); ?>
+                </div>
+                <!--end::Row документов-->
+                <?php endif; ?>
+
+            </div>
+            <!--end::Col для подкатегории-->
+
+        <?php 
+        $i++; // <--- Увеличиваем СРАЗУ ПОСЛЕ вывода одной подкатегории!
+            endforeach; ?>
+    </div>
+    <!--end::Row подкатегорий и документов-->
+    <?php endif; ?>
+
+<?php
+
+    endforeach; // Конец foreach по родителям
+endif;
+?>
+
+
+<!-- /////////////////////////////////////////////// -->
+
+<!-- /////////////////////////////////////////////// -->
+
+<!-- /////////////////////////////////////////////// -->
+
                                                 <!--begin::Row-->
                                                 <div class="row gx-5 gx-xl-8 mb-5 mb-xl-8">
 
                                                     <!--begin::Col-->
                                                     <div class="col-xl-6">
 
-
+                                                        <!-- Подкатегория -->
                                                         <!--begin::Tiles Widget 2-->
                                                         <div class="card min-h-195px bgi-no-repeat bgi-size-contain card-xl-stretch mb-5 mb-xl-8"
                                                              style="
@@ -196,36 +389,35 @@
                                                             <!--end::Body-->
                                                         </div>
                                                         <!--end::Tiles Widget 2-->
+                                                        <!-- Подкатегория -->
 
-
+                                                        <!-- Страницы -->
                                                         <div class="row gx-5 gx-xl-8">
-
-
                                                             <!--begin::Col-->
                                                             <div class="col-xxl-6 mb-5 mb-xl-8">
                                                                 <!--begin::Tiles Widget 5-->
                                                                 <a href="#" class="card card-xxl-stretch bg-primary">
 
-<!--begin::Body-->
-<div class="card-body px-4 py-3">
-    <div class="d-flex align-items-center gap-3">
-        <!--begin::Icon-->
-        <i class="ki-duotone ki-message-text text-white fs-2hx">
-            <span class="path1"></span>
-            <span class="path2"></span>
-            <span class="path3"></span>
-            <span class="path4"></span>
-        </i>
-        <!--end::Icon-->
+                                                                <!--begin::Body-->
+                                                                <div class="card-body px-4 py-3">
+                                                                    <div class="d-flex align-items-center gap-3">
+                                                                        <!--begin::Icon-->
+                                                                        <i class="ki-duotone ki-message-text text-white fs-2hx">
+                                                                            <span class="path1"></span>
+                                                                            <span class="path2"></span>
+                                                                            <span class="path3"></span>
+                                                                            <span class="path4"></span>
+                                                                        </i>
+                                                                        <!--end::Icon-->
 
-        <!--begin::Text-->
-        <div class="text-white fw-semibold fs-6 lh-sm mb-0">
-            General Letter
-        </div>
-        <!--end::Text-->
-    </div>
-</div>
-<!--end::Body-->
+                                                                        <!--begin::Text-->
+                                                                        <div class="text-white fw-semibold fs-6 lh-sm mb-0">
+                                                                            Business Plan for Accommodation and Food
+                                                                        </div>
+                                                                        <!--end::Text-->
+                                                                    </div>
+                                                                </div>
+                                                                <!--end::Body-->
 
                                                                 </a>
                                                                 <!--end::Tiles Widget 5-->
@@ -238,26 +430,26 @@
                                                                 <!--begin::Tiles Widget 5-->
                                                                 <a href="#" class="card card-xxl-stretch bg-primary">
 
-<!--begin::Body-->
-<div class="card-body px-5 py-3">
-    <div class="d-flex align-items-center gap-3">
-        <!--begin::Icon-->
-        <i class="ki-duotone ki-message-text text-white fs-2hx">
-            <span class="path1"></span>
-            <span class="path2"></span>
-            <span class="path3"></span>
-            <span class="path4"></span>
-        </i>
-        <!--end::Icon-->
+                                                                <!--begin::Body-->
+                                                                <div class="card-body px-5 py-3">
+                                                                    <div class="d-flex align-items-center gap-3">
+                                                                        <!--begin::Icon-->
+                                                                        <i class="ki-duotone ki-message-text text-white fs-2hx">
+                                                                            <span class="path1"></span>
+                                                                            <span class="path2"></span>
+                                                                            <span class="path3"></span>
+                                                                            <span class="path4"></span>
+                                                                        </i>
+                                                                        <!--end::Icon-->
 
-        <!--begin::Text-->
-        <div class="text-white fw-semibold fs-6 lh-sm mb-0">
-            General Letter
-        </div>
-        <!--end::Text-->
-    </div>
-</div>
-<!--end::Body-->
+                                                                        <!--begin::Text-->
+                                                                        <div class="text-white fw-semibold fs-6 lh-sm mb-0">
+                                                                            General Letter
+                                                                        </div>
+                                                                        <!--end::Text-->
+                                                                    </div>
+                                                                </div>
+                                                                <!--end::Body-->
 
                                                                 </a>
                                                                 <!--end::Tiles Widget 5-->
@@ -287,7 +479,7 @@
                                                                             <!--begin::Text 70%-->
                                                                             <div class="flex-grow-1 ps-4" style="width: 70%;">
                                                                                 <div class="text-white fw-semibold fs-6 lh-sm">
-                                                                                    Copyright Infringement
+                                                                                    Business Plan for Accommodation and Food
                                                                                 </div>
                                                                             </div>
                                                                             <!--end::Text-->
@@ -388,6 +580,7 @@
 
 
                                                         </div>
+                                                        <!-- Страницы -->
 
                                                     </div>
                                                     <!--end::Col-->
@@ -438,11 +631,7 @@
 
 
                                                     </div>
-                                                    <!--end::Col-->
-
-
-
-                                                                    
+                                                    <!--end::Col-->           
                                                 </div>
                                                 <!--end::Row-->
 
@@ -1098,24 +1287,162 @@
                                                 <!--end::Row-->
 
 
+
+
+
+
+
+
+<?php
+// Получаем все родительские категории
+$parent_terms = get_terms(array(
+    'taxonomy' => 'document_page_category',
+    'parent' => 0,
+    'hide_empty' => false,
+));
+
+if (!empty($parent_terms) && !is_wp_error($parent_terms)) :
+    foreach ($parent_terms as $parent_term) :
+        ?>
+        
+        <h2><?php echo esc_html($parent_term->name); ?></h2>
+        <p><?php echo esc_html($parent_term->description); ?></p>
+
+        <?php
+        // Получаем дочерние категории
+        $child_terms = get_terms(array(
+            'taxonomy' => 'document_page_category',
+            'parent' => $parent_term->term_id,
+            'hide_empty' => false,
+        ));
+
+        if (!empty($child_terms) && !is_wp_error($child_terms)) :
+            foreach ($child_terms as $child_term) :
+                ?>
+
+                <h3><?php echo esc_html($child_term->name); ?></h3>
+                <p><?php echo esc_html($child_term->description); ?></p>
+
+                <?php
+                // Теперь выводим документы в этой подкатегории
+                $query = new WP_Query(array(
+                    'post_type' => 'document_pages',
+                    'posts_per_page' => -1,
+                    'tax_query' => array(
+                        array(
+                            'taxonomy' => 'document_page_category',
+                            'field' => 'term_id',
+                            'terms' => $child_term->term_id,
+                        ),
+                    ),
+                ));
+
+                if ($query->have_posts()) :
+                    echo '<ul>';
+                    while ($query->have_posts()) : $query->the_post();
+                        ?>
+                        <li>
+                            <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
+                        </li>
+                        <?php
+                    endwhile;
+                    echo '</ul>';
+                    wp_reset_postdata();
+                endif;
+                ?>
+
+            <?php
+            endforeach;
+        endif;
+        ?>
+
+    <?php
+    endforeach;
+endif;
+?>
+
+
+<h1>///////////////////////////////////////////////</h1>
+
+
+
+
+
                                             </div>
                                             </div>
                                             <!--end::Col-->
 
+
+
+
+
+
+
+
+
+
                                         </div>
                                         <!--end::Row-->
-
-
-                                        
-
-
                                 </div>
                                 <!--end::Content container-->
                             </div>
                             <!--end::Content-->
 
 
-<script src="<?php echo get_template_directory_uri(); ?>/metronic/assets/js/components/_scrollspy.js"></script>
+
+
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const sidebarMenu = document.getElementById('sidebar_menu');
+    const menuLinks = sidebarMenu.querySelectorAll('a');
+    const headerOffset = 125; // <-- смещение вниз на 170px
+
+    // Плавный скроллинг при клике
+    menuLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+
+            const targetId = this.getAttribute('href').substring(1);
+            const targetElement = document.getElementById(targetId);
+
+            if (targetElement) {
+                const elementPosition = targetElement.getBoundingClientRect().top + window.pageYOffset;
+                window.scrollTo({
+                    top: elementPosition - headerOffset, // <-- вычитаем 170px
+                    behavior: 'smooth'
+                });
+            }
+        });
+    });
+
+    // Подсветка активного пункта при скролле
+    window.addEventListener('scroll', () => {
+        let currentSection = '';
+
+        document.querySelectorAll('.scroll-anchor').forEach(section => {
+            const sectionTop = section.offsetTop - headerOffset;
+
+            if (pageYOffset >= sectionTop) {
+                currentSection = section.getAttribute('id');
+            }
+        });
+
+        menuLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href').substring(1) === currentSection) {
+                link.classList.add('active');
+            }
+        });
+    });
+});
+</script>
+
+
+
+
+
 
 
 
